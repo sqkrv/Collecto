@@ -1,19 +1,17 @@
 package Collecto;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.Random;
 
 public class GridBoard {
-    private ArrayList<ArrayList<Ball>> board;  // [[column, column],[],[]]
+    public ArrayList<ArrayList<Ball>> board;  // [[column, column],[],[]] // TODO change back to private
 
     /**
      * Constructor
      * @ensures the board is properly constructed
      */
     public GridBoard() {
-        construct();
+//        construct();
     }
 
     /**
@@ -23,15 +21,16 @@ public class GridBoard {
     public void construct() {
         Random randInt = new Random();
         int[] colours = {8, 8, 8, 8, 8, 8};
-        String[] colour = {"blue", "yellow", "red", "orange", "purple", "green", "WHITE"};
+//        String[] colour = {"blue", "yellow", "red", "orange", "purple", "green", "WHITE"};
+        Ball[] colour = new Ball[]{Ball.BLUE, Ball.YELLOW, Ball.RED, Ball.ORANGE, Ball.PURPLE, Ball.GREEN};
         Ball ball;
         for (int row = 0; row < 7; row++) {
-            board.add(board.size(), new ArrayList<Ball>());
+            board.add(board.size(), new ArrayList<>());
             for (int col = 0; col < 7; col++) {
                 while (true) {
                     int random = randInt.nextInt(7);
                     if (colours[random] > 0) {
-                        ball = new Ball(new Ball.Colour(colour[random]));
+                        ball = colour[random];
                         colours[random]--;
                         break;
                     }
@@ -116,11 +115,11 @@ public class GridBoard {
      */
     public boolean checkSurroundings(int row, int column) {
         assert validIndex(row) && validIndex(column);
-        Ball.Colour colour = getField(row, column).getColour();
-        Ball.Colour up = getField(row, column-1).getColour();
-        Ball.Colour down = getField(row, column+1).getColour();
-        Ball.Colour left = getField(row-1, column).getColour();
-        Ball.Colour right = getField(row+1, column).getColour();
+        String colour = getField(row, column).getColour();
+        String up = getField(row, column-1).getColour();
+        String down = getField(row, column+1).getColour();
+        String left = getField(row-1, column).getColour();
+        String right = getField(row+1, column).getColour();
         return colour.equals(up) || colour.equals(down)
                 || colour.equals(left) || colour.equals(right);
     }
