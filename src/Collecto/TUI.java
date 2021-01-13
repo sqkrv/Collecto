@@ -34,5 +34,6 @@ public class TUI {
         for (int j = 1; j <= 7; j++) {
             System.out.print("-------+");
         }
+
     }
 }
