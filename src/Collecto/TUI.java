@@ -94,12 +94,14 @@ public class TUI {
                 )
         );
 
+        board.moveLine(4, 4, GridBoard.Direction.LEFT);
+
         System.out.println();
         System.out.print("     |");
         for (int i = 1; i <= 7; i++) {
-            System.out.print("   ");
-            System.out.print(i);
-            System.out.print("   |");
+            System.out.print("   "+i+"   |");
+//            System.out.print(i);
+//            System.out.print("   |");
         }
 
         System.out.println();

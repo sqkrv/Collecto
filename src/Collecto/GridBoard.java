@@ -1,9 +1,15 @@
 package Collecto;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Random;
 
 public class GridBoard {
+    public enum Direction {
+        UP, DOWN, LEFT, RIGHT;
+    }
+
     public ArrayList<ArrayList<Ball>> board;  // [[column, column],[],[]] // TODO change back to private
 
     /**
@@ -49,9 +55,7 @@ public class GridBoard {
     public GridBoard deepCopy() {
         GridBoard copy = new GridBoard();
         for (ArrayList<Ball> row : board) {
-            for (Ball ball : row) {
-//                copy.set
-            }
+//            copy.board.add(row.);
         }
         return null; //TODO add more to this method
     }
@@ -59,9 +63,30 @@ public class GridBoard {
     /**
      * @ensures that a certain move is a valid move
      */
-    public void move(int row, int column, String direction) {
-        if (!legalMoves(row, column, direction)) return;
-        //TODO: add more to this method
+    public void moveLine(int row, int column, Direction direction) {
+        row--;
+        column--;
+//        if (!legalMoves(row, column, direction)) return;
+        int removed;
+        if (direction == Direction.UP) {
+            for (int i=0; i < 7; i++) {
+
+            }
+        } else if (direction == Direction.DOWN) {
+
+        } else {
+            if (board.get(row).contains(Ball.WHITE)) {
+                removed = board.get(row).size();
+                board.get(row).removeAll(Collections.singleton(Ball.WHITE));
+                removed = removed - board.get(row).size();
+
+                if (direction == Direction.LEFT) {
+                    board.get(row).addAll(board.get(row).size() - removed + 1, (Collection) Collections.nCopies(removed, Ball.WHITE));
+                } else if (direction == Direction.RIGHT) {
+                    board.get(row).addAll(0, (Collection) Collections.nCopies(removed, Ball.WHITE));
+                }
+            }
+        }
     }
 
     /**
@@ -112,6 +137,8 @@ public class GridBoard {
      * @returns false if no surrounding ball has the same colour as the ball
      *  specified by the indices, true if at least 1 surrounding colour matches
      *  the ball specified by the indices
+     * @param row row index
+     * @param column column index
      */
     public boolean checkSurroundings(int row, int column) {
         assert validIndex(row) && validIndex(column);
