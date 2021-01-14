@@ -338,10 +338,10 @@ public class GridBoard {
         }
         // No valid move in one turn
 
+        //TODO add (recursive) check for second move
 
         return false;
 
-        //TODO add (recursive) check for second move
     }
 
     /**
