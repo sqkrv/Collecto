@@ -4,13 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class TUI {
-//    private final String
-
     public static void main(String[] args) {
-//        System.out.print("     |");
-//        for (int i = 1; i <= 7; i++) {
-//            System.out.print("       |");
-//        }
+        //region sample board
         GridBoard board = new GridBoard();
         board.board = new ArrayList<>(7);
         for (int i=0; i < 7; i++) {
@@ -43,7 +38,7 @@ public class TUI {
                         Ball.BLUE,
                         Ball.RED,
                         Ball.PURPLE,
-                        Ball.WHITE,
+                        Ball.BLUE,
                         Ball.RED,
                         Ball.YELLOW,
                         Ball.ORANGE
@@ -93,6 +88,7 @@ public class TUI {
                         Ball.RED
                 )
         );
+        //endregion
 
         GridBoard copy = board.deepCopy();
 
@@ -102,8 +98,6 @@ public class TUI {
         System.out.print("     |");
         for (int i = 1; i <= 7; i++) {
             System.out.print("   "+i+"   |");
-//            System.out.print(i);
-//            System.out.print("   |");
         }
 
         System.out.println();
@@ -115,12 +109,9 @@ public class TUI {
             }
             System.out.println();
             System.out.print("  "+i+"  |");
-            StringBuilder string = new StringBuilder();
             for (int j = 1; j <= 7; j++) {
-                string.append(String.format("%-16s|", board.board.get(i-1).get(j-1)));
-//                System.out.printf("%-7s ", board.board.get(i-1).get(j-1));
+                System.out.printf("%-16s|", board.board.get(i-1).get(j-1));
             }
-            System.out.print(string);
             System.out.println();
         }
         System.out.print("-----+");
@@ -128,6 +119,6 @@ public class TUI {
             System.out.print("-------+");
         }
 
-        System.out.println("  Is board the same: "+board.board.equals(copy.board)); // doesnt work
+        System.out.println("  Is board the same: "+board.board.equals(copy.board));
     }
 }

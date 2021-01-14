@@ -14,13 +14,13 @@ public class GridBoard {
 
     /**
      * Constructor
-     * @ensures the board is properly constructed
      */
     public GridBoard() {
 //        construct();
     }
 
     /**
+     * Constructs a board (places Balls on board) according to game rules
      * @ensures the board is initialized, where no adjacent balls are the same colour,
      * all fields hold a ball except for the middle, a legal move can be made.
      */
@@ -60,13 +60,21 @@ public class GridBoard {
         return copy;
     }
 
+    public void moveLine(int row, int column, Direction direction) {
+        moveLine(row, column, direction, this.board);
+    }
+
     /**
+     * Moves balls in line according to game rules
+     * @param row row index (being used only if Direction is LEFT ot RIGHT)
+     * @param column column index (being used only if Direction is UP ot DOWN)
+     * @param direction direction of movement
      * @ensures that a certain move is a valid move
      */
-    public void moveLine(int row, int column, Direction direction) {
+    private void moveLine(int row, int column, Direction direction, ArrayList<ArrayList<Ball>> board) {
         row--;
         column--;
-//        if (!legalMoves(row, column, direction)) return;
+//        if (!legalMoves(row, column, direction)) return; TODO move this check to parent method which will firstly check if first or second move is valid by using this function and then perform this move by using the same (this) function
         int removed;
         if (direction == Direction.UP) {
             for (int i=0; i < 7; i++) {
@@ -176,14 +184,26 @@ public class GridBoard {
     }
 
     /**
-     * @requires direction contains "up", "down", "left" or "right",
-     *  row and column are valid indices
-     * @ensures check if a move is legal
-     * @returns true if a specified move is possible, false if it is impossible
+     * Checks if a certain move is legal
+     * @requires row and column to be valid indices
+     * @returns true if a specified move is valid, false if it is invalid
+     * @param row row index
+     * @param column column index
+     * @param direction direction of the move
      */
-    public boolean legalMoves(int row, int column, String direction) {
+    public boolean isMoveValid(int row, int column, Direction direction) {
+        GridBoard copy = deepCopy();
+        moveLine(row, column, direction, copy.board);
+        if (direction == Direction.UP || direction == Direction.DOWN) {
+            for (int i=0; i < 7; i++) {
+                if (checkSurroundings(i, column)) return true;
+            }
+        } else if (direction == Direction.LEFT || direction == Direction.RIGHT) {
+            for (int i=0; i < 7; i++) {
+                if (checkSurroundings(row, i)) return true;
+            }
+        }
         return false;
-        //TODO
     }
 
     /**
@@ -204,14 +224,14 @@ public class GridBoard {
 
     /**
      * Coordinates class
-     * .....
+     * Being used for storing coordinates of a ball — row and column
      */
     public class Coordinates {
         public final int row;
         public final int column;
+
         /**
          * Constructor
-         * @ensures the right coordinates are set
          */
         public Coordinates(int row, int column) {
             this.row = row;
