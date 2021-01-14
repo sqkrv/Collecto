@@ -197,8 +197,9 @@ public class GridBoard {
      * @param row row index
      * @param column column index
      */
-    public boolean checkSurroundings(int row, int column, String colour) {
+    public boolean checkSurroundings(int row, int column) {
         assert validIndex(row) && validIndex(column);
+        String colour = getField(row, column).getColour();
         String up = getField(row, column-1).getColour();
         String down = getField(row, column+1).getColour();
         String left = getField(row-1, column).getColour();
