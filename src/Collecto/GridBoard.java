@@ -49,15 +49,15 @@ public class GridBoard {
     }
 
     /**
-     * @ensures return of a deepCopy of the current board
-     * @return GridBoard
+     * @return a deep copy of current board
      */
     public GridBoard deepCopy() {
         GridBoard copy = new GridBoard();
+        copy.board = new ArrayList<>();
         for (ArrayList<Ball> row : board) {
-//            copy.board.add(row.);
+            copy.board.add(new ArrayList<>(row));
         }
-        return null; //TODO add more to this method
+        return copy;
     }
 
     /**
@@ -70,10 +70,22 @@ public class GridBoard {
         int removed;
         if (direction == Direction.UP) {
             for (int i=0; i < 7; i++) {
-
+                if (board.get(i).get(column) == Ball.WHITE) {
+                    for (int j=i; j < 7-1; j++) {
+                        board.get(j).set(column, board.get(j+1).get(column));
+                    }
+                    board.get(6).set(column, Ball.WHITE);
+                }
             }
         } else if (direction == Direction.DOWN) {
-
+            for (int i=6; i >= 0; i--) {
+                if (board.get(i).get(column) == Ball.WHITE) {
+                    for (int j=i; j >= 1; j--) {
+                        board.get(j).set(column, board.get(j-1).get(column));
+                    }
+                    board.get(0).set(column, Ball.WHITE);
+                }
+            }
         } else {
             if (board.get(row).contains(Ball.WHITE)) {
                 removed = board.get(row).size();

@@ -25,7 +25,7 @@ public enum Ball {
         } else if (this == GREEN) {
             return "\u001B[32m" + "GREEN" + ANSI_RESET;
         } else {
-            return "\u001B[37m" + "fuck" + ANSI_RESET;
+            return "\u001B[37m" + "" + ANSI_RESET;
         }
 //        return getColour();
     }

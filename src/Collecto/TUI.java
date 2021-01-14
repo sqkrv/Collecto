@@ -94,7 +94,9 @@ public class TUI {
                 )
         );
 
-        board.moveLine(4, 4, GridBoard.Direction.LEFT);
+        GridBoard copy = board.deepCopy();
+
+        board.moveLine(4, 4, GridBoard.Direction.DOWN);
 
         System.out.println();
         System.out.print("     |");
@@ -125,5 +127,7 @@ public class TUI {
         for (int j = 1; j <= 7; j++) {
             System.out.print("-------+");
         }
+
+        System.out.println(board.board.equals(copy.board)); // doesnt work
     }
 }
