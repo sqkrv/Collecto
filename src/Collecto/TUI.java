@@ -43,7 +43,7 @@ public class TUI {
                         Ball.BLUE,
                         Ball.RED,
                         Ball.PURPLE,
-                        Ball.BLUE,
+                        Ball.WHITE,
                         Ball.RED,
                         Ball.YELLOW,
                         Ball.ORANGE
@@ -96,7 +96,7 @@ public class TUI {
 
         GridBoard copy = board.deepCopy();
 
-        board.moveLine(4, 4, GridBoard.Direction.DOWN);
+        board.moveLine(4, 4, GridBoard.Direction.UP);
 
         System.out.println();
         System.out.print("     |");
@@ -128,6 +128,6 @@ public class TUI {
             System.out.print("-------+");
         }
 
-        System.out.println(board.board.equals(copy.board)); // doesnt work
+        System.out.println("  Is board the same: "+board.board.equals(copy.board)); // doesnt work
     }
 }

@@ -72,7 +72,13 @@ public class GridBoard {
             for (int i=0; i < 7; i++) {
                 if (board.get(i).get(column) == Ball.WHITE) {
                     for (int j=i; j < 7-1; j++) {
-                        board.get(j).set(column, board.get(j+1).get(column));
+                        for (int k=j+1; k < 7; k++) {
+                            if (board.get(k).get(column) != Ball.WHITE) {
+                                board.get(j).set(column, board.get(k).get(column));
+                                board.get(k).set(column, Ball.WHITE);
+                                break;
+                            }
+                        }
                     }
                     board.get(6).set(column, Ball.WHITE);
                 }
@@ -81,7 +87,13 @@ public class GridBoard {
             for (int i=6; i >= 0; i--) {
                 if (board.get(i).get(column) == Ball.WHITE) {
                     for (int j=i; j >= 1; j--) {
-                        board.get(j).set(column, board.get(j-1).get(column));
+                        for (int k=j-1; k >= 0; k--) {
+                            if (board.get(k).get(column) != Ball.WHITE) {
+                                board.get(j).set(column, board.get(k).get(column));
+                                board.get(k).set(column, Ball.WHITE);
+                                break;
+                            }
+                        }
                     }
                     board.get(0).set(column, Ball.WHITE);
                 }
@@ -93,7 +105,7 @@ public class GridBoard {
                 removed = removed - board.get(row).size();
 
                 if (direction == Direction.LEFT) {
-                    board.get(row).addAll(board.get(row).size() - removed + 1, (Collection) Collections.nCopies(removed, Ball.WHITE));
+                    board.get(row).addAll(7 - removed, (Collection) Collections.nCopies(removed, Ball.WHITE));
                 } else if (direction == Direction.RIGHT) {
                     board.get(row).addAll(0, (Collection) Collections.nCopies(removed, Ball.WHITE));
                 }
