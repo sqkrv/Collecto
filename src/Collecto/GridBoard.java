@@ -323,8 +323,8 @@ public class GridBoard {
      *  false if there are no valid moves possible within two moves
      */
     public boolean possibleMoves() {
-//        GridBoard copy = deepCopy();
         for (int row=0; row < 7; row++) {
+            if (!board.get(row).contains(Ball.WHITE)) continue;
             for (int col=0; col < 7; col++) {
                 Ball ball = getField(row, col);
                 if (ball == Ball.WHITE) {
