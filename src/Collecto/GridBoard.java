@@ -10,6 +10,7 @@ public class GridBoard {
         UP, DOWN, LEFT, RIGHT;
     }
 
+    //TODO: change to better match the new enumerated Ball class
     public ArrayList<ArrayList<Ball>> board;  // [[column, column],[],[]] // TODO change back to private
 
     /**
@@ -47,6 +48,30 @@ public class GridBoard {
         }
         //TODO: finish this method
     }
+
+
+    // Possible different implementation, requires a change in checkSurroundings()
+
+//    public void construct2() {
+//        for (int i = 0; i < 6; i++) {
+//            board.add(new ArrayList<Ball>());
+//            for (int j = 0; j < 6; j++) {
+//                board.get(i).add(board.get(i).size(), Ball.WHITE);
+//            }
+//        }
+//        Random rand = new Random();
+//        Ball[] ballColours = new Ball[]{Ball.BLUE, Ball.YELLOW, Ball.RED, Ball.ORANGE, Ball.PURPLE, Ball.GREEN};
+//        int row;
+//        int column;
+//        int ball;
+//        for (Ball b : ballColours) {
+//            for (int i = 0; i < 8; i++) {
+//                row = rand.nextInt(8);
+//                column = rand.nextInt(8);
+//                checkSurroundings(row, column, toString(b));
+//            }
+//        }
+//    }
 
     /**
      * @return a deep copy of current board
@@ -129,7 +154,7 @@ public class GridBoard {
     public Ball getField(int row, int column) {
         if (validIndex(row) && validIndex(column)) {
             return board.get(row).get(column);
-        }
+        } //TODO: change to better match the new enumerated Ball class
         return null;
     }
 
@@ -172,16 +197,15 @@ public class GridBoard {
      * @param row row index
      * @param column column index
      */
-    public boolean checkSurroundings(int row, int column) {
+    public boolean checkSurroundings(int row, int column, String colour) {
         assert validIndex(row) && validIndex(column);
-        String colour = getField(row, column).getColour();
         String up = getField(row, column-1).getColour();
         String down = getField(row, column+1).getColour();
         String left = getField(row-1, column).getColour();
         String right = getField(row+1, column).getColour();
         return colour.equals(up) || colour.equals(down)
                 || colour.equals(left) || colour.equals(right);
-    }
+    } //TODO: change to better match the new enumerated Ball class
 
     /**
      * Checks if a certain move is legal
