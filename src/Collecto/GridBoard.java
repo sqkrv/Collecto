@@ -1,19 +1,23 @@
 package Collecto;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Random;
 
 public class GridBoard {
-    private ArrayList<ArrayList<Ball>> board;  // [[column, column],[],[]]
+    public enum Direction {
+        UP, DOWN, LEFT, RIGHT;
+    }
+
+    public ArrayList<ArrayList<Ball>> board;  // [[column, column],[],[]] // TODO change back to private
 
     /**
      * Constructor
      * @ensures the board is properly constructed
      */
     public GridBoard() {
-        construct();
+//        construct();
     }
 
     /**
@@ -23,15 +27,16 @@ public class GridBoard {
     public void construct() {
         Random randInt = new Random();
         int[] colours = {8, 8, 8, 8, 8, 8};
-        String[] colour = {"blue", "yellow", "red", "orange", "purple", "green", "WHITE"};
+//        String[] colour = {"blue", "yellow", "red", "orange", "purple", "green", "WHITE"};
+        Ball[] colour = new Ball[]{Ball.BLUE, Ball.YELLOW, Ball.RED, Ball.ORANGE, Ball.PURPLE, Ball.GREEN};
         Ball ball;
         for (int row = 0; row < 7; row++) {
-            board.add(board.size(), new ArrayList<Ball>());
+            board.add(board.size(), new ArrayList<>());
             for (int col = 0; col < 7; col++) {
                 while (true) {
                     int random = randInt.nextInt(7);
                     if (colours[random] > 0) {
-                        ball = new Ball(new Ball.Colour(colour[random]));
+                        ball = colour[random];
                         colours[random]--;
                         break;
                     }
@@ -44,25 +49,68 @@ public class GridBoard {
     }
 
     /**
-     * @ensures return of a deepCopy of the current board
-     * @return GridBoard
+     * @return a deep copy of current board
      */
     public GridBoard deepCopy() {
         GridBoard copy = new GridBoard();
+        copy.board = new ArrayList<>();
         for (ArrayList<Ball> row : board) {
-            for (Ball ball : row) {
-//                copy.set
-            }
+            copy.board.add(new ArrayList<>(row));
         }
-        return null; //TODO add more to this method
+        return copy;
     }
 
     /**
      * @ensures that a certain move is a valid move
      */
-    public void move(int row, int column, String direction) {
-        if (!legalMoves(row, column, direction)) return;
-        //TODO: add more to this method
+    public void moveLine(int row, int column, Direction direction) {
+        row--;
+        column--;
+//        if (!legalMoves(row, column, direction)) return;
+        int removed;
+        if (direction == Direction.UP) {
+            for (int i=0; i < 7; i++) {
+                if (board.get(i).get(column) == Ball.WHITE) {
+                    for (int j=i; j < 7-1; j++) {
+                        for (int k=j+1; k < 7; k++) {
+                            if (board.get(k).get(column) != Ball.WHITE) {
+                                board.get(j).set(column, board.get(k).get(column));
+                                board.get(k).set(column, Ball.WHITE);
+                                break;
+                            }
+                        }
+                    }
+                    board.get(6).set(column, Ball.WHITE);
+                }
+            }
+        } else if (direction == Direction.DOWN) {
+            for (int i=6; i >= 0; i--) {
+                if (board.get(i).get(column) == Ball.WHITE) {
+                    for (int j=i; j >= 1; j--) {
+                        for (int k=j-1; k >= 0; k--) {
+                            if (board.get(k).get(column) != Ball.WHITE) {
+                                board.get(j).set(column, board.get(k).get(column));
+                                board.get(k).set(column, Ball.WHITE);
+                                break;
+                            }
+                        }
+                    }
+                    board.get(0).set(column, Ball.WHITE);
+                }
+            }
+        } else {
+            if (board.get(row).contains(Ball.WHITE)) {
+                removed = board.get(row).size();
+                board.get(row).removeAll(Collections.singleton(Ball.WHITE));
+                removed = removed - board.get(row).size();
+
+                if (direction == Direction.LEFT) {
+                    board.get(row).addAll(7 - removed, (Collection) Collections.nCopies(removed, Ball.WHITE));
+                } else if (direction == Direction.RIGHT) {
+                    board.get(row).addAll(0, (Collection) Collections.nCopies(removed, Ball.WHITE));
+                }
+            }
+        }
     }
 
     /**
@@ -113,14 +161,16 @@ public class GridBoard {
      * @returns false if no surrounding ball has the same colour as the ball
      *  specified by the indices, true if at least 1 surrounding colour matches
      *  the ball specified by the indices
+     * @param row row index
+     * @param column column index
      */
     public boolean checkSurroundings(int row, int column) {
         assert validIndex(row) && validIndex(column);
-        Ball.Colour colour = getField(row, column).getColour();
-        Ball.Colour up = getField(row, column-1).getColour();
-        Ball.Colour down = getField(row, column+1).getColour();
-        Ball.Colour left = getField(row-1, column).getColour();
-        Ball.Colour right = getField(row+1, column).getColour();
+        String colour = getField(row, column).getColour();
+        String up = getField(row, column-1).getColour();
+        String down = getField(row, column+1).getColour();
+        String left = getField(row-1, column).getColour();
+        String right = getField(row+1, column).getColour();
         return colour.equals(up) || colour.equals(down)
                 || colour.equals(left) || colour.equals(right);
     }
