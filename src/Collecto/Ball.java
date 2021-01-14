@@ -4,7 +4,6 @@ public enum Ball {
     BLUE, YELLOW, RED, ORANGE, PURPLE, GREEN, WHITE;
 
     public static final String ANSI_RESET = "\u001B[0m";
-    public static final String ANSI_CYAN = "\u001B[36m";
 
     public String getColour() {
         return this.name();
