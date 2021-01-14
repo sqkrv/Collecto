@@ -17,7 +17,7 @@ public class GridBoard {
      * Constructor
      */
     public GridBoard() {
-//        construct();
+        constructPreset();
     }
 
     /**
@@ -85,9 +85,9 @@ public class GridBoard {
         return copy;
     }
 
-    public void moveLine(int row, int column, Direction direction) {
-        moveLine(row, column, direction, this.board);
-    }
+//    public void moveLine(int row, int column, Direction direction) {
+//        moveLine(row, column, direction, this.board);
+//    }
 
     /**
      * Moves balls in line according to game rules
@@ -96,10 +96,11 @@ public class GridBoard {
      * @param direction direction of movement
      * @ensures that a certain move is a valid move
      */
-    private void moveLine(int row, int column, Direction direction, ArrayList<ArrayList<Ball>> board) {
-        row--;
-        column--;
-//        if (!legalMoves(row, column, direction)) return; TODO move this check to parent method which will firstly check if first or second move is valid by using this function and then perform this move by using the same (this) function
+    public void moveLine(int row, int column, Direction direction) {
+//        row--;
+//        column--;
+//        if (!legalMoves(row, column, direction)) return;
+//        TODO move this check to parent method which will firstly check if first or second move is valid by using this function and then perform this move by using the same (this) function
         int removed;
         if (direction == Direction.UP) {
             for (int i=0; i < 7; i++) {
@@ -169,12 +170,13 @@ public class GridBoard {
 
     /**
      * @ensures index is valid
-     * @returns true for a valid index (index>1 || index<7),
-     *      and false for a non-valid index (index<1 || index>7)
+     * @returns true for a valid index (index>1 && index<7),
+     *      and false for a non-valid index
      */
     public boolean validIndex(int index) {
-        return index >= 1 && index <= 7;
+        return index >= 0 && index < 7;
     }
+
     /**
      * @requires String input contains numbers as the first two characters
      * @ensures coordinates are valid
@@ -199,14 +201,14 @@ public class GridBoard {
      */
     public boolean checkSurroundings(int row, int column) {
         assert validIndex(row) && validIndex(column);
-        String colour = getField(row, column).getColour();
-        String up = getField(row, column-1).getColour();
-        String down = getField(row, column+1).getColour();
-        String left = getField(row-1, column).getColour();
-        String right = getField(row+1, column).getColour();
-        return colour.equals(up) || colour.equals(down)
-                || colour.equals(left) || colour.equals(right);
-    } //TODO: change to better match the new enumerated Ball class
+        Ball colour = getField(row, column);
+        Ball up = getField(row-1, column);
+        Ball down = getField(row+1, column);
+        Ball left = getField(row, column-1);
+        Ball right = getField(row, column+1);
+        return colour == up || colour == down ||
+                colour == left || colour == right;
+    }
 
     /**
      * Checks if a certain move is legal
@@ -218,14 +220,14 @@ public class GridBoard {
      */
     public boolean isMoveValid(int row, int column, Direction direction) {
         GridBoard copy = deepCopy();
-        moveLine(row, column, direction, copy.board);
+        copy.moveLine(row, column, direction);
         if (direction == Direction.UP || direction == Direction.DOWN) {
             for (int i=0; i < 7; i++) {
-                if (checkSurroundings(i, column)) return true;
+                if (copy.checkSurroundings(i, column)) return true;
             }
         } else if (direction == Direction.LEFT || direction == Direction.RIGHT) {
             for (int i=0; i < 7; i++) {
-                if (checkSurroundings(row, i)) return true;
+                if (copy.checkSurroundings(row, i)) return true;
             }
         }
         return false;
