@@ -344,7 +344,6 @@ public class GridBoard {
         //TODO add (recursive) check for second move
 
         return false;
-
     }
 
     @Override
