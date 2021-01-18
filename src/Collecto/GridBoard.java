@@ -7,7 +7,11 @@ public class GridBoard {
         UP, DOWN, LEFT, RIGHT;
     }
 
-    public ArrayList<ArrayList<Ball>> board;  // [[column, column],[],[]] // TODO change back to private
+    private ArrayList<ArrayList<Ball>> board;  // [[column, column],[],[]] // TODO change back to private
+
+    public GridBoard(ArrayList<ArrayList<Ball>> customBoard) {
+        this.board = new ArrayList<>(customBoard);
+    } //TODO: figure out a better way to test this with Junit
 
     /**
      * Constructor
@@ -160,7 +164,7 @@ public class GridBoard {
         GridBoard copy = new GridBoard();
         copy.board = new ArrayList<>();
         for (ArrayList<Ball> row : board) {
-            copy.board.add(new ArrayList<>(row));
+            copy.board.add((ArrayList<Ball>) row.clone());
         }
         return copy;
     }
@@ -232,28 +236,30 @@ public class GridBoard {
      * @ensures index is valid
      * @returns Ball from a specified field, or null if an index is invalid
      */
-    public Ball getField(int row, int column) {
+    private Ball getField(int row, int column) {
         if (validIndex(row) && validIndex(column)) {
             return board.get(row).get(column);
         }
         return null;
     }
 
-    /**
-     * @requires valid indices
-     * @ensures a ball is set on a certain field
-     */
-    public void setField(int row, int column, Ball ball) {
-        assert validIndex(row) && validIndex(column);
-        board.get(row).set(column, ball);
-    }
+//    /**
+//     * @requires (validIndex(row) && validIndex(column)) == true
+//     * @param row
+//     * @param column
+//     * @param ball
+//     */
+//    private void setField(int row, int column, Ball ball) {
+//        assert validIndex(row) && validIndex(column);
+//        board.get(row).set(column, ball);
+//    }
 
     /**
      * @ensures index is valid
      * @returns true for a valid index (index>1 && index<7),
      *      and false for a non-valid index
      */
-    public boolean validIndex(int index) {
+    protected boolean validIndex(int index) {
         return index >= 0 && index < 7;
     }
 
@@ -262,7 +268,7 @@ public class GridBoard {
      * @ensures coordinates are valid
      * @returns Coordinates of a String input
      */
-    public Coordinates getCoordinates(String input) {
+    protected Coordinates getCoordinates(String input) {
         Coordinates coordinates = new Coordinates(input.charAt(0), input.charAt(1));
         if (validIndex(coordinates.row) && validIndex(coordinates.column)) {
             return coordinates;
@@ -279,10 +285,7 @@ public class GridBoard {
      * @param row row index
      * @param column column index
      */
-//    public boolean checkSurroundings(int row, int column) {
-//        return checkSurroundings(row, column, board);
-//    }
-    private boolean checkSurroundings(int row, int column) {
+    public boolean checkSurroundings(int row, int column) {
         assert validIndex(row) && validIndex(column);
         Ball colour = getField(row, column);
         Ball up = getField(row-1, column);
@@ -342,6 +345,35 @@ public class GridBoard {
 
         return false;
 
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder string = new StringBuilder();
+
+        string.append("     |");
+        for (int i = 1; i <= 7; i++) {
+            string.append("   ").append(i).append("   |");
+        }
+        string.append("\n");
+        for (int i = 1; i <= 7; i++) {
+            string.append("-----+");
+            for (int j = 1; j <= 7; j++) {
+                string.append("-------+");
+            }
+            string.append("\n");
+            string.append("  ").append(i).append("  |");
+            for (int j = 1; j <= 7; j++) {
+                string.append(String.format("%-16s|", getField(i-1, j-1)));
+            }
+            string.append("\n");
+        }
+        string.append("-----+");
+        for (int j = 1; j <= 7; j++) {
+            string.append("-------+");
+        }
+        
+        return string.toString();
     }
 
     /**
