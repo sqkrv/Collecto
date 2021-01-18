@@ -1,6 +1,5 @@
 package Collecto;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class GridBoard {
@@ -8,17 +7,22 @@ public class GridBoard {
         UP, DOWN, LEFT, RIGHT;
     }
 
-    private ArrayList<ArrayList<Ball>> board;  // [[column, column],[],[]] // TODO change back to private
+    private ArrayList<ArrayList<Ball>> board;
 
     public GridBoard(ArrayList<ArrayList<Ball>> customBoard) {
         this.board = new ArrayList<>(customBoard);
     } //TODO: figure out a better way to test this with Junit
 
-                     /**
+    private GridBoard(boolean construct) {
+        if (construct) construct();
+    }
+
+    /**
      * Constructor
      */
     public GridBoard() {
-        constructPreset();
+        construct();
+//        constructPreset();
         //TODO: make an actual board generator rather than a preset
     }
 
@@ -74,10 +78,6 @@ public class GridBoard {
 //            }
 //        }
 //    }
-
-    private void removeBalls() {
-        // TODO: implement (also connect with player class)
-    }
 
     public void constructPreset() {
         board = new ArrayList<>();
@@ -167,7 +167,7 @@ public class GridBoard {
      * @return a deep copy of current board
      */
     public GridBoard deepCopy() {
-        GridBoard copy = new GridBoard();
+        GridBoard copy = new GridBoard(false);
         copy.board = new ArrayList<>();
         for (ArrayList<Ball> row : board) {
             copy.board.add((ArrayList<Ball>) row.clone());
@@ -230,7 +230,7 @@ public class GridBoard {
      * @ensures index is valid
      * @returns Ball from a specified field, or null if an index is invalid
      */
-    private Ball getField(int row, int column) {
+    public Ball getField(int row, int column) {  // TODO maybe should be protected or even private
         if (validIndex(row) && validIndex(column)) {
             return board.get(row).get(column);
         }
