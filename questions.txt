@@ -1,0 +1,3 @@
+1. What's wrong with the moveLine test (individual vs. all)  // the boards and array are the same (maybe array is being changed somewhere)
+2. How do we test private methods and should we
+3.
