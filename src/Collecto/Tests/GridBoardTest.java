@@ -315,4 +315,27 @@ class GridBoardTest {
             assertTrue((new GridBoard(emptyBoardArray)).possibleMoves()); //TODO: implement functionality to GridBoard
         }
     }
+
+    @Nested
+    @DisplayName("checkSurroundings tests")
+    class checkSurroundings {
+        @Test
+        @DisplayName("check false surroundings")
+        void checkSurroundingsFalse() {
+            assertFalse(sampleBoard.checkSurroundings(3,3));
+            assertFalse(sampleBoard.checkSurroundings(0,0));
+            assertFalse(sampleBoard.checkSurroundings(5,1));
+        }
+        @Test
+        @DisplayName("check correct surroundings")
+        void checkSurroundingsTrue() {
+            ArrayList<ArrayList<Ball>> copy = copyArray(sampleBoardArray);
+            copy.get(3).set(3, Ball.GREEN);
+            assertTrue((new GridBoard(copy)).checkSurroundings(3,3));
+            copy.get(0).set(1, Ball.GREEN);
+            assertTrue((new GridBoard(copy)).checkSurroundings(0,0));
+            copy.get(5).set(1, Ball.GREEN);
+            assertTrue((new GridBoard(copy)).checkSurroundings(5,1));
+        }
+    }
 }

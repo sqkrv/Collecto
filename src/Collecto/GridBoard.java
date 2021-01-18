@@ -1,5 +1,6 @@
 package Collecto;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 public class GridBoard {
@@ -13,11 +14,12 @@ public class GridBoard {
         this.board = new ArrayList<>(customBoard);
     } //TODO: figure out a better way to test this with Junit
 
-    /**
+                     /**
      * Constructor
      */
     public GridBoard() {
         constructPreset();
+        //TODO: make an actual board generator rather than a preset
     }
 
 //    /**
@@ -72,6 +74,10 @@ public class GridBoard {
 //            }
 //        }
 //    }
+
+    private void removeBalls() {
+        // TODO: implement (also connect with player class)
+    }
 
     public void constructPreset() {
         board = new ArrayList<>();
@@ -169,22 +175,10 @@ public class GridBoard {
         return copy;
     }
 
-//    public void moveLine(int row, int column, Direction direction) {
-//        moveLine(row, column, direction, this.board);
-//    }
-
-    /**
-     * Moves balls in line according to game rules
-     * @param row row index (being used only if Direction is LEFT ot RIGHT)
-     * @param column column index (being used only if Direction is UP ot DOWN)
-     * @param direction direction of movement
-     * @ensures that a certain move is a valid move
-     */
     public void moveLine(int row, int column, Direction direction) {
-//        row--;
-//        column--;
 //        if (!legalMoves(row, column, direction)) return;
-//        TODO move this check to parent method which will firstly check if first or second move is valid by using this function and then perform this move by using the same (this) function
+//        TODO: move this check to parent method which will firstly check if first or second move
+//         is valid by using this function and then perform this move by using the same (this) function
         int removed;
         if (direction == Direction.UP) {
             for (int i=0; i < 7; i++) {
@@ -274,6 +268,7 @@ public class GridBoard {
             return coordinates;
         }
         return null;
+        //TODO: maybe move this method to a different class, since parsing is not the job of the board
     }
 
     /**
@@ -288,6 +283,7 @@ public class GridBoard {
     public boolean checkSurroundings(int row, int column) {
         assert validIndex(row) && validIndex(column);
         Ball colour = getField(row, column);
+        if (colour == Ball.WHITE) return false;
         Ball up = getField(row-1, column);
         Ball down = getField(row+1, column);
         Ball left = getField(row, column-1);
