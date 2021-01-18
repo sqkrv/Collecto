@@ -129,7 +129,7 @@ class GridBoardTest {
     }
 
 //    @Test
-    @RepeatedTest(10000)
+    @RepeatedTest(100)
     void boardConstruction() {
         assertEquals(board.getField(3, 3), Ball.WHITE);
         for (int i = 0; i < 7; i++) {
@@ -142,9 +142,8 @@ class GridBoardTest {
 
     @Test
     void deepCopy() {
-        GridBoard copy = new GridBoard();
+        GridBoard copy = board.deepCopy();
         assertEquals(board.toString(), copy.toString());
-        // meh
         copy.moveLine(3, 3, GridBoard.Direction.UP);
         assertNotEquals(board.toString(), copy.toString());
     }
