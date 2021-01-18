@@ -29,3 +29,11 @@ Fill up a board randomly with 8 balls of each colour, check if
    the board is correct, retry if incorrect
    + simple
     - probably very inefficient
+   
+5. Row by row\
+Fill an array with one ball of each colour (6 total), select one randomly
+   and place it at (0,0) move on to (0,1) and pull from the resulting array.
+   repeat for all rows, then the last column, excluding the middle ball 
+   + simple
+   + quick
+   

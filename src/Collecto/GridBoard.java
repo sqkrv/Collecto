@@ -79,6 +79,80 @@ public class GridBoard {
 //        }
 //    }
 
+    public void construct() {
+//        while (true) {
+            Random rand = new Random();
+            board = new ArrayList<>();
+
+            ArrayList<Ball> balls = new ArrayList<>(Arrays.asList(Ball.BLUE, Ball.YELLOW, Ball.RED, Ball.ORANGE, Ball.PURPLE, Ball.GREEN));
+            Collections.shuffle(balls);
+            board.add(balls);
+            for (int row = 1; row < 7; row++) {
+                board.add(new ArrayList<>());
+                balls = new ArrayList<>(Arrays.asList(Ball.BLUE, Ball.YELLOW, Ball.RED, Ball.ORANGE, Ball.PURPLE, Ball.GREEN));
+                Collections.shuffle(balls);
+                while (!balls.isEmpty()) {
+                    Ball ball = balls.get(0);
+                    if (getField(row - 1, 6 - balls.size()) == ball) {
+                        if (balls.size() == 1) {
+                            int random = rand.nextInt(5);
+                            board.get(row).add(board.get(row).get(random));
+                            board.get(row).set(random, ball);
+                        } else {
+                            balls.add(ball);
+                        }
+                    } else {
+                        board.get(row).add(ball);
+                    }
+                    balls.remove(0);
+                }
+            }
+
+            balls = new ArrayList<>(Arrays.asList(Ball.BLUE, Ball.YELLOW, Ball.RED, Ball.ORANGE, Ball.PURPLE, Ball.GREEN));
+            Collections.shuffle(balls);
+            Ball ball = getField(3, 3);
+            if (balls.get(balls.size() - 1) == ball) {
+                int random = rand.nextInt(4);
+                balls.add(balls.get(random));
+                balls.set(random, ball);
+            } else balls.add(ball);
+            board.get(3).set(3, Ball.WHITE);
+            for (int row = 0; row < 7; row++) {
+                ball = balls.get(0);
+                while (getField(row - 1, 6) == ball || getField(row, 5) == ball) {
+                    if (balls.size() != 1) {
+                        balls.add(balls.get(0));
+                        balls.remove(0);
+                        ball = balls.get(0);
+                    } else {
+                        while (true) {
+                            int random = rand.nextInt(4);
+                            if (getField(random, 5) != ball && getField(random - 1, 6) != ball
+                                    && getField(random + 1, 6) != ball) {
+                                Ball temp = getField(random, 6);
+                                board.get(6).set(random, ball);
+                                ball = temp;
+                                break;
+                            }
+                        }
+                    }
+                }
+                board.get(row).add(ball);
+            }
+            if (!possibleMoves()) {
+                board = null;
+                construct();
+            }
+//                break;
+//        }
+    }
+
+    protected HashMap<Ball, Integer> removeBalls() {
+        HashMap<Ball, Integer> balls = new HashMap<>();
+        return balls;
+        // TODO: implement (also connect with player class)
+    }
+
     public void constructPreset() {
         board = new ArrayList<>();
         for (int i=0; i < 7; i++) {
