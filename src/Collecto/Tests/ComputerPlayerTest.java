@@ -18,7 +18,7 @@ class ComputerPlayerTest {
     @Test
     void getLevel() {
         assertEquals(player.getLevel(), 1);
-        assertThrows(AssertionError.class, () -> new ComputerPlayer(4));  // TODO: is this okiedokie
+        assertThrows(AssertionError.class, () -> new ComputerPlayer(4));  // TODO: is this okiedokie, yes it is
         player = new ComputerPlayer(3);
         assertEquals(player.getLevel(), 3);
    }

@@ -112,7 +112,6 @@ class GridBoardTest {
 
     @BeforeAll
     static void setEmptyBoard() {
-
         for (int i = 0; i < 7; i++) {
             emptyBoardArray.add(new ArrayList<>());
             for (int j = 0; j < 7; j++) {
@@ -127,6 +126,18 @@ class GridBoardTest {
     void setUp() {
         board = new GridBoard();
         sampleBoard = new GridBoard(copyArray(sampleBoardArray));
+    }
+
+//    @Test
+    @RepeatedTest(10000)
+    void boardConstruction() {
+        assertEquals(board.getField(3, 3), Ball.WHITE);
+        for (int i = 0; i < 7; i++) {
+            for (int j = 0; j < 7; j++) {
+                assertFalse(board.checkSurroundings(i, j));
+            }
+        }
+        assertTrue(board.possibleMoves());
     }
 
     @Test
@@ -264,6 +275,7 @@ class GridBoardTest {
             assertFalse(sampleBoard.isMoveValid(0, 0, GridBoard.Direction.UP));
             assertFalse(sampleBoard.isMoveValid(0, 0, GridBoard.Direction.DOWN));
         }
+
         @Test
         @DisplayName("Moves at (0,0)")
         void isMoveValidMiddleInvalid() {
@@ -296,23 +308,26 @@ class GridBoardTest {
         @Test
         void possibleMovesSample() {
             assertTrue(sampleBoard.possibleMoves());
-            sampleBoardArray.get(3).set(3, Ball.RED);
-            assertFalse((new GridBoard(sampleBoardArray)).possibleMoves());
+            ArrayList<ArrayList<Ball>> copy = copyArray(sampleBoardArray);
+            copy.get(3).set(3, Ball.RED);
+            assertFalse((new GridBoard(copy)).possibleMoves());
         }
 
         @Test
         void possibleMovesEmpty() {
+            ArrayList<ArrayList<Ball>> copy = copyArray(emptyBoardArray);
             assertFalse(emptyBoard.possibleMoves());
-            emptyBoardArray.get(0).set(0, Ball.GREEN);
-            emptyBoardArray.get(0).set(6, Ball.GREEN);
-            assertTrue((new GridBoard(emptyBoardArray)).possibleMoves());
+            copy.get(0).set(0, Ball.GREEN);
+            copy.get(0).set(6, Ball.GREEN);
+            assertTrue((new GridBoard(copy)).possibleMoves());
         }
 
         @Test
         void testTwoMoves() {
-            emptyBoardArray.get(0).set(0, Ball.GREEN);
-            emptyBoardArray.get(6).set(6, Ball.GREEN);
-            assertTrue((new GridBoard(emptyBoardArray)).possibleMoves()); //TODO: implement functionality to GridBoard
+            ArrayList<ArrayList<Ball>> copy = copyArray(emptyBoardArray);
+            copy.get(0).set(0, Ball.GREEN);
+            copy.get(6).set(6, Ball.GREEN);
+            assertTrue((new GridBoard(copy)).possibleMoves()); //TODO: implement functionality to GridBoard
         }
     }
 
