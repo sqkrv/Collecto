@@ -40,8 +40,10 @@ public class GridBoard {
                 if (getField(row - 1, 6 - balls.size()) == ball) {
                     if (balls.size() == 1) {
                         int random = rand.nextInt(5);
-                        board.get(row).add(board.get(row).get(random));
-                        board.get(row).set(random, ball);
+                        board.get(row).add(getField(row, random));
+                        setField(row, random, ball);
+//                        board.get(row).add(board.get(row).get(random));
+//                        board.get(row).set(random, ball);
                     } else {
                         balls.add(ball);
                     }
@@ -60,7 +62,8 @@ public class GridBoard {
             balls.add(balls.get(random));
             balls.set(random, ball);
         } else balls.add(ball);
-        board.get(3).set(3, Ball.WHITE);
+        setField(3, 3, Ball.WHITE);
+//        board.get(3).set(3, Ball.WHITE);
         for (int row = 0; row < 7; row++) {
             ball = balls.get(0);
             while (getField(row - 1, 6) == ball || getField(row, 5) == ball) {
@@ -74,7 +77,8 @@ public class GridBoard {
                         if (getField(random, 5) != ball && getField(random - 1, 6) != ball
                                 && getField(random + 1, 6) != ball) {
                             Ball temp = getField(random, 6);
-                            board.get(6).set(random, ball);
+                            setField(6, random, ball);
+//                            board.get(6).set(random, ball);
                             ball = temp;
                             break;
                         }
@@ -211,9 +215,9 @@ public class GridBoard {
                 removed = removed - board.get(row).size();
 
                 if (direction == Direction.LEFT) {
-                    board.get(row).addAll(7 - removed, (Collection) Collections.nCopies(removed, Ball.WHITE));
+                    board.get(row).addAll(7 - removed, Collections.nCopies(removed, Ball.WHITE));
                 } else if (direction == Direction.RIGHT) {
-                    board.get(row).addAll(0, (Collection) Collections.nCopies(removed, Ball.WHITE));
+                    board.get(row).addAll(0, Collections.nCopies(removed, Ball.WHITE));
                 }
             }
         }
@@ -222,7 +226,7 @@ public class GridBoard {
     /**
      * @requires valid indices
      * @ensures index is valid
-     * @returns Ball from a specified field, or null if an index is invalid
+     * @return Ball from a specified field, or null if an index is invalid
      */
     public Ball getField(int row, int column) {  // TODO maybe should be protected or even private
         if (validIndex(row) && validIndex(column)) {
@@ -233,9 +237,9 @@ public class GridBoard {
 
     /**
      * @requires (validIndex(row) && validIndex(column)) == true
-     * @param row
-     * @param column
-     * @param ball
+     * @param row index of the row of the ball
+     * @param column index of the column of the ball
+     * @param ball the specified ball to be set
      */
     private void setField(int row, int column, Ball ball) {
         assert validIndex(row) && validIndex(column);
@@ -244,7 +248,7 @@ public class GridBoard {
 
     /**
      * @ensures index is valid
-     * @returns true for a valid index (index>1 && index<7),
+     * @return true for a valid index (index>1 && index<7),
      *      and false for a non-valid index
      */
     protected boolean validIndex(int index) {
@@ -254,7 +258,7 @@ public class GridBoard {
     /**
      * @requires String input contains numbers as the first two characters
      * @ensures coordinates are valid
-     * @returns Coordinates of a String input
+     * @return Coordinates of a String input
      */
     protected Coordinates getCoordinates(String input) {
         Coordinates coordinates = new Coordinates(input.charAt(0), input.charAt(1));
@@ -268,7 +272,7 @@ public class GridBoard {
     /**
      * @requires row && column are valid indices
      * @ensures surroundings of indices are checked
-     * @returns false if no surrounding ball has the same colour as the ball
+     * @return false if no surrounding ball has the same colour as the ball
      *  specified by the indices, true if at least 1 surrounding colour matches
      *  the ball specified by the indices
      * @param row row index
@@ -289,7 +293,7 @@ public class GridBoard {
     /**
      * Checks if a certain move is legal
      * @requires row and column to be valid indices
-     * @returns true if a specified move is valid, false if it is invalid
+     * @return true if a specified move is valid, false if it is invalid
      * @param row row index
      * @param column column index
      * @param direction direction of the move
