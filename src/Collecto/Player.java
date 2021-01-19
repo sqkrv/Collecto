@@ -21,9 +21,9 @@ public class Player {
      * @requires ball != Ball.WHITE
      * @param ball a Ball to add to the player balls
      */
-    public void addBall(Ball ball) {
-        assert ball != Ball.WHITE;
-        balls.add(ball);
+    public void addBalls(ArrayList<Ball> balls) {
+        assert !balls.contains(Ball.WHITE);
+        this.balls.addAll(balls);
     }
 
     /**

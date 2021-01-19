@@ -370,21 +370,6 @@ class GridBoardTest {
     @Nested
     @DisplayName("removeBalls tests")
     class removeBalls {
-////        @Test
-//        @RepeatedTest(10000)
-//        void removeBallsVertical() {
-//            sampleBoard.moveLine(3, 3, GridBoard.Direction.UP);
-//            assertEquals(Arrays.asList(Ball.GREEN, Ball.GREEN), sampleBoard.removeBalls(3, 3, GridBoard.Direction.UP));
-////            assertArrayEquals(new Ball[]{Ball.GREEN, Ball.GREEN}, sampleBoard.removeBalls(3, 3, GridBoard.Direction.UP));
-//        }
-//
-////        @Test
-//        @RepeatedTest(10000)
-//        void removeBallsHorizontal() {
-//            sampleBoard.moveLine(3, 3, GridBoard.Direction.LEFT);
-//            assertEquals(Arrays.asList(Ball.BLUE, Ball.BLUE, Ball.RED, Ball.RED), sampleBoard.removeBalls(3, 3, GridBoard.Direction.LEFT));
-////            assertArrayEquals(new Ball[]{Ball.GREEN, Ball.GREEN}, sampleBoard.removeBalls(3, 3, GridBoard.Direction.UP));
-//        }
         @Nested
         class editedSampleBoard {
             @Test
@@ -414,11 +399,14 @@ class GridBoardTest {
                 assertEquals(Arrays.asList(Ball.GREEN, Ball.GREEN), sampleBoard.removeBalls(3, 3, GridBoard.Direction.UP));
             }
 
-//            @Test
-//            void removeBallsDown() {
-//                sampleBoard.moveLine(3, 3, GridBoard.Direction.DOWN);
-//                assertEquals(Arrays.asList(Ball.BLUE, Ball.BLUE), sampleBoard.removeBalls(3, 3, GridBoard.Direction.DOWN));
-//            }
+            @Test
+            void removeBallsDown() {
+                ArrayList<ArrayList<Ball>> copy = copyArray(sampleBoardArray);
+                copy.get(2).set(1, Ball.PURPLE);
+                sampleBoard = new GridBoard(copy);
+                sampleBoard.moveLine(3, 3, GridBoard.Direction.DOWN);
+                assertEquals(Arrays.asList(Ball.BLUE, Ball.BLUE), sampleBoard.removeBalls(3, 3, GridBoard.Direction.DOWN));
+            }
 }
 
         @Test

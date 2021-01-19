@@ -91,10 +91,25 @@ public class GridBoard {
 
     public ArrayList<Ball> removeBalls(int row, int column, Direction direction) {
         ArrayList<Ball> balls = new ArrayList<>();
+        Ball ball;
         if (direction == Direction.UP || direction == Direction.DOWN) {
-        } else if (direction == Direction.LEFT || direction == Direction.RIGHT) {
-            Ball ball;
-            for (int col=0; col < 7; col++) {
+            for (row = 0; row < 7; row++) {
+                while (checkSurroundings(row, column)) {
+                    ball = getField(row, column);
+                    if (getField(row, column-1) == ball) {
+                        balls.add(ball);
+                        setField(row, column - 1, Ball.WHITE);
+                    }
+                    if (getField(row, column + 1) == ball) {
+                        balls.add(ball);
+                        setField(row, column + 1, Ball.WHITE);
+                    }
+                    balls.add(ball);
+                    setField(row, column, Ball.WHITE);
+                }
+            }
+        } else {
+            for (int col = 0; col < 7; col++) {
                 while (checkSurroundings(row, col)) {
                     ball = getField(row, col);
                     if (getField(row - 1, col) == ball) {
