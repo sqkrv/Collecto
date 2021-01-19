@@ -65,7 +65,8 @@ public class Game {
             answer = input.nextLine();
             answer = answer.trim().replaceAll(" +", " ");
             answers = answer.split(" ");
-            if (answer.length() == 1) {
+            if (answers.length == 1) {
+                answers = new String[2];
                 answers[0] = answer.substring(0, 1);
                 answers[1] = answer.substring(1);
             }
@@ -123,9 +124,16 @@ public class Game {
         System.out.println("Enter name of player 1");
         answer = input.nextLine();
         players[0] = new HumanPlayer(answer.trim());
-        System.out.println("Enter name of player 2");
-        answer = input.nextLine();
-        players[1] = new HumanPlayer(answer.trim());
+        while (true) {
+            System.out.println("Enter name of player 2");
+            answer = input.nextLine();
+            answer = answer.trim();
+            if (!answer.equals(players[0].getName())) {
+                players[1] = new HumanPlayer(answer);
+                break;
+            }
+            System.out.println("Name is already taken by the first player");
+        }
     }
 
     public static void main(String[] args) {
