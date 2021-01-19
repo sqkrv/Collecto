@@ -4,13 +4,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Player {
-    private final ArrayList<Ball> balls;
+//    private final ArrayList<Ball> balls;
+    private final HashMap<Ball, Integer> count = new HashMap<>();
+
+    private String name;
 
     /**
      * Player class constructor
      */
-    public Player() {
-        balls = new ArrayList<>();
+    public Player(String name) {
+        this.name = name;
+
+//        balls = new ArrayList<>();
+        for (Ball ball : Ball.values()) {
+            if (ball != Ball.WHITE) count.put(ball, 0);
+        }
     }
 
     public void makeMove() {
@@ -22,24 +30,28 @@ public class Player {
      * @param ball a Ball to add to the player balls
      */
     public void addBalls(ArrayList<Ball> balls) {
-        assert !balls.contains(Ball.WHITE);
-        this.balls.addAll(balls);
+//        this.balls.addAll(balls);
+        for (Ball ball : balls) {
+            if (ball != Ball.WHITE) count.put(ball, count.get(ball) + 1);
+        }
     }
 
     /**
      * @return total points for this player
      */
-    public int calculatePoints() {
-        HashMap<Ball, Integer> count = new HashMap<>();
-        for (Ball ball : balls) {
-            if (!count.containsKey(ball)) count.put(ball, 0);
-            count.replace(ball, count.get(ball) + 1);
-        }
-
+    public int getPoints() {
         int points = 0;
         for (int value : count.values()) {
             points += value / 3;
         }
         return points;
+    }
+
+    public HashMap<Ball, Integer> showBalls() {
+        return count;
+    }
+
+    public String getName() {
+        return name;
     }
 }
