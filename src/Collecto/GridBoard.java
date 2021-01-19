@@ -4,14 +4,14 @@ import java.util.*;
 
 public class GridBoard {
     public enum Direction {
-        UP, DOWN, LEFT, RIGHT;
+        UP, DOWN, LEFT, RIGHT
     }
 
     private ArrayList<ArrayList<Ball>> board;
 
     public GridBoard(ArrayList<ArrayList<Ball>> customBoard) {
         this.board = new ArrayList<>(customBoard);
-    } //TODO: figure out a better way to test this with Junit
+    }
 
     private GridBoard(boolean construct) {
         if (construct) construct();
@@ -22,219 +22,139 @@ public class GridBoard {
      */
     public GridBoard() {
         construct();
-//        constructPreset();
-        //TODO: make an actual board generator rather than a preset
     }
-
-//    /**
-//     * Constructs a board (places Balls on board) according to game rules
-//     * @ensures the board is initialized, where no adjacent balls are the same colour,
-//     * all fields hold a ball except for the middle, a legal move can be made.
-//     */
-//    public void construct() {
-//        Random randInt = new Random();
-//        int[] colours = {8, 8, 8, 8, 8, 8};
-////        String[] colour = {"blue", "yellow", "red", "orange", "purple", "green", "WHITE"};
-//        Ball[] colour = new Ball[]{Ball.BLUE, Ball.YELLOW, Ball.RED, Ball.ORANGE, Ball.PURPLE, Ball.GREEN};
-//        Ball ball;
-//        for (int row = 0; row < 7; row++) {
-//            board.add(board.size(), new ArrayList<>());
-//            for (int col = 0; col < 7; col++) {
-//                while (true) {
-//                    int random = randInt.nextInt(7);
-//                    if (colours[random] > 0) {
-//                        ball = colour[random];
-//                        colours[random]--;
-//                        break;
-//                    }
-//                }
-//
-//                board.get(row).add(ball);
-//            }
-//        }
-//        //TODO: finish this method
-//    }
-//
-//
-//    // Possible different implementation, requires a change in checkSurroundings()
-//
-//    public void construct2() {
-//        for (int i = 0; i < 6; i++) {
-//            board.add(new ArrayList<Ball>());
-//            for (int j = 0; j < 6; j++) {
-//                board.get(i).add(board.get(i).size(), Ball.WHITE);
-//            }
-//        }
-//        Random rand = new Random();
-//        Ball[] ballColours = new Ball[]{Ball.BLUE, Ball.YELLOW, Ball.RED, Ball.ORANGE, Ball.PURPLE, Ball.GREEN};
-//        int row;
-//        int column;
-//        int ball;
-//        for (Ball b : ballColours) {
-//            for (int i = 0; i < 8; i++) {
-//                row = rand.nextInt(8);
-//                column = rand.nextInt(8);
-//                checkSurroundings(row, column, toString(b));
-//            }
-//        }
-//    }
 
     public void construct() {
-//        while (true) {
-            Random rand = new Random();
-            board = new ArrayList<>();
+        Random rand = new Random();
+        board = new ArrayList<>();
 
-            ArrayList<Ball> balls = new ArrayList<>(Arrays.asList(Ball.BLUE, Ball.YELLOW, Ball.RED, Ball.ORANGE, Ball.PURPLE, Ball.GREEN));
-            Collections.shuffle(balls);
-            board.add(balls);
-            for (int row = 1; row < 7; row++) {
-                board.add(new ArrayList<>());
-                balls = new ArrayList<>(Arrays.asList(Ball.BLUE, Ball.YELLOW, Ball.RED, Ball.ORANGE, Ball.PURPLE, Ball.GREEN));
-                Collections.shuffle(balls);
-                while (!balls.isEmpty()) {
-                    Ball ball = balls.get(0);
-                    if (getField(row - 1, 6 - balls.size()) == ball) {
-                        if (balls.size() == 1) {
-                            int random = rand.nextInt(5);
-                            board.get(row).add(board.get(row).get(random));
-                            board.get(row).set(random, ball);
-                        } else {
-                            balls.add(ball);
-                        }
-                    } else {
-                        board.get(row).add(ball);
-                    }
-                    balls.remove(0);
-                }
-            }
-
+        ArrayList<Ball> balls = new ArrayList<>(Arrays.asList(Ball.BLUE, Ball.YELLOW, Ball.RED, Ball.ORANGE, Ball.PURPLE, Ball.GREEN));
+        Collections.shuffle(balls);
+        board.add(balls);
+        for (int row = 1; row < 7; row++) {
+            board.add(new ArrayList<>());
             balls = new ArrayList<>(Arrays.asList(Ball.BLUE, Ball.YELLOW, Ball.RED, Ball.ORANGE, Ball.PURPLE, Ball.GREEN));
             Collections.shuffle(balls);
-            Ball ball = getField(3, 3);
-            if (balls.get(balls.size() - 1) == ball) {
-                int random = rand.nextInt(4);
-                balls.add(balls.get(random));
-                balls.set(random, ball);
-            } else balls.add(ball);
-            board.get(3).set(3, Ball.WHITE);
-            for (int row = 0; row < 7; row++) {
-                ball = balls.get(0);
-                while (getField(row - 1, 6) == ball || getField(row, 5) == ball) {
-                    if (balls.size() != 1) {
-                        balls.add(balls.get(0));
-                        balls.remove(0);
-                        ball = balls.get(0);
+            while (!balls.isEmpty()) {
+                Ball ball = balls.get(0);
+                if (getField(row - 1, 6 - balls.size()) == ball) {
+                    if (balls.size() == 1) {
+                        int random = rand.nextInt(5);
+                        board.get(row).add(board.get(row).get(random));
+                        board.get(row).set(random, ball);
                     } else {
-                        while (true) {
-                            int random = rand.nextInt(4);
-                            if (getField(random, 5) != ball && getField(random - 1, 6) != ball
-                                    && getField(random + 1, 6) != ball) {
-                                Ball temp = getField(random, 6);
-                                board.get(6).set(random, ball);
-                                ball = temp;
-                                break;
-                            }
+                        balls.add(ball);
+                    }
+                } else {
+                    board.get(row).add(ball);
+                }
+                balls.remove(0);
+            }
+        }
+
+        balls = new ArrayList<>(Arrays.asList(Ball.BLUE, Ball.YELLOW, Ball.RED, Ball.ORANGE, Ball.PURPLE, Ball.GREEN));
+        Collections.shuffle(balls);
+        Ball ball = getField(3, 3);
+        if (balls.get(balls.size() - 1) == ball) {
+            int random = rand.nextInt(4);
+            balls.add(balls.get(random));
+            balls.set(random, ball);
+        } else balls.add(ball);
+        board.get(3).set(3, Ball.WHITE);
+        for (int row = 0; row < 7; row++) {
+            ball = balls.get(0);
+            while (getField(row - 1, 6) == ball || getField(row, 5) == ball) {
+                if (balls.size() != 1) {
+                    balls.add(balls.get(0));
+                    balls.remove(0);
+                    ball = balls.get(0);
+                } else {
+                    while (true) {
+                        int random = rand.nextInt(4);
+                        if (getField(random, 5) != ball && getField(random - 1, 6) != ball
+                                && getField(random + 1, 6) != ball) {
+                            Ball temp = getField(random, 6);
+                            board.get(6).set(random, ball);
+                            ball = temp;
+                            break;
                         }
                     }
                 }
-                board.get(row).add(ball);
             }
-            if (!possibleMoves()) {
-                board = null;
-                construct();
-            }
-//                break;
-//        }
-    }
-
-    protected HashMap<Ball, Integer> removeBalls() {
-        HashMap<Ball, Integer> balls = new HashMap<>();
-        return balls;
-        // TODO: implement (also connect with player class)
-    }
-
-    public void constructPreset() {
-        board = new ArrayList<>();
-        for (int i=0; i < 7; i++) {
-            board.add(i, new ArrayList<>());
+            board.get(row).add(ball);
         }
-        board.get(0).addAll(
-                Arrays.asList(
-                        Ball.GREEN,
-                        Ball.YELLOW,
-                        Ball.ORANGE,
-                        Ball.GREEN,
-                        Ball.PURPLE,
-                        Ball.RED,
-                        Ball.ORANGE
-                )
-        );
-        board.get(1).addAll(
-                Arrays.asList(
-                        Ball.YELLOW,
-                        Ball.BLUE,
-                        Ball.RED,
-                        Ball.ORANGE,
-                        Ball.YELLOW,
-                        Ball.GREEN,
-                        Ball.PURPLE
-                )
-        );
-        board.get(2).addAll(
-                Arrays.asList(
-                        Ball.BLUE,
-                        Ball.RED,
-                        Ball.PURPLE,
-                        Ball.BLUE,
-                        Ball.RED,
-                        Ball.YELLOW,
-                        Ball.ORANGE
-                )
-        );
-        board.get(3).addAll(
-                Arrays.asList(
-                        Ball.PURPLE,
-                        Ball.YELLOW,
-                        Ball.GREEN,
-                        Ball.WHITE,
-                        Ball.BLUE,
-                        Ball.RED,
-                        Ball.GREEN
-                )
-        );
-        board.get(4).addAll(
-                Arrays.asList(
-                        Ball.ORANGE,
-                        Ball.GREEN,
-                        Ball.BLUE,
-                        Ball.GREEN,
-                        Ball.PURPLE,
-                        Ball.BLUE,
-                        Ball.RED
-                )
-        );
-        board.get(5).addAll(
-                Arrays.asList(
-                        Ball.YELLOW,
-                        Ball.PURPLE,
-                        Ball.ORANGE,
-                        Ball.YELLOW,
-                        Ball.ORANGE,
-                        Ball.YELLOW,
-                        Ball.PURPLE
-                )
-        );
-        board.get(6).addAll(
-                Arrays.asList(
-                        Ball.ORANGE,
-                        Ball.GREEN,
-                        Ball.BLUE,
-                        Ball.RED,
-                        Ball.BLUE,
-                        Ball.PURPLE,
-                        Ball.RED
-                )
-        );
+        if (!possibleMoves()) {
+            board = null;
+            construct();
+        }
+    }
+
+    public ArrayList<Ball> removeBalls(int row, int column, Direction direction) {
+        ArrayList<Ball> balls = new ArrayList<>();
+        Ball ball;
+        if (direction == Direction.UP || direction == Direction.DOWN) {
+            for (row = 0; row < 7; row++) {
+                while (checkSurroundings(row, column)) {
+                    ball = getField(row, column);
+                    if (getField(row, column-1) == ball) {
+                        balls.add(ball);
+                        setField(row, column - 1, Ball.WHITE);
+                    }
+                    if (getField(row, column + 1) == ball) {
+                        balls.add(ball);
+                        setField(row, column + 1, Ball.WHITE);
+                    }
+                    balls.add(ball);
+                    setField(row, column, Ball.WHITE);
+                }
+            }
+        } else {
+            for (int col = 0; col < 7; col++) {
+                while (checkSurroundings(row, col)) {
+                    ball = getField(row, col);
+                    if (getField(row - 1, col) == ball) {
+                        balls.add(ball);
+                        setField(row - 1, col, Ball.WHITE);
+                    }
+                    if (getField(row + 1, col) == ball) {
+                        balls.add(ball);
+                        setField(row + 1, col, Ball.WHITE);
+                    }
+                    balls.add(ball);
+                    setField(row, col, Ball.WHITE);
+                }
+            }
+        }
+//            for (int i=0; i < 7; i++) {
+//                if (checkSurroundings(i, column)) {
+//                    Ball ball = getField(i, column);
+//                    for (int j = -1; j <= 1; j+=2) {
+//                        if (getField(i, column+j) == ball) {
+//                            balls.add(ball);
+//                            setField(i, column, Ball.WHITE);
+//                            if (checkSurroundings(i, column+j)) {
+//                                removeBalls(i, column+j, direction);
+//                            } else {
+//                                balls.add(getField(i, column+j));
+//                                setField(i, column+j, Ball.WHITE);
+//                            }
+//                        }
+//                        if (getField(i+j, column) == ball) {
+//                            balls.add(ball);
+//                            setField(i, column, Ball.WHITE);
+//                            removeBalls(i+j, column, direction);
+//                            if (checkSurroundings(i+j, column)) {
+//                                removeBalls(i+j, column, direction);
+//                            } else {
+//                                balls.add(getField(i+j, column));
+//                                setField(i+j, column, Ball.WHITE);
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//    }
+        return balls;
     }
 
     /**
@@ -311,16 +231,16 @@ public class GridBoard {
         return null;
     }
 
-//    /**
-//     * @requires (validIndex(row) && validIndex(column)) == true
-//     * @param row
-//     * @param column
-//     * @param ball
-//     */
-//    private void setField(int row, int column, Ball ball) {
-//        assert validIndex(row) && validIndex(column);
-//        board.get(row).set(column, ball);
-//    }
+    /**
+     * @requires (validIndex(row) && validIndex(column)) == true
+     * @param row
+     * @param column
+     * @param ball
+     */
+    private void setField(int row, int column, Ball ball) {
+        assert validIndex(row) && validIndex(column);
+        board.get(row).set(column, ball);
+    }
 
     /**
      * @ensures index is valid
@@ -390,29 +310,45 @@ public class GridBoard {
     }
 
     /**
-     * @requires board != null, board != empty
-     * @ensures check if there are valid moves possible
-     * @returns true if there is a valid move within one or two moves,
-     *  false if there are no valid moves possible within two moves
+     * Public call for a {@code possibleMove} with false boolean argument
      */
     public boolean possibleMoves() {
-        for (int row=0; row < 7; row++) {
-            if (!board.get(row).contains(Ball.WHITE)) continue;
-            for (int col=0; col < 7; col++) {
-                Ball ball = getField(row, col);
-                if (ball == Ball.WHITE) {
-                    for (Direction direction : Direction.values()) {
-                        if (isMoveValid(row, col, direction)) {
-                            return true;
-                        }
-                    }
-                }
+        return possibleMoves(false);
+    }
+
+    /**
+     * Algorithm for checking if there are possible moves for the current board
+     * @param isSecondTime boolean to define if it checks if the the move is possible with two moves
+     * @return true if there is a valid move within one or two moves, false if there are no valid moves possible within two moves
+     */
+    private boolean possibleMoves(boolean isSecondTime) {
+        for (int i = 0; i < 7; i++) {
+            if (isMoveValid(i, 0, Direction.RIGHT) || isMoveValid(i, 0, Direction.LEFT)
+                    || isMoveValid(0, i, Direction.UP) || isMoveValid(0, i, Direction.DOWN)) {
+                return true;
             }
         }
-        // No valid move in one turn
 
-        //TODO add (recursive) check for second move
+        if (isSecondTime) return false;
 
+        GridBoard copy;
+        for (int i = 0; i < 7; i++) {
+            copy = deepCopy();
+            copy.moveLine(i, 0, Direction.LEFT);
+            if (copy.possibleMoves(true)) return true;
+
+            copy = deepCopy();
+            copy.moveLine(i, 0, Direction.RIGHT);
+            if (copy.possibleMoves(true)) return true;
+
+            copy = deepCopy();
+            copy.moveLine(0, i, Direction.UP);
+            if (copy.possibleMoves(true)) return true;
+
+            copy = deepCopy();
+            copy.moveLine(0, i, Direction.DOWN);
+            if (copy.possibleMoves(true)) return true;
+        }
         return false;
     }
 

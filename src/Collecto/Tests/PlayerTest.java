@@ -6,6 +6,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,7 +27,7 @@ class PlayerTest {
     }
 
     @Test
-    void addBall() {
+    void addBalls() {
         ArrayList<Ball> balls = new ArrayList<>();
 //        balls.addAll(Ball.BLUE);
 //        assertNotEquals(player, new Player());
@@ -35,9 +38,9 @@ class PlayerTest {
     void calculatePoints() {
         assertEquals(player.calculatePoints(), 0);
         for (int i = 0; i <= 10; i++) {
-            player.addBall(Ball.BLUE);
-            player.addBall(Ball.BLUE);
-            player.addBall(Ball.YELLOW);
+            player.addBalls(new ArrayList<>(Collections.singleton(Ball.BLUE)));
+            player.addBalls(new ArrayList<>(Collections.singleton(Ball.BLUE)));
+            player.addBalls(new ArrayList<>(Collections.singleton(Ball.YELLOW)));
         }
         // 11*2*blue balls = 22/3 points = 7 points;
         // 10*yellow balls = 10/3 points = 3 points;
