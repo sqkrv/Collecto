@@ -147,10 +147,57 @@ public class GridBoard {
 //        }
     }
 
-    protected HashMap<Ball, Integer> removeBalls() {
-        HashMap<Ball, Integer> balls = new HashMap<>();
+    public ArrayList<Ball> removeBalls(int row, int column, Direction direction) {
+        ArrayList<Ball> balls = new ArrayList<>();
+        if (direction == Direction.UP || direction == Direction.DOWN) {
+        } else if (direction == Direction.LEFT || direction == Direction.RIGHT) {
+            Ball ball;
+            for (int col=0; col < 7; col++) {
+                while (checkSurroundings(row, col)) {
+                    ball = getField(row, col);
+                    if (getField(row - 1, col) == ball) {
+                        balls.add(ball);
+                        setField(row - 1, col, Ball.WHITE);
+                    }
+                    if (getField(row + 1, col) == ball) {
+                        balls.add(ball);
+                        setField(row + 1, col, Ball.WHITE);
+                    }
+                    balls.add(ball);
+                    setField(row, col, Ball.WHITE);
+                }
+            }
+        }
+
         return balls;
-        // TODO: implement (also connect with player class)
+//            for (int i=0; i < 7; i++) {
+//                if (checkSurroundings(i, column)) {
+//                    Ball ball = getField(i, column);
+//                    for (int j = -1; j <= 1; j+=2) {
+//                        if (getField(i, column+j) == ball) {
+//                            balls.add(ball);
+//                            setField(i, column, Ball.WHITE);
+//                            if (checkSurroundings(i, column+j)) {
+//                                removeBalls(i, column+j, direction);
+//                            } else {
+//                                balls.add(getField(i, column+j));
+//                                setField(i, column+j, Ball.WHITE);
+//                            }
+//                        }
+//                        if (getField(i+j, column) == ball) {
+//                            balls.add(ball);
+//                            setField(i, column, Ball.WHITE);
+//                            removeBalls(i+j, column, direction);
+//                            if (checkSurroundings(i+j, column)) {
+//                                removeBalls(i+j, column, direction);
+//                            } else {
+//                                balls.add(getField(i+j, column));
+//                                setField(i+j, column, Ball.WHITE);
+//                            }
+//                        }
+//                    }
+//                }
+//            }
     }
 
     public void constructPreset() {
@@ -311,16 +358,16 @@ public class GridBoard {
         return null;
     }
 
-//    /**
-//     * @requires (validIndex(row) && validIndex(column)) == true
-//     * @param row
-//     * @param column
-//     * @param ball
-//     */
-//    private void setField(int row, int column, Ball ball) {
-//        assert validIndex(row) && validIndex(column);
-//        board.get(row).set(column, ball);
-//    }
+    /**
+     * @requires (validIndex(row) && validIndex(column)) == true
+     * @param row
+     * @param column
+     * @param ball
+     */
+    private void setField(int row, int column, Ball ball) {
+        assert validIndex(row) && validIndex(column);
+        board.get(row).set(column, ball);
+    }
 
     /**
      * @ensures index is valid
@@ -390,15 +437,17 @@ public class GridBoard {
     }
 
     /**
-     * @requires board != null, board != empty
-     * @ensures check if there are valid moves possible
-     * @returns true if there is a valid move within one or two moves,
-     *  false if there are no valid moves possible within two moves
+     * Public call for a {@code possibleMove} with false boolean argument
      */
     public boolean possibleMoves() {
         return possibleMoves(false);
     }
 
+    /**
+     * Algorithm for checking if there are possible moves for the current board
+     * @param isSecondTime boolean to define if it checks if the the move is possible with two moves
+     * @return true if there is a valid move within one or two moves, false if there are no valid moves possible within two moves
+     */
     private boolean possibleMoves(boolean isSecondTime) {
         for (int i = 0; i < 7; i++) {
             if (isMoveValid(i, 0, Direction.RIGHT) || isMoveValid(i, 0, Direction.LEFT)
@@ -429,48 +478,6 @@ public class GridBoard {
         }
         return false;
     }
-
-//    public boolean possibleMoves() {
-//
-//        return possibleMoves(false);
-//    }
-//    private boolean possibleMoves(boolean isSecond) {
-//        for (int row=0; row < 7; row++) {
-//            if (!board.get(row).contains(Ball.WHITE)) continue;
-//            for (int col=0; col < 7; col++) {
-//                Ball ball = getField(row, col);
-//                if (ball == Ball.WHITE) {
-//                    for (Direction direction : Direction.values()) {
-//                        if (isMoveValid(row, col, direction)) {
-//                            return true;
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        // No valid move in one turn
-//
-//        if (isSecond) return false; // check if this is a second iteration
-//
-//        GridBoard copy;
-//        for (int row=0; row < 7; row++) {
-//            if (!board.get(row).contains(Ball.WHITE)) continue;
-//            for (int col=0; col < 7; col++) {
-//                Ball ball = getField(row, col);
-//                if (ball == Ball.WHITE) {
-//                    for (Direction direction : Direction.values()) {
-//                        copy = deepCopy();
-//                        copy.moveLine(row, col, direction);
-//                        copy.possibleMoves(true);
-//                    }
-//                }
-//            }
-//        }
-//
-//        //TODO add (recursive) check for second move
-//
-//        return false;
-//    }
 
     @Override
     public String toString() {
