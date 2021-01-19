@@ -429,9 +429,10 @@ class GridBoardTest {
         void removeBallsUp() {
 //            sampleBoard.moveLine(3, 3, GridBoard.Direction.UP);
 //            assertEquals(Arrays.asList(Ball.GREEN, Ball.GREEN), sampleBoard.removeBalls(3, 3, GridBoard.Direction.UP));
-            sampleBoardArray.get(3).set(3, Ball.YELLOW);
-            sampleBoardArray.get(4).set(3, Ball.WHITE);
-            sampleBoard = new GridBoard(sampleBoardArray);
+            ArrayList<ArrayList<Ball>> copy = copyArray(sampleBoardArray);
+            copy.get(3).set(3, Ball.YELLOW);
+            copy.get(4).set(3, Ball.WHITE);
+            sampleBoard = new GridBoard(copy);
             sampleBoard.moveLine(3, 3, GridBoard.Direction.UP);
             assertEquals(Arrays.asList(Ball.YELLOW, Ball.YELLOW), sampleBoard.removeBalls(3, 3, GridBoard.Direction.UP));
             System.out.println(TUI.colouredBoard(sampleBoard));
