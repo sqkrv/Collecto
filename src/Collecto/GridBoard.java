@@ -358,31 +358,11 @@ public class GridBoard {
 
     @Override
     public String toString() {
-        StringBuilder string = new StringBuilder();
+        return TUI.toString(this);
+    }
 
-        string.append("     |");
-        for (int i = 1; i <= 7; i++) {
-            string.append("   ").append(i).append("   |");
-        }
-        string.append("\n");
-        for (int i = 1; i <= 7; i++) {
-            string.append("-----+");
-            for (int j = 1; j <= 7; j++) {
-                string.append("-------+");
-            }
-            string.append("\n");
-            string.append("  ").append(i).append("  |");
-            for (int j = 1; j <= 7; j++) {
-                string.append(String.format("%-16s|", getField(i-1, j-1)));
-            }
-            string.append("\n");
-        }
-        string.append("-----+");
-        for (int j = 1; j <= 7; j++) {
-            string.append("-------+");
-        }
-        
-        return string.toString();
+    public ArrayList<ArrayList<Ball>> getBoard() {
+        return board;
     }
 
     /**
