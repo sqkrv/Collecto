@@ -148,9 +148,9 @@ class GridBoardTest {
         assertNotEquals(board.toString(), copy.toString());
     }
 
-    @Nested
-    @DisplayName("Tests for method moveLine")
-    class moveLine {
+//    @Nested
+//    @DisplayName("Tests for method moveLine")
+//    class moveLine {
 
         @Nested
         @DisplayName("Tests for rows and columns with blank spaces")
@@ -252,7 +252,7 @@ class GridBoardTest {
                 assertNotEquals(sampleBoard.toString(), (new GridBoard(copy)).toString());
             }
         }
-    }
+//    }
 
     @Nested
     @DisplayName("isMoveValid tests")
