@@ -114,7 +114,7 @@ public class GridBoard {
             ball = getField(row, column);
             for (int j = -1; j <= 1; j += 2) {
                 if (getField(row, column + j) == ball) {
-                    balls.add(ball);
+                    if (getField(row, column) != Ball.WHITE) balls.add(ball);
                     setField(row, column, Ball.WHITE);
                     if (checkSurroundings(row, column + j)) {
                         balls.addAll(removeBalls(row, column + j));
@@ -124,7 +124,7 @@ public class GridBoard {
                     }
                 }
                 if (getField(row + j, column) == ball) {
-                    balls.add(ball);
+                    if (getField(row, column) != Ball.WHITE) balls.add(ball);
                     setField(row, column, Ball.WHITE);
 //                    removeBalls(row + j, column);
                     if (checkSurroundings(row + j, column)) {

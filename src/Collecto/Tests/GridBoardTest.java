@@ -388,7 +388,7 @@ class GridBoardTest {
                 copy.get(2).set(1, Ball.PURPLE);
                 sampleBoard = new GridBoard(copy);
                 sampleBoard.moveLine(3, 3, GridBoard.Direction.RIGHT);
-                assertEquals(Arrays.asList(Ball.PURPLE, Ball.PURPLE, Ball.GREEN, Ball.GREEN), sampleBoard.removeBalls(3, 3, GridBoard.Direction.RIGHT));
+                assertEquals(Arrays.asList(Ball.PURPLE, Ball.PURPLE, Ball.PURPLE, Ball.GREEN, Ball.GREEN), sampleBoard.removeBalls(3, 3, GridBoard.Direction.RIGHT));
             }
 
             @Test
