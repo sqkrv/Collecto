@@ -96,68 +96,118 @@ public class GridBoard {
     public ArrayList<Ball> removeBalls(int row, int column, Direction direction) {
         ArrayList<Ball> balls = new ArrayList<>();
         Ball ball;
+        //region RIP code
+//        if (direction == Direction.UP || direction == Direction.DOWN) {
+//            for (row = 0; row < 7; row++) {
+////                while (checkSurroundings(row, column)) {
+//                ball = getField(row, column);
+//
+//                if (getField(row - 1, column) == ball) {
+//                    balls.add(ball);
+//                    setField(row, column, Ball.WHITE);
+//                }
+//                if (getField(row, column - 1) == ball) {
+//                    balls.add(ball);
+//                    setField(row, column - 1, Ball.WHITE);
+//                }
+//                if (getField(row, column + 1) == ball) {
+//                    balls.add(ball);
+//                    setField(row, column + 1, Ball.WHITE);
+//                }
+//                if (getField(row + 1, column) != ball && getField(row + 1, column + 1) != getField(row + 1, column) && getField(row + 1, column - 1) != getField(row + 1, column) && getField(row + 2, column) != getField(row + 1, column)) {
+//                    balls.add(ball);
+//                    setField(row + 1, column, Ball.WHITE);
+//                }
+////            }
+//        }
+//        } else {
+//            for (int col = 0; col < 7; col++) {
+//                while (checkSurroundings(row, col)) {
+//                    ball = getField(row, col);
+//                    if (getField(row - 1, col) == ball) {
+//                        balls.add(ball);
+//                        setField(row - 1, col, Ball.WHITE);
+//                    }
+//                    if (getField(row + 1, col) == ball) {
+//                        balls.add(ball);
+//                        setField(row + 1, col, Ball.WHITE);
+//                    }
+//                    balls.add(ball);
+//                    setField(row, col, Ball.WHITE);
+//                }
+//            }
+//        }
+        //endregion
+
+
+
         if (direction == Direction.UP || direction == Direction.DOWN) {
-            for (row = 0; row < 7; row++) {
-                while (checkSurroundings(row, column)) {
-                    ball = getField(row, column);
-                    if (getField(row, column-1) == ball) {
-                        balls.add(ball);
-                        setField(row, column - 1, Ball.WHITE);
+            // move top to bottom
+            for (int i = 0; i < 7; i++) {
+                // if the current ball is not white AND there is a matching ball around
+                if (checkSurroundings(i, column)) {
+                    ball = getField(i, column);
+                    // j=-1 or j=1
+                    for (int j = -1; j <= 1; j += 2) {
+                        // check left and right of the selected ball
+                        if (getField(i, column + j) == ball) {
+                            balls.add(ball);
+                            // clear the selected ball
+                            setField(i, column, Ball.WHITE);
+                            // check if the adjacent ball has matching balls around
+                            if (checkSurroundings(i, column + j)) {
+                                // if it does, use recursion for that ball, add the result to the list
+                                 removeBalls(i, column + j, direction);
+                            } else {
+                                // if it does not, add it to the list and clear it
+                                getField(i, column + j);
+                                setField(i, column + j, Ball.WHITE);
+                            }
+                        }
+                        if (getField(i + j, column) == ball) {
+                            balls.add(ball);
+                            setField(i, column, Ball.WHITE);
+                            removeBalls(i + j, column, direction);
+                            if (checkSurroundings(i + j, column)) {
+                                removeBalls(i + j, column, direction);
+                            } else {
+                                balls.add(getField(i + j, column));
+                                setField(i + j, column, Ball.WHITE);
+                            }
+                        }
                     }
-                    if (getField(row, column + 1) == ball) {
-                        balls.add(ball);
-                        setField(row, column + 1, Ball.WHITE);
-                    }
-                    balls.add(ball);
-                    setField(row, column, Ball.WHITE);
                 }
             }
         } else {
-            for (int col = 0; col < 7; col++) {
-                while (checkSurroundings(row, col)) {
-                    ball = getField(row, col);
-                    if (getField(row - 1, col) == ball) {
-                        balls.add(ball);
-                        setField(row - 1, col, Ball.WHITE);
+            for (int i = 0; i < 7; i++) {
+                if (checkSurroundings(row, i)) {
+                    ball = getField(row, i);
+                    for (int j = -1; j <= 1; j += 2) {
+                        if (getField(row + j, i) == ball) {
+                            balls.add(ball);
+                            setField(row, i, Ball.WHITE);
+                            if (checkSurroundings(row + j, i)) {
+                                removeBalls(row + j, i, direction);
+                            } else {
+                                balls.add(getField(row + j, i));
+                                setField(row + j, i, Ball.WHITE);
+                            }
+                        }
+                        if (getField(row, i + j) == ball) {
+                            balls.add(ball);
+                            setField(row, i, Ball.WHITE);
+                            removeBalls(row, i + j, direction);
+                            if (checkSurroundings(row, i + j)) {
+                                removeBalls(row, i + j, direction);
+                            } else {
+                                balls.add(getField(row, i + j));
+                                setField(row, i + j, Ball.WHITE);
+                            }
+                        }
                     }
-                    if (getField(row + 1, col) == ball) {
-                        balls.add(ball);
-                        setField(row + 1, col, Ball.WHITE);
-                    }
-                    balls.add(ball);
-                    setField(row, col, Ball.WHITE);
                 }
             }
         }
-//            for (int i=0; i < 7; i++) {
-//                if (checkSurroundings(i, column)) {
-//                    Ball ball = getField(i, column);
-//                    for (int j = -1; j <= 1; j+=2) {
-//                        if (getField(i, column+j) == ball) {
-//                            balls.add(ball);
-//                            setField(i, column, Ball.WHITE);
-//                            if (checkSurroundings(i, column+j)) {
-//                                removeBalls(i, column+j, direction);
-//                            } else {
-//                                balls.add(getField(i, column+j));
-//                                setField(i, column+j, Ball.WHITE);
-//                            }
-//                        }
-//                        if (getField(i+j, column) == ball) {
-//                            balls.add(ball);
-//                            setField(i, column, Ball.WHITE);
-//                            removeBalls(i+j, column, direction);
-//                            if (checkSurroundings(i+j, column)) {
-//                                removeBalls(i+j, column, direction);
-//                            } else {
-//                                balls.add(getField(i+j, column));
-//                                setField(i+j, column, Ball.WHITE);
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//    }
         return balls;
     }
 

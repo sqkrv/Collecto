@@ -2,6 +2,7 @@ package Collecto.Tests;
 
 import Collecto.Ball;
 import Collecto.GridBoard;
+import Collecto.TUI;
 import org.junit.jupiter.api.*;
 
 import java.util.*;
@@ -426,8 +427,14 @@ class GridBoardTest {
 
         @Test
         void removeBallsUp() {
+//            sampleBoard.moveLine(3, 3, GridBoard.Direction.UP);
+//            assertEquals(Arrays.asList(Ball.GREEN, Ball.GREEN), sampleBoard.removeBalls(3, 3, GridBoard.Direction.UP));
+            sampleBoardArray.get(3).set(3, Ball.YELLOW);
+            sampleBoardArray.get(4).set(3, Ball.WHITE);
+            sampleBoard = new GridBoard(sampleBoardArray);
             sampleBoard.moveLine(3, 3, GridBoard.Direction.UP);
-            assertEquals(Arrays.asList(Ball.GREEN, Ball.GREEN), sampleBoard.removeBalls(3, 3, GridBoard.Direction.UP));
+            assertEquals(Arrays.asList(Ball.YELLOW, Ball.YELLOW), sampleBoard.removeBalls(3, 3, GridBoard.Direction.UP));
+            System.out.println(TUI.colouredBoard(sampleBoard));
         }
 
         @Test
