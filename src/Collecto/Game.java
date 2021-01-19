@@ -50,9 +50,68 @@ public class Game {
      * any actual games play out within this method
      */
     public void play() {
-        while (true) {
-            System.out.println("Playing playing playing");
-            break;
+        String answer;
+        String[] answers;
+        int row;
+        int column;
+        boolean inTwoMoves;
+        GridBoard.Direction direction;
+        Player player = players[(new Random()).nextInt(2)];
+
+        while (inTwoMoves = board.possibleMoves()) {
+            System.out.println(TUI.colouredBoard(board));
+            System.out.println(player.getName() + ", make a move");
+            System.out.println("Format = [row|column direction]");
+            answer = input.nextLine();
+            answer = answer.trim().replaceAll(" +", " ");
+            answers = answer.split(" ");
+            if (answer.length() == 1) {
+                answers[0] = answer.substring(0, 1);
+                answers[1] = answer.substring(1);
+            }
+            try {
+                row = column = Integer.parseInt(answers[0]) - 1;
+                answers[1] = answers[1].toUpperCase();
+
+                try {
+                    direction = GridBoard.Direction.valueOf(answers[1]);
+                } catch (IllegalArgumentException i) {
+                    switch (answers[1]) {
+                        case "U":
+                            direction = GridBoard.Direction.UP;
+                            break;
+                        case "D":
+                            direction = GridBoard.Direction.DOWN;
+                            break;
+                        case "L":
+                            direction = GridBoard.Direction.LEFT;
+                            break;
+                        case "R":
+                            direction = GridBoard.Direction.RIGHT;
+                            break;
+                        default:
+                            System.out.println("Incorrect input");
+                            continue;
+                    }
+                }
+            } catch (IllegalArgumentException a) {
+                System.out.println("Incorrect input");
+                continue;
+            }
+            if (board.isMoveValid(row, column, direction)) {
+                board.moveLine(row, column, direction);
+                ArrayList<Ball> balls = board.removeBalls(row, column, direction);
+                player.addBalls(balls);
+                if (player.equals(players[0])) {
+                    player = players[1];
+                } else {
+                    player = players[0];
+                }
+            } else {
+                System.out.println("Invalid move");
+            }
+            System.out.println(TUI.playersBoard(players[0], players[1]));
+            System.out.println();
         }
     }
 
@@ -60,7 +119,13 @@ public class Game {
      * sets up all the pre-game data, such as player names, bot difficulty, .....
      */
     public void setup() {
-
+        String answer;
+        System.out.println("Enter name of player 1");
+        answer = input.nextLine();
+        players[0] = new HumanPlayer(answer.trim());
+        System.out.println("Enter name of player 2");
+        answer = input.nextLine();
+        players[1] = new HumanPlayer(answer.trim());
     }
 
     public static void main(String[] args) {
