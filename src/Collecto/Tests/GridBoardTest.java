@@ -472,5 +472,40 @@ class GridBoardTest {
             newEmptyBoard.removeBalls(0, 1, GridBoard.Direction.UP);
             assertEquals(newEmptyBoard.toString(), emptyBoard.toString());
         }
+
+        @Test
+        void removeThreeBalls() {
+            ArrayList<ArrayList<Ball>> copy = copyArray(emptyBoardArray);
+            copy.get(0).set(3, Ball.YELLOW);
+            copy.get(2).set(3, Ball.YELLOW);
+            copy.get(4).set(3, Ball.YELLOW);
+            GridBoard threeBallBoard = new GridBoard(copy);
+            threeBallBoard.moveLine(0, 3, GridBoard.Direction.UP);
+            assertEquals(threeBallBoard.removeBalls(0, 3, GridBoard.Direction.UP).size(), 3);
+            assertEquals(threeBallBoard.toString(), emptyBoard.toString());
+        }
+
+        @Test
+        void removeFourBalls() {
+            ArrayList<ArrayList<Ball>> copy = copyArray(emptyBoardArray);
+            copy.get(0).set(3, Ball.YELLOW);
+            copy.get(2).set(3, Ball.YELLOW);
+            copy.get(4).set(3, Ball.YELLOW);
+            copy.get(6).set(3, Ball.YELLOW);
+            GridBoard fourBallBoard = new GridBoard(copy);
+            fourBallBoard.moveLine(0, 3, GridBoard.Direction.UP);
+            assertEquals(fourBallBoard.removeBalls(0, 3, GridBoard.Direction.UP).size(), 4);
+            assertEquals(fourBallBoard.toString(), emptyBoard.toString());
+        }
+
+        @Test
+        void removeThreeAdjacent() {
+            ArrayList<ArrayList<Ball>> copy = copyArray(emptyBoardArray);
+            copy.get(6).set(0, Ball.YELLOW);
+            copy.get(6).set(1, Ball.YELLOW);
+            copy.get(6).set(2, Ball.YELLOW);
+            GridBoard threeAdjBoard  = new GridBoard(copy);
+            assertEquals(threeAdjBoard.removeBalls(0, 1, GridBoard.Direction.DOWN).size(), 3);
+        }
     }
 }

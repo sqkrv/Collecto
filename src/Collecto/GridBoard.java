@@ -95,6 +95,53 @@ public class GridBoard {
 
     public ArrayList<Ball> removeBalls(int row, int column, Direction direction) {
         ArrayList<Ball> balls = new ArrayList<>();
+        if (direction == Direction.UP || direction == Direction.DOWN) {
+            for (int ro = 0; ro < 7; ro++) {
+                balls.addAll(removeBalls(ro, column));
+            }
+        } else {
+            for (int col = 0; col < 7; col++) {
+                balls.addAll(removeBalls(row, col));
+            }
+        }
+        return balls;
+    }
+
+    private ArrayList<Ball> removeBalls(int row, int column) {
+        Ball ball;
+        ArrayList<Ball> balls = new ArrayList<>();
+        if (checkSurroundings(row , column)) {
+            ball = getField(row, column);
+            for (int j = -1; j <= 1; j += 2) {
+                if (getField(row, column + j) == ball) {
+                    balls.add(ball);
+                    setField(row, column, Ball.WHITE);
+                    if (checkSurroundings(row, column + j)) {
+                        balls.addAll(removeBalls(row, column + j));
+                    } else {
+                        balls.add(getField(row, column + j));
+                        setField(row, column + j, Ball.WHITE);
+                    }
+                }
+                if (getField(row + j, column) == ball) {
+                    balls.add(ball);
+                    setField(row, column, Ball.WHITE);
+//                    removeBalls(row + j, column);
+                    if (checkSurroundings(row + j, column)) {
+                        balls.addAll(removeBalls(row + j, column));
+                    } else {
+                        balls.add(getField(row + j, column));
+                        setField(row + j, column, Ball.WHITE);
+                    }
+                }
+            }
+        }
+        return balls;
+    }
+
+    /*
+    public ArrayList<Ball> removeBalls(int row, int column, Direction direction) {
+        ArrayList<Ball> balls = new ArrayList<>();
         Ball ball;
         //region RIP code
 //        if (direction == Direction.UP || direction == Direction.DOWN) {
@@ -210,6 +257,7 @@ public class GridBoard {
         }
         return balls;
     }
+    */
 
     /**
      * @return a deep copy of current board
