@@ -15,6 +15,7 @@ public class ComputerPlayer extends Player {
      * @param level requested difficulty level for this ComputerPlayer
      */
     public ComputerPlayer(int level) {
+        super("smartass");
         assert level > 0 && level <= 3;
         this.level = level;
     }
