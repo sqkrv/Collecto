@@ -6,8 +6,14 @@ public class Game {
     public static final int NUMBER_PLAYERS = 2;
 
     private GridBoard board;
+    private Player[] players = new Player[2];
+    private Scanner input = new Scanner(System.in);
 
-    private Player[] players;
+//    public Game(Player p1, Player p2) {
+//        board = new GridBoard();
+//        players[0] = p1;
+//        players[1] = p2;
+//    }
 
     public Game() {
         board = new GridBoard();
@@ -25,7 +31,12 @@ public class Game {
      * sets up the start of a new game
      */
     public void start() {
-
+        boolean nextGame = true;
+        while (nextGame) {
+            play();
+            System.out.println("Play again?");
+            nextGame = input.nextLine().equals("y");
+        }
     }
 
     /**
@@ -58,5 +69,4 @@ public class Game {
         game.start();
         game.play();
     }
-
 }
