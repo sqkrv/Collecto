@@ -3,7 +3,7 @@ package Collecto;
 public enum Ball {
     BLUE, YELLOW, RED, ORANGE, PURPLE, GREEN, WHITE;
 
-    static final String RESET_COLOUR = "\u001B[0m";
+    private static final String RESET_COLOUR = "\u001B[0m";
 
     public String getColour() {
         return this.name();
