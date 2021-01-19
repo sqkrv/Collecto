@@ -396,25 +396,81 @@ public class GridBoard {
      *  false if there are no valid moves possible within two moves
      */
     public boolean possibleMoves() {
-        for (int row=0; row < 7; row++) {
-            if (!board.get(row).contains(Ball.WHITE)) continue;
-            for (int col=0; col < 7; col++) {
-                Ball ball = getField(row, col);
-                if (ball == Ball.WHITE) {
-                    for (Direction direction : Direction.values()) {
-                        if (isMoveValid(row, col, direction)) {
-                            return true;
-                        }
-                    }
-                }
+        return possibleMoves(false);
+    }
+
+    private boolean possibleMoves(boolean isSecondTime) {
+        for (int i = 0; i < 7; i++) {
+            if (isMoveValid(i, 0, Direction.RIGHT) || isMoveValid(i, 0, Direction.LEFT)
+                    || isMoveValid(0, i, Direction.UP) || isMoveValid(0, i, Direction.DOWN)) {
+                return true;
             }
         }
-        // No valid move in one turn
 
-        //TODO add (recursive) check for second move
+        if (isSecondTime) return false;
 
+        GridBoard copy;
+        for (int i = 0; i < 7; i++) {
+            copy = deepCopy();
+            copy.moveLine(i, 0, Direction.LEFT);
+            if (copy.possibleMoves(true)) return true;
+
+            copy = deepCopy();
+            copy.moveLine(i, 0, Direction.RIGHT);
+            if (copy.possibleMoves(true)) return true;
+
+            copy = deepCopy();
+            copy.moveLine(0, i, Direction.UP);
+            if (copy.possibleMoves(true)) return true;
+
+            copy = deepCopy();
+            copy.moveLine(0, i, Direction.DOWN);
+            if (copy.possibleMoves(true)) return true;
+        }
         return false;
     }
+
+//    public boolean possibleMoves() {
+//
+//        return possibleMoves(false);
+//    }
+//    private boolean possibleMoves(boolean isSecond) {
+//        for (int row=0; row < 7; row++) {
+//            if (!board.get(row).contains(Ball.WHITE)) continue;
+//            for (int col=0; col < 7; col++) {
+//                Ball ball = getField(row, col);
+//                if (ball == Ball.WHITE) {
+//                    for (Direction direction : Direction.values()) {
+//                        if (isMoveValid(row, col, direction)) {
+//                            return true;
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        // No valid move in one turn
+//
+//        if (isSecond) return false; // check if this is a second iteration
+//
+//        GridBoard copy;
+//        for (int row=0; row < 7; row++) {
+//            if (!board.get(row).contains(Ball.WHITE)) continue;
+//            for (int col=0; col < 7; col++) {
+//                Ball ball = getField(row, col);
+//                if (ball == Ball.WHITE) {
+//                    for (Direction direction : Direction.values()) {
+//                        copy = deepCopy();
+//                        copy.moveLine(row, col, direction);
+//                        copy.possibleMoves(true);
+//                    }
+//                }
+//            }
+//        }
+//
+//        //TODO add (recursive) check for second move
+//
+//        return false;
+//    }
 
     @Override
     public String toString() {
