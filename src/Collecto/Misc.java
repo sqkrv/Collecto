@@ -7,9 +7,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Misc {
-    static DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd/MM");
+    static DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd.MM");
 
     public static String logTime() {
+        return "["+currentDateTime()+"] - ";
+    }
+
+    public static String currentDateTime() {
         Date date = new Date();
         return dateFormat.format(date);
     }
