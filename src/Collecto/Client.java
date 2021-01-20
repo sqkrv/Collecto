@@ -65,7 +65,7 @@ public class Client {
         port = checkPort(args[2]);
 
         try {
-            System.out.println("Connecting to " + address);
+            System.out.println("Connecting to " + address + ":" + port);
             sock = new Socket(address, port);
             System.out.println(Misc.logTime()+"Connected");
         } catch (IOException e) {
