@@ -1,8 +1,12 @@
 package Collecto.Tests;
 
 import Collecto.ComputerPlayer;
+import Collecto.GridBoard;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import Collecto.Ball;
+import java.util.*;
 import org.junit.jupiter.api.function.Executable;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -59,5 +63,10 @@ class ComputerPlayerTest {
         assertThrows(AssertionError.class, () -> new ComputerPlayer(4));
         player = new ComputerPlayer(3);
         assertEquals(player.getLevel(), 3);
+   }
+
+   @Test
+    void makeBeginnerMove() {
+        // assertEquals(player.makeMove(new GridBoard(testBoardArray))[0], 0);
    }
 }

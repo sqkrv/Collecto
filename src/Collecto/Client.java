@@ -50,6 +50,10 @@ public class Client {
 //        out = null;
 //    }
 
+    public void handleCommand() {
+
+    }
+
     public static void main(String[] args) throws IOException {
         if (args.length != 3) {
             System.out.println(USAGE);
