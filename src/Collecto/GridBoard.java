@@ -4,7 +4,7 @@ import java.util.*;
 
 public class GridBoard {
     public enum Direction {
-        UP, DOWN, LEFT, RIGHT
+        RIGHT, LEFT, DOWN, UP
     }
 
     private ArrayList<ArrayList<Ball>> board;
