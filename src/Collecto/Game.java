@@ -134,6 +134,10 @@ public class Game {
         }
     }
 
+    public String getBoardString() {
+        return board.getBoardString();
+    }
+
     public static void main(String[] args) {
         Game game = new Game();
         game.setup();

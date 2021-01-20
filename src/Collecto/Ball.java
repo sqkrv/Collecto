@@ -1,7 +1,7 @@
 package Collecto;
 
 public enum Ball {
-    BLUE, YELLOW, RED, ORANGE, PURPLE, GREEN, WHITE;
+    WHITE, BLUE, YELLOW, RED, ORANGE, PURPLE, GREEN;
 
     private static final String RESET_COLOUR = "\u001B[0m";
 

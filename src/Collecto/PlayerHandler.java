@@ -17,6 +17,7 @@ public class PlayerHandler implements Runnable {
     private boolean rankSupport = false;
     private boolean authSupport = false;
     private boolean cryptSupport = false;
+    private boolean saidHello = false;
     private boolean loggedIn = false;
     private boolean myTurn = false;
     private Game game;
@@ -76,7 +77,7 @@ public class PlayerHandler implements Runnable {
     }
 
     private void handleHello(String[] params) {
-        if (params.length < 1) {
+        if (params.length <= 1) {
             sendError("Insufficient parameters provided");
             return;
         }
@@ -97,6 +98,7 @@ public class PlayerHandler implements Runnable {
                     break;
             }
             respondHello();
+            saidHello = true;
         }
     }
 
@@ -111,11 +113,11 @@ public class PlayerHandler implements Runnable {
 
     private void handleLogin(String[] params) {
         // CRYPT stuff if we do the bonus
-        if (params.length < 1) {
+        if (!saidHello) {
+            sendError("Please say Hello first");
+        } else if (params.length < 1) {
             sendError("Insufficient parameters provided");
-            return;
-        }
-        if (server.checkPlayer(params[1])) {
+        } else if (server.checkPlayer(params[1])) {
             this.name = params[1];
             this.loggedIn = true;
             sendMessage("LOGIN");
@@ -150,6 +152,10 @@ public class PlayerHandler implements Runnable {
     }
 
     private void handleMove(String[] params) {
+        if (!myTurn) {
+            sendError("Not your turn");
+            return;
+        }
         int firstMove = -1;
         int secondMove = -1;
         // TODO: add turn check (probably in Game)
@@ -170,6 +176,19 @@ public class PlayerHandler implements Runnable {
         } catch (IOException e) {
             // TODO: handle exception
         }
+    }
+
+    protected void startNewGame(Game game, boolean starter, String opponent) {
+        this.game = game;
+        myTurn = starter;
+        String appendage;
+        if (starter) {
+            appendage = DIVISOR + name + DIVISOR + opponent;
+        } else {
+            appendage = DIVISOR + opponent + DIVISOR + name;
+        }
+        sendMessage("NEWGAME" + game.getBoardString() + appendage);
+        System.out.println("GREAT SUCCES!"); // TODO: remove this line after debugging
     }
 
     protected void startNewGame(Game game, boolean starter, String opponent) {

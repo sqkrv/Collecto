@@ -458,8 +458,16 @@ public class GridBoard {
         return TUI.toString(this);
     }
 
-    public ArrayList<ArrayList<Ball>> getBoard() {
-        return board;
+    public String getBoardString() {
+        String result = "";
+        for (ArrayList<Ball> array : board) {
+            for (Ball ball : array) {
+                for (int i = 0; i < Ball.values().length; i++) {
+                    if (Ball.values()[i].equals(ball)) result += PlayerHandler.DIVISOR + ball.name();
+                }
+            }
+        }
+        return result;
     }
 
     /**
