@@ -12,7 +12,7 @@ class HumanPlayerTest {
 
     @BeforeEach
     void setUp() {
-//        player = new HumanPlayer("Patricia");
+        player = new HumanPlayer("Patricia");
     }
 
     @Test

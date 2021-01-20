@@ -3,11 +3,9 @@ package Collecto;
 import java.util.*;
 
 public class Game {
-    public static final int NUMBER_PLAYERS = 2;
-
-    private GridBoard board;
-    private Player[] players = new Player[2];
-    private Scanner input = new Scanner(System.in);
+    private final GridBoard board;
+    private final Player[] players = new Player[2];
+    private final Scanner input = new Scanner(System.in);
 
 //    public Game(Player p1, Player p2) {
 //        board = new GridBoard();
@@ -21,7 +19,7 @@ public class Game {
 
     /**
      * Constructor that uses a custom board for the game
-     * @param customBoardArray
+     * @param customBoardArray custom board to game on
      */
     public Game(ArrayList<ArrayList<Ball>> customBoardArray) {
         this.board = new GridBoard(customBoardArray);
