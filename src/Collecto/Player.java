@@ -21,13 +21,14 @@ public class Player {
         }
     }
 
-    public void makeMove() {
+    public int[] makeMove() {
         //TODO: add this method
+        return null;
     }
 
     /**
      * @requires ball != Ball.WHITE
-     * @param ball a Ball to add to the player balls
+     * @param balls a Ball to add to the player balls
      */
     public void addBalls(ArrayList<Ball> balls) {
 //        this.balls.addAll(balls);
