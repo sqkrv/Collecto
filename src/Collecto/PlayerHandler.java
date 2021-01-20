@@ -191,18 +191,6 @@ public class PlayerHandler implements Runnable {
         System.out.println("GREAT SUCCES!"); // TODO: remove this line after debugging
     }
 
-    protected void startNewGame(Game game, boolean starter, String opponent) {
-        this.game = game;
-        myTurn = starter;
-        String appendage;
-        if (starter) {
-            appendage = DIVISOR + name + DIVISOR + opponent;
-        } else {
-            appendage = DIVISOR + opponent + DIVISOR + name;
-        }
-        sendMessage("NEWGAME" + appendage);
-    }
-
     private void sendError(String error) {
         error = "ERROR" + DIVISOR + error;
         try {
