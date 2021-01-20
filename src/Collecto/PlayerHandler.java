@@ -5,16 +5,21 @@ import java.net.Socket;
 import java.util.*;
 
 public class PlayerHandler implements Runnable {
+
+    public static final char DIVISOR = '~';
+
     private BufferedReader in;
     private BufferedWriter out;
     private Socket socket;
-    private String name;
+    protected String name;
     private String description;
     private boolean chatSupport = false;
     private boolean rankSupport = false;
     private boolean authSupport = false;
     private boolean cryptSupport = false;
     private boolean loggedIn = false;
+    private boolean myTurn = false;
+    private Game game;
 
     private Server server;
 
@@ -45,7 +50,7 @@ public class PlayerHandler implements Runnable {
             // TODO: send error to connected client
             return;
         }
-        String[] params = message.split("~");
+        String[] params = message.split(Character.toString(DIVISOR));
 
         switch (params[0].strip()) {
             case "HELLO":
@@ -65,7 +70,7 @@ public class PlayerHandler implements Runnable {
                 break;
             default:
                 sendError("Could not recognize message");
-                // TODO remove sout below after testing is complete
+                // TODO: remove sout below after testing is complete
                 System.out.println("Could not recognize players message, sorry!");
         }
     }
@@ -96,11 +101,11 @@ public class PlayerHandler implements Runnable {
     }
 
     private void respondHello() {
-        String response = "HELLO~" + server.DESCRIPTION;
-        if (server.chatSupport) response = response + "~CHAT";
-        if (server.rankSupport) response = response + "~RANK";
-        if (server.authSupport) response = response + "~AUTH";
-        if (server.cryptSupport) response = response + "~CRYPT";
+        String response = "HELLO" + DIVISOR + server.DESCRIPTION;
+        if (server.chatSupport) response += DIVISOR + "CHAT";
+        if (server.rankSupport) response += DIVISOR + "RANK";
+        if (server.authSupport) response += DIVISOR + "AUTH";
+        if (server.cryptSupport) response += DIVISOR + "CRYPT";
         sendMessage(response);
     }
 
@@ -127,7 +132,7 @@ public class PlayerHandler implements Runnable {
          String playerList = "LIST";
          ArrayList<String> players = server.getPlayers();
          for (String player : players) {
-             playerList = playerList + "~" + player;
+             playerList += DIVISOR + player;
          }
          sendMessage(playerList);
     }
@@ -137,10 +142,10 @@ public class PlayerHandler implements Runnable {
         if (!loggedIn) {
             sendError("You are not yet logged in!");
         }
-        if (!server.queued(this.name)) {
-            server.addToQueue(this.name);
+        if (!server.queued(this)) {
+            server.addToQueue(this);
         } else {
-            server.removeFromQueue(this.name);
+            server.removeFromQueue(this);
         }
     }
 
@@ -167,8 +172,20 @@ public class PlayerHandler implements Runnable {
         }
     }
 
+    protected void startNewGame(Game game, boolean starter, String opponent) {
+        this.game = game;
+        myTurn = starter;
+        String appendage;
+        if (starter) {
+            appendage = DIVISOR + name + DIVISOR + opponent;
+        } else {
+            appendage = DIVISOR + opponent + DIVISOR + name;
+        }
+        sendMessage("NEWGAME" + appendage);
+    }
+
     private void sendError(String error) {
-        error = "ERROR~" + error;
+        error = "ERROR" + DIVISOR + error;
         try {
             out.write(error);
         } catch (IOException e) {

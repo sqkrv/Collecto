@@ -13,7 +13,7 @@ public class Server implements Runnable {
     private final int port;
     private final ArrayList<PlayerHandler> playerClients;
     private ArrayList<String> players = new ArrayList<>();
-    private Queue<String> queue = new LinkedList<>();
+    private LinkedList<PlayerHandler> queue = new LinkedList<>();
     private ArrayList<Game> games;
     protected final static String DESCRIPTION = "the server of Stan and Hein";
     protected boolean chatSupport = false;
@@ -59,16 +59,17 @@ public class Server implements Runnable {
         return true;
     }
 
-    protected boolean queued(String name) {
-        return (queue.contains(name));
+    protected boolean queued(PlayerHandler client) {
+        return (queue.contains(client));
     }
 
-    protected void addToQueue(String name) {
-        queue.add(name);
+    protected void addToQueue(PlayerHandler client) {
+        queue.add(client);
+        startNewGame();
     }
 
-    protected void removeFromQueue(String name) {
-        queue.remove(name);
+    protected void removeFromQueue(PlayerHandler client) {
+        queue.remove(client);
     }
 
     protected ArrayList<String> getPlayers() {
@@ -76,7 +77,14 @@ public class Server implements Runnable {
     }
 
     private void startNewGame() {
-        // TODO: implement
+        if (queue.size() > 2) {
+            Game game = new Game();
+            games.add(game);
+            queue.get(0).startNewGame(game, true, queue.get(1).name);
+            queue.get(1).startNewGame(game, false, queue.get(0).name);
+            removeFromQueue(queue.get(0));
+            removeFromQueue(queue.get(0));
+        }
     }
 
     public static void main(String[] args) {
