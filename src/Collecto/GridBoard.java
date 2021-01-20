@@ -119,18 +119,17 @@ public class GridBoard {
                     if (checkSurroundings(row, column + j)) {
                         balls.addAll(removeBalls(row, column + j));
                     } else {
-                        balls.add(getField(row, column + j));
+                        balls.add(ball);
                         setField(row, column + j, Ball.WHITE);
                     }
                 }
                 if (getField(row + j, column) == ball) {
                     if (getField(row, column) != Ball.WHITE) balls.add(ball);
                     setField(row, column, Ball.WHITE);
-//                    removeBalls(row + j, column);
                     if (checkSurroundings(row + j, column)) {
                         balls.addAll(removeBalls(row + j, column));
                     } else {
-                        balls.add(getField(row + j, column));
+                        balls.add(ball);
                         setField(row + j, column, Ball.WHITE);
                     }
                 }
