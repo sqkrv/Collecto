@@ -48,13 +48,13 @@ public class PlayerHandler implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println(Misc.logTime()+"Client disconnected");
+        System.out.println(Misc.logTime(false)+"("+name+") — Client disconnected");
         // this is where the client is fully disconnected from the server
         // TODO give win to opponent
     }
 
     private void handleCommand(String message) {
-        System.out.println(Misc.logTime()+"("+name+") — "+message); // TODO DEBUG
+        System.out.println(Misc.logTime(false)+"("+name+") — "+message); // TODO DEBUG
         message = message.strip();
         if (message == null) {
             sendError("suck");
@@ -188,25 +188,10 @@ public class PlayerHandler implements Runnable {
         return 0 <= push && push <= 27;
     }
 
-    private Misc.Move convertPush(int push) {
-        switch (push / 7) {
-            case 0:
-                return new Move(push % 7, GridBoard.Direction.LEFT);
-            case 1:
-                return new Move(push % 7, GridBoard.Direction.RIGHT);
-            case 2:
-                return new Move(push % 7, GridBoard.Direction.UP);
-            case 3:
-                return new Move(push % 7, GridBoard.Direction.DOWN);
-            default:
-                return null;
-        }
-    }
-
     private void respondMove(int firstMove, int secondMove) {
 
 
-        // send the last played move to all players.
+        // send the last played move to both players.
     }
 
     private void sendMessage(String message) {

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import static Collecto.Server.DELIMITER;
+import static Collecto.Misc.Move;
 
 public class Client implements Runnable {
     private Player player; //TODO: find use for this
@@ -110,11 +111,13 @@ public class Client implements Runnable {
         if (params.length <= 1) {
             TUI.printError("(no description of the error provided)");
         } else {
-            TUI.printError("Server sent an error");
+            TUI.printError("Server sent an error"+params[0]);
         }
         if (!saidHello) {
             TUI.printError("No HELLO response received");
-            notifyAll();
+            synchronized (this) {
+                notify();
+            }
         } else if (!loggedIn) {
             TUI.printError("No LOGIN response received");
             notifyAll();
@@ -201,7 +204,7 @@ public class Client implements Runnable {
     }
 
     private void handleNewGame(String[] params) {
-        if (game == null) {
+        if (game != null) {
             TUI.printError("Still in a game, can't start a new game");
         } else if (params.length != 52) {
             TUI.printError("Incorrect number of arguments received from server");

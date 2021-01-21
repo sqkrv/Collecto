@@ -32,8 +32,29 @@ public class Misc {
 
         public Move(int line, GridBoard.Direction direction) {
             assert 0 <= line && line < 7;
-            this.direction = direction;
             this.line = line;
+            this.direction = direction;
+        }
+
+        public Move(int push) {
+            assert 0 <= push && push <= 27;
+            this.line = push % 7;
+            switch (push / 7) {
+                case 0:
+                    direction = GridBoard.Direction.LEFT;
+                    break;
+                case 1:
+                    direction = GridBoard.Direction.RIGHT;
+                    break;
+                case 2:
+                    direction = GridBoard.Direction.UP;
+                    break;
+                case 3:
+                    direction = GridBoard.Direction.DOWN;
+                    break;
+                default:
+                    direction = null;
+            }
         }
 
         public GridBoard.Direction getDirection() {
