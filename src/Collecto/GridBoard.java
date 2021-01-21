@@ -393,12 +393,20 @@ public class GridBoard {
      * Checks if a certain move is legal
      * @requires row and column to be valid indices
      * @return true if a specified move is valid, false if it is invalid
-     * @param row row index
-     * @param column column index
-     * @param direction direction of the move
+     * @param move new move being made
      */
     public boolean isMoveValid(Move move) {
         GridBoard copy = deepCopy();
+        return isMoveValidCheck(move, copy);
+    }
+
+    public boolean isMoveValid(Move first, Move second) {
+        GridBoard copy = deepCopy();
+        copy.moveLine(first);
+        return isMoveValidCheck(second, copy);
+    }
+
+    private boolean isMoveValidCheck(Move move, GridBoard copy) {
         copy.moveLine(move);
         if (move.getDirection() == Direction.UP || move.getDirection() == Direction.DOWN) {
             for (int i=0; i < 7; i++) {

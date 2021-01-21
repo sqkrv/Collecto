@@ -46,8 +46,35 @@ public class Game {
     /**
       * resets the game and some attributes
      */
-    public void reset() {
+//    public void reset() {
+//
+//    }
 
+    public boolean makeMove(Move move) {
+        if (board.isMoveValid(move)) {
+            board.moveLine(move);
+            board.removeBalls(move);
+            printBoard();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean makeMove(Move first, Move second) {
+        if (board.isMoveValid(first, second)) {
+            board.moveLine(first);
+            board.moveLine(second);
+            board.removeBalls(second);
+            printBoard();
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void printBoard() {
+        TUI.print(TUI.colouredBoard(board));
     }
 
     /**

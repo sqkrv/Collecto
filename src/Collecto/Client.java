@@ -120,7 +120,9 @@ public class Client implements Runnable {
             }
         } else if (!loggedIn) {
             TUI.printError("No LOGIN response received");
-            notifyAll();
+            synchronized (this) {
+                notify();
+            }
         }
     }
 
@@ -167,7 +169,7 @@ public class Client implements Runnable {
             TUI.printError("Server sent empty List to print");
         } else {
             String players = params[1];
-            for (String player : params) {
+            for (int i = 2; i < params.length; i++) {
                 players += " " + player;
             }
             TUI.print("Current players on server:\n" + players);
@@ -195,10 +197,18 @@ public class Client implements Runnable {
             TUI.printError("Unknown move made");
         } else {
             if (params.length == 2) {
-                TUI.print("New move made: [" + params[1] + "]");
+                if (game.makeMove(new Move(Integer.parseInt(params[1])))) {
+                    TUI.print("New move made: [" + params[1] + "]");
+                } else {
+                    TUI.printError("Server sent incorrect move");
+                }
             } else {
-                TUI.print("Double move made: [" + params[1] + "] " +
-                        "and [" + params[2] + "]");
+                if (game.makeMove(new Move(Integer.parseInt(params[1])), new Move(Integer.parseInt(params[2])))) {
+                    TUI.print("Double move made: [" + params[1] + "] " +
+                            "and [" + params[2] + "]");
+                } else {
+                    TUI.printError("Server sent incorrect move");
+                }
             }
         }
     }
@@ -211,6 +221,7 @@ public class Client implements Runnable {
         } else {
             game = new Game(parseStringBoard(params));
             TUI.print("New game: " + params[50] + " versus " + params[51]);
+            game.printBoard();
         }
     }
 

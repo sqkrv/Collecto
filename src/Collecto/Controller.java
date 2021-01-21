@@ -6,7 +6,7 @@ public class Controller {
     private final Scanner scanner;
     private final Client client;
 
-    public final static String COMMANDS = "LOGIN, LIST, QUEUE, MOVE";
+    public final static String COMMANDS = "LIST, QUEUE, MOVE";
 
     public Controller(Client client) {
         this.client = client;
@@ -24,7 +24,7 @@ public class Controller {
         if (input == null) {
             return;
         }
-        String[] params = input.split(" ");
+        String[] params = input.trim().split(" ");
         switch (params[0]) {
             case "LIST":
             case "QUEUE":
@@ -37,6 +37,7 @@ public class Controller {
                 TUI.printError("Unknown command: " + params[0]);
                 TUI.print("Instead use: " + COMMANDS);
         }
+        // TODO: add disconnect statement
     }
 
     private void handleMove(String[] params) {
@@ -50,7 +51,7 @@ public class Controller {
     }
 
     protected String handleLogin() {
-        return scanner.nextLine();
+        return scanner.nextLine().trim();
     }
 
 }
