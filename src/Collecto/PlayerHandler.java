@@ -2,17 +2,24 @@ package Collecto;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.*;
 
+import static Collecto.Server.DELIMITER;
+import static Collecto.Misc.Move;
+
 public class PlayerHandler implements Runnable {
-
-    public static final char DIVISOR = '~';
-
-    private BufferedReader in;
+    
+    private final BufferedReader in;
     private BufferedWriter out;
     private Socket socket;
+
+    private Game game;
+    private Server server;
+
     protected String name;
     private String description;
+
     private boolean chatSupport = false;
     private boolean rankSupport = false;
     private boolean authSupport = false;
@@ -20,9 +27,7 @@ public class PlayerHandler implements Runnable {
     private boolean saidHello = false;
     private boolean loggedIn = false;
     private boolean myTurn = false;
-    private Game game;
 
-    private Server server;
 
     public PlayerHandler(Socket socket, Server server) throws IOException {
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -37,21 +42,25 @@ public class PlayerHandler implements Runnable {
         try {
             while ((message = in.readLine()) != null) {
                 handleCommand(message);
-                out.newLine();
-                out.flush();
             }
+        } catch (SocketException e) {
+            // TODO handle player disconnect
         } catch (IOException e) {
             e.printStackTrace();
         }
+        System.out.println(Misc.logTime()+"Client disconnected");
+        // this is where the client is fully disconnected from the server
+        // TODO give win to opponent
     }
 
     private void handleCommand(String message) {
-        System.out.println(Misc.logTime()+message); // TODO DEBUG
+        System.out.println(Misc.logTime()+"("+name+") — "+message); // TODO DEBUG
+        message = message.strip();
         if (message == null) {
-            // TODO: send error to connected client
+            sendError("suck");
             return;
         }
-        String[] params = message.split(Character.toString(DIVISOR));
+        String[] params = message.split(Character.toString(DELIMITER));
 
         switch (params[0].strip()) {
             case "HELLO":
@@ -70,9 +79,8 @@ public class PlayerHandler implements Runnable {
                 handleMove(params);
                 break;
             default:
-                sendError("Could not recognize message");
-                // TODO: remove sout below after testing is complete
-                System.out.println("Could not recognize players message, sorry!");
+                sendError("Server could not recognize message \""+message+"\"");
+                System.out.println("Could not recognize players message, sorry!"); // TODO DEBUG
         }
     }
 
@@ -97,17 +105,18 @@ public class PlayerHandler implements Runnable {
                     this.cryptSupport = true;
                     break;
             }
-            respondHello();
-            saidHello = true;
         }
+
+        respondHello();
+        saidHello = true;
     }
 
     private void respondHello() {
-        String response = "HELLO" + DIVISOR + server.DESCRIPTION;
-        if (server.chatSupport) response += DIVISOR + "CHAT";
-        if (server.rankSupport) response += DIVISOR + "RANK";
-        if (server.authSupport) response += DIVISOR + "AUTH";
-        if (server.cryptSupport) response += DIVISOR + "CRYPT";
+        String response = "HELLO" + DELIMITER + Server.DESCRIPTION;
+        if (server.chatSupport) response += DELIMITER + "CHAT";
+        if (server.rankSupport) response += DELIMITER + "RANK";
+        if (server.authSupport) response += DELIMITER + "AUTH";
+        if (server.cryptSupport) response += DELIMITER + "CRYPT";
         sendMessage(response);
     }
 
@@ -122,7 +131,7 @@ public class PlayerHandler implements Runnable {
             this.loggedIn = true;
             sendMessage("LOGIN");
         } else {
-            sendMessage("ALREADYLOGGEDIN");
+            sendError("You are already logged in");
         }
     }
 
@@ -131,12 +140,12 @@ public class PlayerHandler implements Runnable {
              sendError("You are not yet logged in!");
              return;
          }
-         String playerList = "LIST";
+         StringBuilder playerList = new StringBuilder("LIST");
          ArrayList<String> players = server.getPlayers();
          for (String player : players) {
-             playerList += DIVISOR + player;
+             playerList.append(DELIMITER).append(player);
          }
-         sendMessage(playerList);
+         sendMessage(playerList.toString());
     }
 
     private void handleQueue() {
@@ -156,16 +165,46 @@ public class PlayerHandler implements Runnable {
             sendError("Not your turn");
             return;
         }
-        int firstMove = -1;
-        int secondMove = -1;
-        // TODO: add turn check (probably in Game)
-        // add isPossible() check
-        // add move parsing
 
-        respondMove(firstMove, secondMove);
+        int firstMove;
+        int secondMove = -1;
+
+        firstMove = parseInt(params[0]);
+
+        if (params.length > 1) {
+            secondMove = parseInt(params[1]);
+        }
+
+        // Check if both pushes are valid
+        if (!isPushValid(firstMove)) sendError("invalid");
+        if (secondMove != -1) if (!isPushValid(secondMove)) sendError("invalid");
+
+
+
+//        respondMove(firstMove, secondMove);
+    }
+
+    private boolean isPushValid(int push) {
+        return 0 <= push && push <= 27;
+    }
+
+    private Misc.Move convertPush(int push) {
+        switch (push / 7) {
+            case 0:
+                return new Move(push % 7, GridBoard.Direction.LEFT);
+            case 1:
+                return new Move(push % 7, GridBoard.Direction.RIGHT);
+            case 2:
+                return new Move(push % 7, GridBoard.Direction.UP);
+            case 3:
+                return new Move(push % 7, GridBoard.Direction.DOWN);
+            default:
+                return null;
+        }
     }
 
     private void respondMove(int firstMove, int secondMove) {
+
 
         // send the last played move to all players.
     }
@@ -173,6 +212,8 @@ public class PlayerHandler implements Runnable {
     private void sendMessage(String message) {
         try {
             out.write(message);
+            out.newLine();
+            out.flush();
         } catch (IOException e) {
             // TODO: handle exception
         }
@@ -183,21 +224,26 @@ public class PlayerHandler implements Runnable {
         myTurn = starter;
         String appendage;
         if (starter) {
-            appendage = DIVISOR + name + DIVISOR + opponent;
+            appendage = DELIMITER + name + DELIMITER + opponent;
         } else {
-            appendage = DIVISOR + opponent + DIVISOR + name;
+            appendage = DELIMITER + opponent + DELIMITER + name;
         }
         sendMessage("NEWGAME" + game.getBoardString() + appendage);
-        System.out.println("GREAT SUCCES!"); // TODO: remove this line after debugging
+        System.out.println("GREAT SUCCESS!"); // TODO: remove this line after debugging
     }
 
     private void sendError(String error) {
-        error = "ERROR" + DIVISOR + error;
+        error = "ERROR" + DELIMITER + error;
+        sendMessage(error);
+    }
+
+    protected Integer parseInt(String string) {
         try {
-            out.write(error);
-        } catch (IOException e) {
-            // TODO: handle exception
+            return Integer.parseInt(string);
+        } catch (IllegalArgumentException e) {
+            sendError("Wrong arguments provided");
         }
+        return null;
     }
 
     protected void closeConnection() {
