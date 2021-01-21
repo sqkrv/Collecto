@@ -2,6 +2,8 @@ package Collecto;
 
 import java.util.*;
 
+import static Collecto.Misc.Move;
+
 public class GridBoard {
     public enum Direction {
         RIGHT, LEFT, DOWN, UP
@@ -93,21 +95,21 @@ public class GridBoard {
         }
     }
 
-    public ArrayList<Ball> removeBalls(int row, int column, Direction direction) {
+    public ArrayList<Ball> removeBalls(Move move) {
         ArrayList<Ball> balls = new ArrayList<>();
-        if (direction == Direction.UP || direction == Direction.DOWN) {
+        if (move.getDirection() == Direction.UP || move.getDirection() == Direction.DOWN) {
             for (int ro = 0; ro < 7; ro++) {
-                balls.addAll(removeBalls(ro, column));
+                balls.addAll(removeBalls(ro, move.getLine()));
             }
         } else {
             for (int col = 0; col < 7; col++) {
-                balls.addAll(removeBalls(row, col));
+                balls.addAll(removeBalls(move.getLine(), col));
             }
         }
         return balls;
     }
 
-    private ArrayList<Ball> removeBalls(int row, int column) {
+    ArrayList<Ball> removeBalls(int row, int column) {
         Ball ball;
         ArrayList<Ball> balls = new ArrayList<>();
         if (checkSurroundings(row , column)) {
@@ -270,51 +272,51 @@ public class GridBoard {
         return copy;
     }
 
-    public void moveLine(int row, int column, Direction direction) {
+    public void moveLine(Move move) {
 //        if (!legalMoves(row, column, direction)) return;
 //        TODO: move this check to parent method which will firstly check if first or second move
 //         is valid by using this function and then perform this move by using the same (this) function
         int removed;
-        if (direction == Direction.UP) {
+        if (move.getDirection() == Direction.UP) {
             for (int i=0; i < 7; i++) {
-                if (board.get(i).get(column) == Ball.WHITE) {
+                if (board.get(i).get(move.getLine()) == Ball.WHITE) {
                     for (int j=i; j < 7-1; j++) {
                         for (int k=j+1; k < 7; k++) {
-                            if (board.get(k).get(column) != Ball.WHITE) {
-                                board.get(j).set(column, board.get(k).get(column));
-                                board.get(k).set(column, Ball.WHITE);
+                            if (board.get(k).get(move.getLine()) != Ball.WHITE) {
+                                board.get(j).set(move.getLine(), board.get(k).get(move.getLine()));
+                                board.get(k).set(move.getLine(), Ball.WHITE);
                                 break;
                             }
                         }
                     }
-                    board.get(6).set(column, Ball.WHITE);
+                    board.get(6).set(move.getLine(), Ball.WHITE);
                 }
             }
-        } else if (direction == Direction.DOWN) {
+        } else if (move.getDirection() == Direction.DOWN) {
             for (int i=6; i >= 0; i--) {
-                if (board.get(i).get(column) == Ball.WHITE) {
+                if (board.get(i).get(move.getLine()) == Ball.WHITE) {
                     for (int j=i; j >= 1; j--) {
                         for (int k=j-1; k >= 0; k--) {
-                            if (board.get(k).get(column) != Ball.WHITE) {
-                                board.get(j).set(column, board.get(k).get(column));
-                                board.get(k).set(column, Ball.WHITE);
+                            if (board.get(k).get(move.getLine()) != Ball.WHITE) {
+                                board.get(j).set(move.getLine(), board.get(k).get(move.getLine()));
+                                board.get(k).set(move.getLine(), Ball.WHITE);
                                 break;
                             }
                         }
                     }
-                    board.get(0).set(column, Ball.WHITE);
+                    board.get(0).set(move.getLine(), Ball.WHITE);
                 }
             }
         } else {
-            if (board.get(row).contains(Ball.WHITE)) {
-                removed = board.get(row).size();
-                board.get(row).removeAll(Collections.singleton(Ball.WHITE));
-                removed = removed - board.get(row).size();
+            if (board.get(move.getLine()).contains(Ball.WHITE)) {
+                removed = board.get(move.getLine()).size();
+                board.get(move.getLine()).removeAll(Collections.singleton(Ball.WHITE));
+                removed = removed - board.get(move.getLine()).size();
 
-                if (direction == Direction.LEFT) {
-                    board.get(row).addAll(7 - removed, Collections.nCopies(removed, Ball.WHITE));
-                } else if (direction == Direction.RIGHT) {
-                    board.get(row).addAll(0, Collections.nCopies(removed, Ball.WHITE));
+                if (move.getDirection() == Direction.LEFT) {
+                    board.get(move.getLine()).addAll(7 - removed, Collections.nCopies(removed, Ball.WHITE));
+                } else if (move.getDirection() == Direction.RIGHT) {
+                    board.get(move.getLine()).addAll(0, Collections.nCopies(removed, Ball.WHITE));
                 }
             }
         }
@@ -357,14 +359,14 @@ public class GridBoard {
      * @ensures coordinates are valid
      * @return Coordinates of a String input
      */
-    protected Coordinates getCoordinates(String input) {
-        Coordinates coordinates = new Coordinates(input.charAt(0), input.charAt(1));
-        if (validIndex(coordinates.row) && validIndex(coordinates.column)) {
-            return coordinates;
-        }
-        return null;
-        //TODO: maybe move this method to a different class, since parsing is not the job of the board
-    }
+//    protected Coordinates getCoordinates(String input) {
+//        Coordinates coordinates = new Coordinates(input.charAt(0), input.charAt(1));
+//        if (validIndex(coordinates.row) && validIndex(coordinates.column)) {
+//            return coordinates;
+//        }
+//        return null;
+//        //TODO: maybe move this method to a different class, since parsing is not the job of the board
+//    }
 
     /**
      * @requires row && column are valid indices
@@ -395,16 +397,16 @@ public class GridBoard {
      * @param column column index
      * @param direction direction of the move
      */
-    public boolean isMoveValid(int row, int column, Direction direction) {
+    public boolean isMoveValid(Move move) {
         GridBoard copy = deepCopy();
-        copy.moveLine(row, column, direction);
-        if (direction == Direction.UP || direction == Direction.DOWN) {
+        copy.moveLine(move);
+        if (move.getDirection() == Direction.UP || move.getDirection() == Direction.DOWN) {
             for (int i=0; i < 7; i++) {
-                if (copy.checkSurroundings(i, column)) return true;
+                if (copy.checkSurroundings(i, move.getLine())) return true;
             }
-        } else if (direction == Direction.LEFT || direction == Direction.RIGHT) {
+        } else if (move.getDirection() == Direction.LEFT || move.getDirection() == Direction.RIGHT) {
             for (int i=0; i < 7; i++) {
-                if (copy.checkSurroundings(row, i)) return true;
+                if (copy.checkSurroundings(move.getLine(), i)) return true;
             }
         }
         return false;
@@ -424,8 +426,12 @@ public class GridBoard {
      */
     private boolean possibleMoves(boolean isSecondTime) {
         for (int i = 0; i < 7; i++) {
-            if (isMoveValid(i, 0, Direction.RIGHT) || isMoveValid(i, 0, Direction.LEFT)
-                    || isMoveValid(0, i, Direction.UP) || isMoveValid(0, i, Direction.DOWN)) {
+            if (
+                    isMoveValid(new Move(i, Direction.LEFT)) ||
+                    isMoveValid(new Move(i, Direction.RIGHT)) ||
+                    isMoveValid(new Move(i, Direction.UP)) ||
+                    isMoveValid(new Move(i, Direction.DOWN))
+            ) {
                 return true;
             }
         }
@@ -435,19 +441,19 @@ public class GridBoard {
         GridBoard copy;
         for (int i = 0; i < 7; i++) {
             copy = deepCopy();
-            copy.moveLine(i, 0, Direction.LEFT);
+            copy.moveLine(new Move(i, Direction.LEFT));
             if (copy.possibleMoves(true)) return true;
 
             copy = deepCopy();
-            copy.moveLine(i, 0, Direction.RIGHT);
+            copy.moveLine(new Move(i, Direction.RIGHT));
             if (copy.possibleMoves(true)) return true;
 
             copy = deepCopy();
-            copy.moveLine(0, i, Direction.UP);
+            copy.moveLine(new Move(i, Direction.UP));
             if (copy.possibleMoves(true)) return true;
 
             copy = deepCopy();
-            copy.moveLine(0, i, Direction.DOWN);
+            copy.moveLine(new Move(i, Direction.DOWN));
             if (copy.possibleMoves(true)) return true;
         }
         return false;
@@ -468,22 +474,5 @@ public class GridBoard {
             }
         }
         return result.toString();
-    }
-
-    /**
-     * Coordinates class
-     * Being used for storing coordinates of a ball — row and column
-     */
-    public class Coordinates {
-        public final int row;
-        public final int column;
-
-        /**
-         * Constructor
-         */
-        public Coordinates(int row, int column) {
-            this.row = row;
-            this.column = column;
-        }
     }
 }
