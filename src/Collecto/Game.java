@@ -2,6 +2,8 @@ package Collecto;
 
 import java.util.*;
 
+import static Collecto.Misc.Move;
+
 public class Game {
     private final GridBoard board;
     private final Player[] players = new Player[2];
@@ -50,7 +52,7 @@ public class Game {
     public void play() {
         String answer;
         String[] answers;
-        int row;
+        int line;
         int column;
         boolean inTwoMoves;
         GridBoard.Direction direction;
@@ -69,7 +71,7 @@ public class Game {
                 answers[1] = answer.substring(1);
             }
             try {
-                row = column = Integer.parseInt(answers[0]) - 1;
+                line = Integer.parseInt(answers[0]) - 1;
                 answers[1] = answers[1].toUpperCase();
 
                 try {
@@ -97,9 +99,9 @@ public class Game {
                 System.out.println("Incorrect input");
                 continue;
             }
-            if (board.isMoveValid(row, column, direction)) {
-                board.moveLine(row, column, direction);
-                ArrayList<Ball> balls = board.removeBalls(row, column, direction);
+            if (board.isMoveValid(new Move(line, direction))) {
+                board.moveLine(new Move(line, direction));
+                ArrayList<Ball> balls = board.removeBalls(new Move(line, direction));
                 player.addBalls(balls);
                 if (player.equals(players[0])) {
                     player = players[1];
@@ -132,10 +134,6 @@ public class Game {
             }
             System.out.println("Name is already taken by the first player");
         }
-    }
-
-    public String getBoardString() {
-        return board.getBoardString();
     }
 
     public static void main(String[] args) {
