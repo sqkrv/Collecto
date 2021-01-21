@@ -63,9 +63,7 @@ public class TUI {
         string.append("\n");
         for (int i = 1; i <= 7; i++) {
             string.append("-----+");
-            for (int j = 1; j <= 7; j++) {
-                string.append("-------+");
-            }
+            string.append("-------+".repeat(7));
             string.append("\n");
             string.append("  ").append(i).append("  |");
             for (int j = 1; j <= 7; j++) {
@@ -75,9 +73,7 @@ public class TUI {
             string.append("\n");
         }
         string.append("-----+");
-        for (int j = 1; j <= 7; j++) {
-            string.append("-------+");
-        }
+        string.append("-------+".repeat(7));
 
         return string.toString();
     }
@@ -91,9 +87,7 @@ public class TUI {
 
         for (int i = 1; i <= 7; i++) {
             string.append("+");
-            for (int j = 1; j <= 7; j++) {
-                string.append("-------+");
-            }
+            string.append("-------+".repeat(7));
             string.append("\n|");
             for (int j = 1; j <= 7; j++) {
                 string.append(String.format("%-7s|", gridBoard.getField(i-1, j-1)));
@@ -101,11 +95,18 @@ public class TUI {
             string.append("\n");
         }
         string.append("+");
-        for (int j = 1; j <= 7; j++) {
-            string.append("-------+");
-        }
+        string.append("-------+".repeat(7));
 
         return string.toString();
+    }
+
+    public static void print(String string) {
+        System.out.println(string);
+    }
+
+    public static void printError(String error) {
+        String cerror = "["+"\u001B[31m" + "ERROR" + "\u001B[0m"+"]";
+        System.out.println(Misc.logTime(false)+cerror+" "+error);
     }
 
     public static void main(String[] args) {
