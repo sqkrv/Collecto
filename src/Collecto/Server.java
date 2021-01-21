@@ -1,6 +1,5 @@
 package Collecto;
 
-import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -8,16 +7,19 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Queue;
 
 public class Server implements Runnable {
     private final int port;
     private final InetAddress ip;
+
     private final ArrayList<PlayerHandler> playerClients;
     private ArrayList<String> players = new ArrayList<>();
     private LinkedList<PlayerHandler> queue = new LinkedList<>();
     private ArrayList<Game> games;
+
     protected final static String DESCRIPTION = "the server of Stan and Hein";
+    public static final char DELIMITER = '~';
+
     protected boolean chatSupport = false;
     protected boolean rankSupport = false;
     protected boolean authSupport = false;
@@ -31,7 +33,7 @@ public class Server implements Runnable {
 
     @Override
     public void run() {
-        try (ServerSocket ssocket = new ServerSocket(port, 0, InetAddress.getByName("192.168.1.68"))) {
+        try (ServerSocket ssocket = new ServerSocket(port, 0, ip)) {
 //        try (ServerSocket ssocket = new ServerSocket(port)) {  // for external server
             while (true) {
                 Socket socket = ssocket.accept();
@@ -106,7 +108,6 @@ public class Server implements Runnable {
         }
 
         int port = 0;
-
         try {
             port = Integer.parseInt(args[1]);
         } catch (NumberFormatException e) {
