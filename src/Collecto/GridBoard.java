@@ -325,7 +325,7 @@ public class GridBoard {
      * @ensures index is valid
      * @return Ball from a specified field, or null if an index is invalid
      */
-    public Ball getField(int row, int column) {  // TODO maybe should be protected or even private
+    public Ball getField(int row, int column) {
         if (validIndex(row) && validIndex(column)) {
             return board.get(row).get(column);
         }
@@ -459,15 +459,15 @@ public class GridBoard {
     }
 
     public String getBoardString() {
-        String result = "";
+        StringBuilder result = new StringBuilder();
         for (ArrayList<Ball> array : board) {
             for (Ball ball : array) {
                 for (int i = 0; i < Ball.values().length; i++) {
-                    if (Ball.values()[i].equals(ball)) result += PlayerHandler.DIVISOR + ball.name();
+                    if (Ball.values()[i].equals(ball)) result.append(Server.DELIMITER).append(ball.name());
                 }
             }
         }
-        return result;
+        return result.toString();
     }
 
     /**
