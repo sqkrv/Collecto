@@ -19,32 +19,36 @@ public class Game {
         board = new GridBoard();
     }
 
-    /**
-     * Constructor that uses a custom board for the game
-     * @param customBoardArray custom board to game on
-     */
-    public Game(ArrayList<ArrayList<Ball>> customBoardArray) {
-        this.board = new GridBoard(customBoardArray);
+    public Game(GridBoard board) {
+        this.board = board;
     }
+
+//    /**
+//     * Constructor that uses a custom board for the game
+//     * @param customBoardArray custom board to game on
+//     */
+//    public Game(ArrayList<ArrayList<Ball>> customBoardArray) {
+//        this.board = new GridBoard(customBoardArray);
+//    }
 
     /**
      * sets up the start of a new game
      */
-    public void start() {
-        boolean nextGame = true;
-        while (nextGame) {
-            play();
-            System.out.println("Play again?");
-            nextGame = input.nextLine().equals("y");
-        }
-    }
+//    public void start() {
+//        boolean nextGame = true;
+//        while (nextGame) {
+//            play();
+//            System.out.println("Play again?");
+//            nextGame = input.nextLine().equals("y");
+//        }
+//    }
 
-    /**
-      * resets the game and some attributes
-     */
-    public void reset() {
-
-    }
+//    /**
+//      * resets the game and some attributes
+//     */
+//    public void reset() {
+//
+//    }
 
     /**
      * any actual games play out within this method
@@ -136,10 +140,14 @@ public class Game {
         }
     }
 
-    public static void main(String[] args) {
-        Game game = new Game();
-        game.setup();
-        game.start();
-        game.play();
+    public String getBoardString() {
+        return board.getBoardString();
     }
+
+//    public static void main(String[] args) {
+//        Game game = new Game();
+//        game.setup();
+//        game.start();
+//        game.play();
+//    }
 }

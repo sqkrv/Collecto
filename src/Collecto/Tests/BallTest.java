@@ -67,8 +67,8 @@ class BallTest {
 
     @Test
     void testValues() {
-        Ball[] testArray = new Ball[]{Ball.BLUE, Ball.YELLOW, Ball.RED, Ball.ORANGE,
-                Ball.PURPLE, Ball.GREEN, Ball.WHITE};
+        Ball[] testArray = new Ball[]{Ball.WHITE, Ball.BLUE, Ball.YELLOW, Ball.RED, Ball.ORANGE,
+                Ball.PURPLE, Ball.GREEN};
         assertArrayEquals(testArray, Ball.values());
     }
 }

@@ -47,8 +47,8 @@ public class Client implements Runnable {
         try {
             return InetAddress.getByName(ip);
         } catch (UnknownHostException e) {
-            System.out.println(USAGE);
-            System.out.println("ERROR: host " + ip + " unknown");
+            TUI.print(USAGE);
+            TUI.printError("host " + ip + " unknown");
             System.exit(0);
         }
         return null;
