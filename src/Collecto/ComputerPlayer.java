@@ -1,5 +1,7 @@
 package Collecto;
 
+import java.util.ArrayList;
+
 public class ComputerPlayer extends Player {
     private int level;
 
@@ -54,10 +56,10 @@ public class ComputerPlayer extends Player {
         GridBoard board = new GridBoard(); //TODO: change this to be better (e.g. use a copy of the actual board)
         // single move
         for (int i = 0; i < 7; i++) {
-            if (board.isMoveValid(i, 0, GridBoard.Direction.RIGHT)) return (i);
-            if (board.isMoveValid(i, 0, GridBoard.Direction.LEFT)) return (7 + i);
-            if (board.isMoveValid(0, i, GridBoard.Direction.UP)) return (14 + i);
-            if (board.isMoveValid(0, i, GridBoard.Direction.DOWN)) return (21 + i);
+            if (board.isMoveValid(new Misc.Move(i, GridBoard.Direction.RIGHT))) return (i);
+            if (board.isMoveValid(new Misc.Move(i, GridBoard.Direction.LEFT))) return (7 + i);
+            if (board.isMoveValid(new Misc.Move(i, GridBoard.Direction.UP))) return (14 + i);
+            if (board.isMoveValid(new Misc.Move(i, GridBoard.Direction.DOWN))) return (21 + i);
         }
         return -1;
     }
@@ -69,13 +71,13 @@ public class ComputerPlayer extends Player {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 7; j++) {
                 copy = board.deepCopy();
-                copy.moveLine(j, 0, GridBoard.Direction.values()[i]);
+                copy.moveLine(new Misc.Move(j, GridBoard.Direction.values()[i]));
                 if (!board.toString().equals(copy.toString())) {
                     for (int k = 0; k < 7; k++) {
-                        if (copy.isMoveValid(j, 0, GridBoard.Direction.RIGHT)) return new int[]{j + i*7, k};
-                        if (copy.isMoveValid(j, 0, GridBoard.Direction.LEFT)) return new int[]{j + i*7, 7 + k};
-                        if (copy.isMoveValid(0, j, GridBoard.Direction.UP)) return new int[]{j + i*7, 14 + k};
-                        if (copy.isMoveValid(0, j, GridBoard.Direction.DOWN)) return new int[]{j + i*7, 21 + k};
+                        if (copy.isMoveValid(new Misc.Move(j, GridBoard.Direction.RIGHT))) return new int[]{j + i*7, k};
+                        if (copy.isMoveValid(new Misc.Move(j, GridBoard.Direction.LEFT))) return new int[]{j + i*7, 7 + k};
+                        if (copy.isMoveValid(new Misc.Move(j, GridBoard.Direction.UP))) return new int[]{j + i*7, 14 + k};
+                        if (copy.isMoveValid(new Misc.Move(j, GridBoard.Direction.DOWN))) return new int[]{j + i*7, 21 + k};
                     }
                 }
             }
@@ -83,8 +85,30 @@ public class ComputerPlayer extends Player {
         return null;
     }
 
+//    private ArrayList<Ball> ballsFromMove(GridBoard board, Misc.Move move) {
+//        GridBoard copy = board.deepCopy();
+//        copy.removeBalls(move.getLine(), move.getLine());
+//    }
+
     private int[] makeIntermediateMove() {
-        return null;
+        GridBoard board = new GridBoard(); //TODO: change this to be better (e.g. use a copy of the actual board)
+        // double move
+        GridBoard copy;
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 7; j++) {
+                copy = board.deepCopy();
+                copy.moveLine(new Misc.Move(j, GridBoard.Direction.values()[i]));
+                if (!board.toString().equals(copy.toString())) {
+                    for (int k = 0; k < 7; k++) {
+                        if (copy.isMoveValid(new Misc.Move(j, GridBoard.Direction.RIGHT))) return new int[]{j + i*7, k};
+                        if (copy.isMoveValid(new Misc.Move(j, GridBoard.Direction.LEFT))) return new int[]{j + i*7, 7 + k};
+                        if (copy.isMoveValid(new Misc.Move(j, GridBoard.Direction.UP))) return new int[]{j + i*7, 14 + k};
+                        if (copy.isMoveValid(new Misc.Move(j, GridBoard.Direction.DOWN))) return new int[]{j + i*7, 21 + k};
+                    }
+                }
+            }
+        }
+        return new int[]{1};
     }
 
     private int[] makeExpertMove() {
