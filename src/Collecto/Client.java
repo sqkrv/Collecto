@@ -4,7 +4,6 @@ import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 import static Collecto.Server.DELIMITER;
 import static Collecto.Misc.*;
@@ -200,7 +199,20 @@ public class Client implements Runnable {
             game = new Game(parseStringBoard(params), params[50], params[51]);
             TUI.print("New game: " + params[50] + " versus " + params[51]);
             game.printBoard();
+            if (params[50].equals(playerName)) TUI.print("It's your turn");
+            useAI();
         }
+    }
+
+    private void useAI() {
+        String answer = controller.promptUser("Do you want to use smartass computer to play for you? (y/n)");
+        if (answer.equalsIgnoreCase("y") || answer.equalsIgnoreCase("yes")) {
+            answer = controller.promptUser("What level of AI do you want to use? (1/2)");
+            if (answer.equals("1") || answer.equals("2")) {
+                // TODO use an AI and disable some user inputs
+            }
+        }
+        TUI.print("AI will not be used. It's in your hands my friend");
     }
 
 //    /**
@@ -268,27 +280,8 @@ public class Client implements Runnable {
         }
     }
 
-    protected void printLogs() {
-        for (String log : logs) {
-            TUI.print(log);
-        }
-    }
-
-    protected void disconnect() {
-        if (socket != null) {
-            try {
-                socket.close();
-                in.close();
-                out.close();
-                socket = null;
-//                in = null;
-//                out = null;
-//                socket = null;
-            } catch (IOException e) {
-                TUI.printError("IOException while disconnecting from server");
-            }
-            logs.add(TUI.log("Disconnected from server"));
-        }
+    protected void printHelp() {
+        TUI.printHelpClient();
     }
 
     protected void exit() {
