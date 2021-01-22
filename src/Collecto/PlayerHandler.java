@@ -165,13 +165,16 @@ public class PlayerHandler implements Runnable {
     private void handleQueue() {
         if (!loggedIn) {
             sendError("You are not yet logged in!");
-        }
-        if (!server.queued(this)) {
-            server.addToQueue(this);
-            TUI.print(TUI.log("added " + getName() + " to queue"));
+        } else if (game == null) {
+            sendError("You are in a game, can't rejoin queue");
         } else {
-            server.removeFromQueue(this);
-            TUI.print(TUI.log("removed " + getName() + " from queue"));
+            if (!server.queued(this)) {
+                server.addToQueue(this);
+                TUI.print(TUI.log("added " + getName() + " to queue"));
+            } else {
+                server.removeFromQueue(this);
+                TUI.print(TUI.log("removed " + getName() + " from queue"));
+            }
         }
     }
 
@@ -180,6 +183,8 @@ public class PlayerHandler implements Runnable {
             sendError("Not your turn");
         } else if (params.length != 2 && params.length != 3) {
             sendError("Invalid amount of arguments provided");
+        } else if (game == null) {
+            sendError("You are not in a game");
         } else {
             Integer firstMove;
             Integer secondMove = -1;
@@ -200,7 +205,9 @@ public class PlayerHandler implements Runnable {
                 sendError("invalid");
             } else {
                 respondMove(firstMove, secondMove);
-                respondMove(firstMove, secondMove);
+                opponent.respondMove(firstMove, secondMove);
+                opponent.myTurn = true;
+                myTurn = false;
                 Move move = new Move(firstMove);
                 if (secondMove == -1) {
                     opponent.game.makeMove(move);
@@ -241,6 +248,7 @@ public class PlayerHandler implements Runnable {
                 message += game.getWinner();
             }
         }
+        game = null;
         server.gameEnded(this);
         sendMessage(message);
     }

@@ -16,6 +16,7 @@ check in client if a player is not moving to give the correct response
 
 figure out if toString() in enum Direction is important
 
+perhaps simplify the checks in server (and perhaps client) for example when checking if the game is null
 
 write a BUNCH of tests (both unit and integration tests)
 
