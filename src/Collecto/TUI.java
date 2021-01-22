@@ -106,7 +106,7 @@ public class TUI {
 
     public static void printError(String error) {
         error = "["+"\u001B[31m" + "ERROR" + "\u001B[0m"+"] " + error;
-        printLog(error, false);
+        log(error, false);
     }
 
     public static void printLog(String log) {
