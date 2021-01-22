@@ -7,6 +7,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import static Collecto.Misc.checkPort;
+
 public class Server implements Runnable {
     private final int port;
 
@@ -111,6 +113,9 @@ public class Server implements Runnable {
         if (args.length != 1) {
             // Port prompt
             port = controller.promptPort();
+        } else {
+            port = checkPort(args[0]);
+            if (port == null) port = controller.promptPort();
         }
 
         // Port check
