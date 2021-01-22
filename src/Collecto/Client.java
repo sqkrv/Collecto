@@ -211,6 +211,7 @@ public class Client implements Runnable {
                 }
             }
         }
+        game.printBoard();
     }
 
     private void handleNewGame(String[] params) {
@@ -219,7 +220,7 @@ public class Client implements Runnable {
         } else if (params.length != 52) {
             TUI.printError("Incorrect number of arguments received from server");
         } else {
-            game = new Game(parseStringBoard(params));
+            game = new Game(parseStringBoard(params), params[50], params[51]);
             TUI.print("New game: " + params[50] + " versus " + params[51]);
             game.printBoard();
         }
