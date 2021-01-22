@@ -189,7 +189,6 @@ public class PlayerHandler implements Runnable {
                 sendError("invalid");
             } else {
                 respondMove(firstMove, secondMove);
-                respondMove(firstMove, secondMove);
                 Move move = new Move(firstMove);
                 if (secondMove == -1) {
                     opponent.game.makeMove(move);
