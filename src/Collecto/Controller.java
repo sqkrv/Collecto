@@ -26,9 +26,9 @@ public class Controller {
             return;
         }
         String[] params = input.trim().split(" ");
-        switch (params[0].toLowerCase()) {
-            case "list":
-            case "queue":
+        switch (params[0].toUpperCase()) {
+            case "LIST":
+            case "QUEUE":
                 client.sendMessage(params[0]);
                 break;
             case "move":
@@ -58,7 +58,7 @@ public class Controller {
         }
     }
 
-    protected String handleLogin() {
+    protected String promptUser() {
         return scanner.nextLine().trim();
     }
 

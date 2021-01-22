@@ -8,6 +8,7 @@ Add log command to controller to allow user to view logs
     - add showAllLogs to TUI, add showLastLog (for server) ?
 Add connect functionality to client
 Add reconnect functionality to client
+Add scores to check who won
 
 When server disconnects before you sent a name to log in with, and then you do send a name, there is an error (catch this error)
 

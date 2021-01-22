@@ -16,6 +16,7 @@ public class PlayerHandler implements Runnable {
 
     private Game game;
     private Server server;
+    private PlayerHandler opponent = null;
 
     protected String name;
     private String description;
@@ -150,7 +151,6 @@ public class PlayerHandler implements Runnable {
     }
 
     private void handleQueue() {
-        // TODO: protect the queue with synchronisation so that it works properly
         if (!loggedIn) {
             sendError("You are not yet logged in!");
         }
@@ -164,25 +164,29 @@ public class PlayerHandler implements Runnable {
     private void handleMove(String[] params) {
         if (!myTurn) {
             sendError("Not your turn");
-            return;
+        } else if (params.length <= 1) {
+            sendError("Insufficient arguments provided");
+        } else {
+            int firstMove;
+            int secondMove = -1;
+            firstMove = parseInt(params[0]);
+            if (params.length > 2) {
+                secondMove = parseInt(params[1]);
+            }
+            if (!isPushValid(firstMove) ||
+                    (secondMove != -1 && !isPushValid(secondMove))) {
+                sendError("invalid");
+            } else {
+                respondMove(firstMove, secondMove);
+                if (secondMove == -1) {
+                    // TODO: let the other client make the move too
+                    game.makeMove(new Move(firstMove));
+                } else {
+                    game.makeMove(new Move(firstMove), new Move(secondMove));
+                }
+                // TODO: add check to see if the game is over
+            }
         }
-
-        int firstMove;
-        int secondMove = -1;
-
-        firstMove = parseInt(params[0]);
-
-        if (params.length > 1) {
-            secondMove = parseInt(params[1]);
-        }
-
-        // Check if both pushes are valid
-        if (!isPushValid(firstMove)) sendError("invalid");
-        if (secondMove != -1) if (!isPushValid(secondMove)) sendError("invalid");
-
-
-
-//        respondMove(firstMove, secondMove);
     }
 
     private boolean isPushValid(int push) {
@@ -190,9 +194,11 @@ public class PlayerHandler implements Runnable {
     }
 
     private void respondMove(int firstMove, int secondMove) {
-
-
-        // send the last played move to both players.
+        if (secondMove == -1) {
+            sendMessage("MOVE" + DELIMITER + firstMove);
+        } else {
+            sendMessage("MOVE" + DELIMITER + firstMove + DELIMITER + secondMove);
+        }
     }
 
     private void sendMessage(String message) {
@@ -205,17 +211,17 @@ public class PlayerHandler implements Runnable {
         }
     }
 
-    protected void startNewGame(Game game, boolean starter, String opponent) {
+    protected void startNewGame(Game game, boolean starter, PlayerHandler opponent) {
         this.game = game;
         myTurn = starter;
         String appendage;
         if (starter) {
             appendage = DELIMITER + name + DELIMITER + opponent;
         } else {
-            appendage = DELIMITER + opponent + DELIMITER + name;
+            appendage = DELIMITER + opponent.name + DELIMITER + name;
         }
+        this.opponent = opponent;
         sendMessage("NEWGAME" + game.getBoardString() + appendage);
-        System.out.println("GREAT SUCCESS!"); // TODO: remove this line after debugging
     }
 
     private void sendError(String error) {

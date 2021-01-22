@@ -270,6 +270,8 @@ public class Client implements Runnable {
                     board.get(row).add(Ball.values()[Integer.parseInt(fields[7*row+column + 1])]);
                 } catch (IllegalArgumentException e) {
                     return null;
+                } catch (NullPointerException e) {
+                    TUI.printError("Server sent wrong arguments for new game");
                 }
             }
         }
@@ -309,33 +311,33 @@ public class Client implements Runnable {
     }
 
     public static void main(String[] args) throws IOException {
-        if (args.length != 3) {
+        if (args.length != 3 && args.length != 0) {
             TUI.print(USAGE);
             System.exit(0);
         }
+//        if (args.length == 0) connectToServer();
+//            String name = args[0];
+            int port;
+            InetAddress address;
+            Socket sock = null;
 
-        String name = args[0];
-        int port;
-        InetAddress address;
-        Socket sock = null;
+            address = checkIP(args[1]);
+            port = checkPort(args[2]);
 
-        address = checkIP(args[1]);
-        port = checkPort(args[2]);
+            try {
+                TUI.print("Connecting to " + address + ":" + port);
+                sock = new Socket(address, port);
+                TUI.printLog("Connected");
+            } catch (IOException e) {
+                TUI.printError("IOException while trying to connect");
+                e.printStackTrace();
+                System.exit(0);
+            }
 
-        try {
-            TUI.print("Connecting to " + address + ":" + port);
-            sock = new Socket(address, port);
-            TUI.printLog("Connected");
-        } catch (IOException e) {
-            TUI.printError("IOException while trying to connect");
-            e.printStackTrace();
-            System.exit(0);
-        }
-
-        Client client = new Client(sock);
-        Thread InputHandler = new Thread(client);
-        InputHandler.start();
-        client.startUpClient();
+            Client client = new Client(sock);
+            Thread InputHandler = new Thread(client);
+            InputHandler.start();
+            client.startUpClient();
     }
 
     @Override
@@ -357,17 +359,6 @@ public class Client implements Runnable {
         TUI.print("Setting up connection, please wait...");
         handleSetup();
         this.controller.start();
-//        while (true) {
-//            String message;
-//            while ((message = scanner.nextLine()) != null) {
-//                message = message.strip();
-//                TUI.print("You sent: " + message);
-//                handleCommandOut(message);
-////                out.write(message);
-////                out.newLine();
-////                out.flush();
-//            }
-//        }
     }
 
     private void handleSetup() {
@@ -400,7 +391,7 @@ public class Client implements Runnable {
         while (!loggedIn) {
             try {
                 TUI.print("Please enter a name to log in to the server:");
-                answer = controller.handleLogin();
+                answer = controller.promptUser();
                 sendMessage("LOGIN" + Server.DELIMITER + answer);
                 synchronized (this) {
                     this.wait();
@@ -412,4 +403,10 @@ public class Client implements Runnable {
         }
         TUI.print("You have been logged in under the name: " + answer);
     }
+
+//    private static void connectToServer() {
+//
+//    }
 }
+
+

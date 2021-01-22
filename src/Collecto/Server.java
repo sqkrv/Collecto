@@ -48,13 +48,10 @@ public class Server implements Runnable {
 
     protected void addPlayer(PlayerHandler player) {
         this.playerClients.add(player);
-        this.players.add(player.name);
     }
 
     protected void removePlayer(PlayerHandler player) {
         this.playerClients.remove(player);
-        this.players.remove(player.name);
-        // TODO: improve this
     }
 
     /**
@@ -64,8 +61,8 @@ public class Server implements Runnable {
      * if the name is not yet registered in the system
      */
     public boolean checkPlayer(String playerName) {
-        for (String player : players) {
-            if (player.equals(playerName)) return false;
+        for (PlayerHandler client : playerClients) {
+            if (client.name.equals(playerName)) return false;
         }
         return true;
     }
@@ -80,21 +77,28 @@ public class Server implements Runnable {
     }
 
     protected void removeFromQueue(PlayerHandler client) {
-        queue.remove(client);
+       queue.remove(client);
     }
 
     protected ArrayList<String> getPlayers() {
+        ArrayList<String> players = new ArrayList<>();
+        for (PlayerHandler client : playerClients) {
+            players.add(client.name);
+        }
         return players;
     }
 
     private void startNewGame() {
         if (queue.size() >= 2) {
-            Game game = new Game();
-            games.add(game);
-            queue.get(0).startNewGame(game, true, queue.get(1).name);
-            queue.get(1).startNewGame(game, false, queue.get(0).name);
-            removeFromQueue(queue.get(0));
-            removeFromQueue(queue.get(0));
+            // TODO: check whether queue synchronisation works properly
+            synchronized (queue) {
+                Game game = new Game();
+                games.add(game);
+                queue.get(0).startNewGame(game, true, queue.get(1));
+                queue.get(1).startNewGame(game, false, queue.get(0));
+                removeFromQueue(queue.get(0));
+                removeFromQueue(queue.get(0));
+            }
         }
     }
 
