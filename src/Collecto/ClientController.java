@@ -26,10 +26,6 @@ public class ClientController extends Controller {
         String[] params = input.trim().split(" ");
         params[0] = params[0].toUpperCase();
 
-        if (choosingAI) {
-            client.chooseAI(params[0]);
-        }
-
         switch (params[0]) {
             case "DISCONNECT":
                 client.disconnect();
@@ -37,6 +33,12 @@ public class ClientController extends Controller {
             case "EXIT":
                 client.disconnect();
                 client.exit();
+                break;
+            case "HELP":
+                client.printHelp();
+                break;
+            case "HINT":
+                client.hint();
                 break;
             case "LOGS":
                 client.printLogs();
@@ -49,6 +51,10 @@ public class ClientController extends Controller {
                 client.sendMessage(params[0]);
                 break;
             default:
+                if (choosingAI) {
+                    client.chooseAI(params);
+                    break;
+                }
                 TUI.printError("Unknown command: " + params[0]);
                 TUI.print("Instead use: " + COMMANDS);
         }
