@@ -121,8 +121,8 @@ public class TUI {
         print("Valid inputs are: " + ClientController.COMMANDS + "\n" +
                 "These can be upper or lowercase\n" +
                 "To make a move, typ: MOVE [row/column] [direction]\n" +
-                "For a double move: MOVE [row/column] [direction] [row/column] [direction]" +
-                "Where [row/column] is an integer, and direction is UP/DOWN/LEFT/RIGHT\n");
+                "For a double move: MOVE [row/column] [direction] [row/column] [direction]\n" +
+                "Where [row/column] is an integer, and direction is UP/DOWN/LEFT/RIGHT");
     }
 
     public static void main(String[] args) {

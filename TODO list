@@ -5,6 +5,8 @@ add a "single move still possible" error when provided with double moves
 
 change the logs on client and server to be prettier
 
+check if the client is in game
+
 The client should be able to withstand:
  - randomly dropping connections
  - malformed networking messages

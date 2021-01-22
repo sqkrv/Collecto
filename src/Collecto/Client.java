@@ -277,6 +277,28 @@ public class Client implements Runnable {
         }
     }
 
+    protected void disconnect() {
+        if (socket != null) {
+            try {
+                socket.close();
+                in.close();
+                out.close();
+                socket = null;
+                game = null;
+//                in = null;
+//                out = null;
+//                socket = null;
+            } catch (IOException e) {
+                TUI.printError("IOException while disconnecting from server");
+            }
+            TUI.print("Connection to server lost");
+        }
+    }
+
+    protected void exit() {
+        System.exit(0);
+    }
+
     protected void printHelp() {
         TUI.printHelpClient();
     }
