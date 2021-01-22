@@ -2,32 +2,23 @@ package Collecto.Tests;
 
 import Collecto.ComputerPlayer;
 import Collecto.GridBoard;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import Collecto.Ball;
 import java.util.*;
-import org.junit.jupiter.api.function.Executable;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import static Collecto.Misc.Move;
+import static Collecto.Tests.Misc.copyArray;
+
 class ComputerPlayerTest {
     ComputerPlayer player;
-    ArrayList<ArrayList<Ball>> emptyBoardArray = new ArrayList<>();
-    ArrayList<ArrayList<Ball>> testBoardArray = new ArrayList<>();
-
-    private ArrayList<ArrayList<Ball>> copyArray(ArrayList<ArrayList<Ball>> array) {
-        ArrayList<ArrayList<Ball>> copy_array = new ArrayList<>();
-
-        for (ArrayList<Ball> row : array) {
-            copy_array.add((ArrayList<Ball>) row.clone());
-        }
-
-        return copy_array;
-    }
+    static ArrayList<ArrayList<Ball>> emptyBoardArray = new ArrayList<>();
+    static ArrayList<ArrayList<Ball>> testBoardArray = new ArrayList<>();
+    private static ArrayList<ArrayList<Ball>> sampleBoardArray;
 
     @BeforeAll
-    void setEmptyBoardArray() {
+    static void setEmptyBoardArray() {
         for (int i = 0; i < 7; i++) {
             emptyBoardArray.add(new ArrayList<>());
             for (int j = 0; j < 7; j++) {
@@ -37,7 +28,7 @@ class ComputerPlayerTest {
     }
 
     @BeforeAll
-    void setTestBoardArray() {
+    static void setTestBoardArray() {
         testBoardArray = copyArray(emptyBoardArray);
         testBoardArray.get(0).set(0, Ball.YELLOW);
         testBoardArray.get(0).set(6, Ball.YELLOW);
@@ -52,6 +43,11 @@ class ComputerPlayerTest {
         testBoardArray.get(0).set(6, Ball.BLUE);
     }
 
+    @BeforeAll
+    public static void setSampleBoardArray() {
+        sampleBoardArray = Misc.sampleBoardArray();
+    }
+
     @BeforeEach
     void setUp() {
         player = new ComputerPlayer();
@@ -63,10 +59,50 @@ class ComputerPlayerTest {
         assertThrows(AssertionError.class, () -> new ComputerPlayer(4));
         player = new ComputerPlayer(3);
         assertEquals(player.getLevel(), 3);
-   }
+    }
 
-   @Test
-    void makeBeginnerMove() {
-        // assertEquals(player.makeMove(new GridBoard(testBoardArray))[0], 0);
-   }
+    @Nested
+    @DisplayName("Beginner moves")
+    class beginnerMoves {
+        @Test
+        void makeBeginnerMoveSingle() {
+            ArrayList<ArrayList<Ball>> array = copyArray(emptyBoardArray);
+            array.get(0).set(0, Ball.BLUE);
+            array.get(0).set(6, Ball.BLUE);
+
+            Move[] moves = player.makeBeginnerMove(new GridBoard(array));
+            assertTrue(
+                    moves[0].equals(new Move(0, GridBoard.Direction.LEFT)) ||
+                            moves[0].equals(new Move(0, GridBoard.Direction.RIGHT))
+            );
+        }
+
+        @Test
+        void makeBeginnerMoveDouble() {
+            ArrayList<ArrayList<Ball>> array = copyArray(emptyBoardArray);
+            array.get(0).set(0, Ball.BLUE);
+            array.get(0).set(3, Ball.RED);
+            array.get(0).set(6, Ball.BLUE);
+
+            Move[] moves = player.makeBeginnerMove(new GridBoard(array));
+            assertEquals(moves[0], new Move(3, GridBoard.Direction.DOWN));
+            assertTrue(
+                    moves[0].equals(new Move(0, GridBoard.Direction.LEFT)) ||
+                            moves[0].equals(new Move(0, GridBoard.Direction.RIGHT))
+            );
+        }
+    }
+
+    @Test
+    void makeIntermediateMove() {
+        ArrayList<ArrayList<Ball>> array = copyArray(sampleBoardArray);
+
+        Move[] moves = player.makeIntermediateMove(new GridBoard(array));
+        assertEquals(moves[0], new Move(3, GridBoard.Direction.LEFT));
+
+        array.get(0).set(3, Ball.RED);
+        array.get(1).set(3, Ball.PURPLE);
+        moves = player.makeIntermediateMove(new GridBoard(array));
+        assertEquals(moves[0], new Move(3, GridBoard.Direction.DOWN));
+    }
 }

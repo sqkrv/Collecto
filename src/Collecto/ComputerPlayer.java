@@ -40,17 +40,12 @@ public class ComputerPlayer extends Player {
      * @return Move
      */
 
-    public Move[] makeMove() {
+    public Move[] makeMove(GridBoard board) {
         switch (level) {
             case 1:
-                Move[] move = makeBeginnerMove();
-                if (move != null) {
-                    return move;
-                } else {
-                    return makeBeginnerMoveDouble();
-                }
+                return makeBeginnerMove(board);
             case 2:
-                return makeIntermediateMove();
+                return makeIntermediateMove(board);
             case 3:
                 return makeExpertMove();
             default:
@@ -58,9 +53,7 @@ public class ComputerPlayer extends Player {
         }
     }
 
-    private Move[] makeBeginnerMove() {
-        GridBoard board = new GridBoard(); //TODO: change this to be better (e.g. use a copy of the actual board)
-        // single move
+    private Move[] makeBeginnerMoveSingle(GridBoard board) {
         Move move;
         for (int i = 0; i < 7; i++) {
             for (GridBoard.Direction direction : GridBoard.Direction.values()) {
@@ -71,20 +64,24 @@ public class ComputerPlayer extends Player {
         return null;
     }
 
-    private Move[] makeBeginnerMoveDouble() {
-        GridBoard board = new GridBoard(); //TODO: change this to be better (e.g. use a copy of the actual board)
-        // double move
+    public Move[] makeBeginnerMove(GridBoard board) {
         GridBoard copy;
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 7; j++) {
+
+        // check if single move exists
+        Move[] moves = makeBeginnerMoveSingle(board);
+        if (moves != null) return moves;
+
+        // if not - find two moves
+        for (int j = 0; j < 7; j++) {
+            for (GridBoard.Direction direction : GridBoard.Direction.values()) {
                 copy = board.deepCopy();
-                copy.moveLine(new Move(j, GridBoard.Direction.values()[i]));
+                copy.moveLine(new Move(j, direction));
                 if (!board.toString().equals(copy.toString())) {
                     for (int k = 0; k < 7; k++) {
-                        if (copy.isMoveValid(new Move(j, GridBoard.Direction.RIGHT))) return new Move[]{new Move(j + i*7), new Move(k, GridBoard.Direction.RIGHT)};
-//                        else if (copy.isMoveValid(new Move(j, GridBoard.Direction.LEFT))) return new int[]{j + i*7, 7 + k};
-//                        else if (copy.isMoveValid(new Move(j, GridBoard.Direction.UP))) return new int[]{j + i*7, 14 + k};
-//                        else if (copy.isMoveValid(new Move(j, GridBoard.Direction.DOWN))) return new int[]{j + i*7, 21 + k};
+                        for (GridBoard.Direction direction2 : GridBoard.Direction.values()) {
+                            if (copy.isMoveValid(new Move(j, direction2)))
+                                return new Move[]{new Move(j, direction), new Move(k, direction2)};
+                        }
                     }
                 }
             }
@@ -97,18 +94,20 @@ public class ComputerPlayer extends Player {
         return copy.removeBalls(move.getLine(), move.getLine());
     }
 
-    private Move[] makeIntermediateMove() {
+    public Move[] makeIntermediateMove(GridBoard board) {
         // double move
-        GridBoard board = new GridBoard(); //TODO: change this to be better (e.g. use a copy of the actual board)
+//        GridBoard board = new GridBoard(); //TODO: change this to be better (e.g. use a copy of the actual board)
         HashMap<Move, Integer> movesResults = new HashMap<>();
-        int max = 0;
+        int max;
         ArrayList<Ball> balls;
+        Move move1;
         Move move;
         GridBoard copy;
         for (int j = 0; j < 7; j++) {
             for (int i = 0; i < 4; i++) {
                 copy = board.deepCopy();
-                copy.moveLine(new Move(j, GridBoard.Direction.values()[i]));
+                move1 = new Move(j, GridBoard.Direction.values()[i]);
+//                copy.moveLine();
                 if (!board.toString().equals(copy.toString())) {
                     for (int k = 0; k < 7; k++) {
                         max = 0;
@@ -134,6 +133,7 @@ public class ComputerPlayer extends Player {
             }
         }
 
+        assert maxEntry != null;
         return new Move[]{maxEntry.getKey()};
     }
 
