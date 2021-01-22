@@ -78,8 +78,19 @@ public class Game {
         }
     }
 
+    public GridBoard getBoard() {
+        return board;
+    }
 
-//    private final Player[] players = new Player[2];
+    public boolean isMoveValid(Move[] moves) {
+        if (moves[1] == null) {
+            return board.isMoveValid(moves[0]);
+        } else {
+            return board.isMoveValid(moves[0], moves[1]);
+        }
+    }
+
+    //    private final Player[] players = new Player[2];
 //    private final Scanner input = new Scanner(System.in);
 //    public boolean myTurn = false;
 //
@@ -121,7 +132,7 @@ public class Game {
 //        boolean inTwoMoves;
 //        GridBoard.Direction direction;
 //        Player player = players[(new Random()).nextInt(2)];
-//
+
 //        while (inTwoMoves = board.possibleMoves()) {
 //            System.out.println(TUI.colouredBoard(board));
 //            System.out.println(player.getName() + ", make a move");
@@ -203,4 +214,5 @@ public class Game {
 //        game.start();
 //        game.play();
 //    }
+
 }
