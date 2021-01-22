@@ -481,9 +481,10 @@ public class GridBoard {
         StringBuilder result = new StringBuilder();
         for (ArrayList<Ball> array : board) {
             for (Ball ball : array) {
-                for (int i = 0; i < Ball.values().length; i++) {
-                    if (Ball.values()[i].equals(ball)) result.append(Server.DELIMITER).append(ball.name());
-                }
+                result.append(Server.DELIMITER).append(ball.ordinal());
+//                for (int i = 0; i < Ball.values().length; i++) {
+//                    if (Ball.values()[i].equals(ball)) result.append(Server.DELIMITER).append(ball.name());
+//                }
             }
         }
         return result.toString();
