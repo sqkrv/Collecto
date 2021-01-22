@@ -13,9 +13,8 @@ public class Server implements Runnable {
     private final InetAddress ip;
 
     private final ArrayList<PlayerHandler> playerClients;
-    private ArrayList<String> players = new ArrayList<>();
-    private LinkedList<PlayerHandler> queue = new LinkedList<>();
-    private ArrayList<Game> games;
+    private final LinkedList<PlayerHandler> queue = new LinkedList<>();
+    private final ArrayList<Game> games = new ArrayList<>();
 
     protected final static String DESCRIPTION = "the server of Stan and Hein";
     public static final char DELIMITER = '~';
