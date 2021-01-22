@@ -364,14 +364,24 @@ public class Client implements Runnable {
                     direction = GridBoard.Direction.valueOf(params[2].toUpperCase());
                     if (params.length >= 4) direction2 = GridBoard.Direction.valueOf(params[4].toUpperCase());
                 } catch (IllegalArgumentException i) {
-                    TUI.print("Direction was wrong, please try again or typ help");
+                    TUI.print("Direction is wrong, please try again or type help");
                     return;
                 } // TODO: handle what happens when the input is wrong
-                Move firstMove = new Move(Integer.parseInt(params[1]), direction);
+                Integer line = Misc.parseInt(params[1]);
+                if (line == null) {
+                    TUI.print("Line parameter is wrong, please try again");
+                    return;
+                }
+                Move firstMove = new Move(line - 1, direction);
                 Move secondMove = null;
                 message += Character.toString(DELIMITER) + firstMove.push();
                 if (params.length >= 4) {
-                    secondMove = new Move(Integer.parseInt(params[3]), direction2);
+                    line = Misc.parseInt(params[3]);
+                    if (line == null) {
+                        TUI.print("Line parameter is wrong, please try again");
+                        return;
+                    }
+                    secondMove = new Move(line - 1, direction2);
                     message += Character.toString(DELIMITER) + secondMove.push();
                 }
                 if (game.isMoveValid(new Move[]{firstMove, secondMove})) {
