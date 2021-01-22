@@ -31,13 +31,13 @@ public class Controller {
             case "QUEUE":
                 client.sendMessage(params[0]);
                 break;
-            case "move":
+            case "MOVE":
                 handleMove(params);
                 break;
-            case "disconnect":
+            case "DISCONNECT":
                 client.disconnect();
                 break;
-            case "exit":
+            case "EXIT":
                 client.disconnect();
                 client.exit();
                 break;

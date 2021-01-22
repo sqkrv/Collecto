@@ -39,7 +39,7 @@ public class Server implements Runnable {
                 System.out.println(Misc.logTime()+"New player connected");
                 PlayerHandler player = new PlayerHandler(socket, this);
                 new Thread(player).start();
-                playerClients.add(player);
+//                playerClients.add(player);
             }
         } catch (IOException e) {
             e.printStackTrace();
