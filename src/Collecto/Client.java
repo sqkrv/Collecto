@@ -270,11 +270,33 @@ public class Client implements Runnable {
             out.write(message);
             out.newLine();
             out.flush();
-            logs.add(TUI.log("You sent    - " + message));
+            logs.add(TUI.log("[OUT] " + message));
         } catch (IOException e) {
             TUI.printError("sendmessage");
             e.printStackTrace();
         }
+    }
+
+    protected void disconnect() {
+        if (socket != null) {
+            try {
+                socket.close();
+                in.close();
+                out.close();
+                socket = null;
+                game = null;
+//                in = null;
+//                out = null;
+//                socket = null;
+            } catch (IOException e) {
+                TUI.printError("IOException while disconnecting from server");
+            }
+            TUI.print("Connection to server lost");
+        }
+    }
+
+    protected void exit() {
+        System.exit(0);
     }
 
     protected void printHelp() {
@@ -342,7 +364,7 @@ public class Client implements Runnable {
         try {
             String line;
             while ((line = in.readLine()) != null) {
-                logs.add(TUI.log("Server sent - " + line));
+                logs.add(TUI.log("[IN ] " + line));
                 handleCommandIn(line);
             }
 //        } catch (SocketException ignored) {

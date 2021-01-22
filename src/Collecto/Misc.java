@@ -10,13 +10,7 @@ public class Misc {
     static DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd.MM");
 
     public static String logTime() {
-        return logTime(true);
-    }
-
-    public static String logTime(boolean dash) {
-        String string = "["+currentDateTime()+"] ";
-        if (dash) return string+"— ";
-        return string;
+        return "["+currentDateTime()+"] ";
     }
 
     public static String currentDateTime() {

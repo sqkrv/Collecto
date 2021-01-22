@@ -106,15 +106,11 @@ public class TUI {
 
     public static void printError(String error) {
         error = "["+"\u001B[31m" + "ERROR" + "\u001B[0m"+"] " + error;
-        log(error, false);
+        log(error);
     }
 
     public static String log(String log) {
         return Misc.logTime() + log;
-    }
-
-    public static String log(String log, boolean dash) {
-        return Misc.logTime(dash) + log;
     }
 
     public static void printHelpClient() {

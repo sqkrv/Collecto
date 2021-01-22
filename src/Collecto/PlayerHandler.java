@@ -51,7 +51,7 @@ public class PlayerHandler implements Runnable {
 
         this.closeConnection();
         server.removePlayer(this);
-        TUI.print(TUI.log("("+getName()+") — Client disconnected", false));
+        TUI.print(TUI.log("("+getName()+") — Client disconnected"));
         // this is where the client is fully disconnected from the server
         if (game != null) {
             opponent.handleGameOver("DISCONNECT");
@@ -59,10 +59,10 @@ public class PlayerHandler implements Runnable {
     }
 
     private void handleCommand(String message) {
-        TUI.print(TUI.log("("+name+") — "+message, false)); // TODO DEBUG
+        TUI.print(TUI.log( "[IN ] " + "("+name+") — "+message));
         message = message.strip();
         if (message == null) {
-            sendError("suck");
+            sendError("suck"); // TODO perhaps change this vulgar wording or smth
             return;
         }
         String[] params = message.split(Character.toString(DELIMITER));
@@ -85,7 +85,6 @@ public class PlayerHandler implements Runnable {
                 break;
             default:
                 sendError("Server could not recognize message \""+message+"\"");
-                TUI.print("Could not recognize players message, sorry!"); // TODO DEBUG
         }
     }
 
@@ -189,6 +188,7 @@ public class PlayerHandler implements Runnable {
                 sendError("invalid");
             } else {
                 respondMove(firstMove, secondMove);
+                respondMove(firstMove, secondMove);
                 Move move = new Move(firstMove);
                 if (secondMove == -1) {
                     opponent.game.makeMove(move);
@@ -242,11 +242,12 @@ public class PlayerHandler implements Runnable {
 
     private void sendMessage(String message) {
         try {
+            TUI.print(TUI.log("[OUT] " + message));
             out.write(message);
             out.newLine();
             out.flush();
         } catch (IOException e) {
-            // TODO: handle exception
+            TUI.print(TUI.log("IOException while trying to send a message to " + getName()));
         }
     }
 
@@ -278,7 +279,7 @@ public class PlayerHandler implements Runnable {
     }
 
     protected void closeConnection() {
-        TUI.print(TUI.log(""));
+        TUI.print(TUI.log("Closed connection with " + getName()));
         try {
             in.close();
             out.close();
