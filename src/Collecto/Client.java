@@ -21,6 +21,7 @@ public class Client implements Runnable {
     private final ClientController controller;
 
     private Game game = null;
+    private ArrayList<String> logs = new ArrayList<>();
 
     protected boolean chatSupport = false;
     protected boolean rankSupport = false;
@@ -169,7 +170,6 @@ public class Client implements Runnable {
     }
 
     private void handleMoveServer(String[] params) {
-        // TODO: add the move to the Game variable
         if (params.length  <= 1) {
             TUI.printError("Unknown move made");
         } else {
@@ -261,10 +261,16 @@ public class Client implements Runnable {
             out.write(message);
             out.newLine();
             out.flush();
-            TUI.printLog("You sent    - " + message);
+            logs.add(TUI.log("You sent    - " + message));
         } catch (IOException e) {
             TUI.printError("sendmessage");
             e.printStackTrace();
+        }
+    }
+
+    protected void printLogs() {
+        for (String log : logs) {
+            TUI.print(log);
         }
     }
 
@@ -274,13 +280,14 @@ public class Client implements Runnable {
                 socket.close();
                 in.close();
                 out.close();
+                socket = null;
 //                in = null;
 //                out = null;
 //                socket = null;
             } catch (IOException e) {
                 TUI.printError("IOException while disconnecting from server");
             }
-            TUI.printLog("Disconnected from server");
+            logs.add(TUI.log("Disconnected from server"));
         }
     }
 
@@ -294,12 +301,13 @@ public class Client implements Runnable {
         try {
             String line;
             while ((line = in.readLine()) != null) {
-                TUI.printLog("Server sent - "+line);
+                logs.add(TUI.log("Server sent - "+line));
                 handleCommandIn(line);
             }
         } catch (IOException e) {
             TUI.printError("IOException while listening to server");
             disconnect();
+            exit();
         }
     }
 

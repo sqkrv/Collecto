@@ -49,7 +49,7 @@ public class PlayerHandler implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println(Misc.logTime(false)+"("+name+") — Client disconnected");
+        TUI.print(TUI.log("("+name+") — Client disconnected", false));
         // this is where the client is fully disconnected from the server
         if (game != null) {
             opponent.handleGameOver("DISCONNECT");
@@ -57,7 +57,7 @@ public class PlayerHandler implements Runnable {
     }
 
     private void handleCommand(String message) {
-        System.out.println(Misc.logTime(false)+"("+name+") — "+message); // TODO DEBUG
+        TUI.print(TUI.log("("+name+") — "+message, false)); // TODO DEBUG
         message = message.strip();
         if (message == null) {
             sendError("suck");
@@ -83,7 +83,7 @@ public class PlayerHandler implements Runnable {
                 break;
             default:
                 sendError("Server could not recognize message \""+message+"\"");
-                System.out.println("Could not recognize players message, sorry!"); // TODO DEBUG
+                TUI.print("Could not recognize players message, sorry!"); // TODO DEBUG
         }
     }
 
@@ -138,7 +138,10 @@ public class PlayerHandler implements Runnable {
         } else if (!server.checkPlayer(params[1])) {
             sendError("You are already logged in");
         } else {
-            sendError("You are already logged in");
+            this.name = params[1];
+            server.addPlayer(this);
+            this.loggedIn = true;
+            sendMessage("LOGIN");
         }
     }
 
@@ -169,14 +172,14 @@ public class PlayerHandler implements Runnable {
     private void handleMove(String[] params) {
         if (!myTurn) {
             sendError("Not your turn");
-        } else if (params.length <= 1) {
-            sendError("Insufficient arguments provided");
+        } else if (params.length != 2 && params.length != 3) {
+            sendError("Invalid amount of arguments provided");
         } else {
             int firstMove;
             int secondMove = -1;
-            firstMove = parseInt(params[0]);
+            firstMove = parseInt(params[1]);
             if (params.length > 2) {
-                secondMove = parseInt(params[1]);
+                secondMove = parseInt(params[2]);
             }
             if (!isPushValid(firstMove) ||
                     (secondMove != -1 && !isPushValid(secondMove))) {
@@ -272,7 +275,7 @@ public class PlayerHandler implements Runnable {
     }
 
     protected void closeConnection() {
-        System.out.println(Misc.logTime());
+        TUI.print(TUI.log(""));
         try {
             in.close();
             out.close();

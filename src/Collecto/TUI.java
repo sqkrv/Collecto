@@ -109,12 +109,12 @@ public class TUI {
         log(error, false);
     }
 
-    public static void printLog(String log) {
-        System.out.println(Misc.logTime() + log);
+    public static String log(String log) {
+        return Misc.logTime() + log;
     }
 
-    public static void printLog(String log, boolean dash) {
-        System.out.println(Misc.logTime(dash) + log);
+    public static String log(String log, boolean dash) {
+        return Misc.logTime(dash) + log;
     }
 
     public static void main(String[] args) {

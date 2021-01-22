@@ -31,14 +31,13 @@ public class Server implements Runnable {
 
     @Override
     public void run() {
-        try (ServerSocket ssocket = new ServerSocket(port, 0, ip)) {
+        try (ServerSocket ssocket = new ServerSocket(port)) {
 //        try (ServerSocket ssocket = new ServerSocket(port)) {  // for external server
             while (true) {
                 Socket socket = ssocket.accept();
-                System.out.println(Misc.logTime()+"New player connected");
+                TUI.print(TUI.log("New player connected"));
                 PlayerHandler player = new PlayerHandler(socket, this);
                 new Thread(player).start();
-//                playerClients.add(player);
             }
         } catch (IOException e) {
             e.printStackTrace();
