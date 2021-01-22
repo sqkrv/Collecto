@@ -277,27 +277,6 @@ public class Client implements Runnable {
         }
     }
 
-    protected void disconnect() {
-        if (socket != null) {
-            try {
-                socket.close();
-                in.close();
-                out.close();
-                socket = null;
-//                in = null;
-//                out = null;
-//                socket = null;
-            } catch (IOException e) {
-                TUI.printError("IOException while disconnecting from server");
-            }
-            TUI.print("Connection to server lost");
-        }
-    }
-
-    protected void exit() {
-        System.exit(0);
-    }
-
     protected void printHelp() {
         TUI.printHelpClient();
     }
@@ -323,33 +302,37 @@ public class Client implements Runnable {
     }
 
     protected void handleMove(String[] params) {
-        if (params.length != 3 && params.length != 5) {
-            TUI.print("Invalid amount of arguments, please try again");
-        } else {
-            String message = params[0];
-            message = message.replaceAll(" +", " ");
-            GridBoard.Direction direction;
-            GridBoard.Direction direction2 = null;
-            try {
-                direction = GridBoard.Direction.valueOf(params[2].toUpperCase());
-                if (params.length >= 4) direction2 = GridBoard.Direction.valueOf(params[4].toUpperCase());
-            } catch (IllegalArgumentException i) {
-                TUI.print("Direction was wrong, please try again or typ help");
-                return;
-            }
-            Move firstMove = new Move(Integer.parseInt(params[1]), direction);
-            Move secondMove = null;
-            message += DELIMITER +
-                    firstMove.push();
-            if (params.length >= 4) {
-                secondMove = new Move(Integer.parseInt(params[3]), direction2);
-                message += DELIMITER + secondMove.push();
-            }
-            if (game.isMoveValid(new Move[]{firstMove, secondMove})) {
-                sendMessage(message);
+        if (game != null) {
+            if (params.length != 3 && params.length != 5) {
+                TUI.print("Invalid amount of arguments, please try again");
             } else {
-                TUI.print("Move is not valid, please try again or ask for a hint");
+                String message = params[0];
+                message = message.replaceAll(" +", " ");
+                GridBoard.Direction direction;
+                GridBoard.Direction direction2 = null;
+                try {
+                    direction = GridBoard.Direction.valueOf(params[2].toUpperCase());
+                    if (params.length >= 4) direction2 = GridBoard.Direction.valueOf(params[4].toUpperCase());
+                } catch (IllegalArgumentException i) {
+                    TUI.print("Direction was wrong, please try again or typ help");
+                    return;
+                }
+                Move firstMove = new Move(Integer.parseInt(params[1]), direction);
+                Move secondMove = null;
+                message += DELIMITER +
+                        firstMove.push();
+                if (params.length >= 4) {
+                    secondMove = new Move(Integer.parseInt(params[3]), direction2);
+                    message += DELIMITER + secondMove.push();
+                }
+                if (game.isMoveValid(new Move[]{firstMove, secondMove})) {
+                    sendMessage(message);
+                } else {
+                    TUI.print("Move is not valid, please try again or ask for a hint");
+                }
             }
+        } else {
+            TUI.print("You are not in a game");
         }
     }
 
