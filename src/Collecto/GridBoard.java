@@ -114,7 +114,7 @@ public class GridBoard {
         return balls;
     }
 
-    ArrayList<Ball> removeBalls(int row, int column) {
+    private ArrayList<Ball> removeBalls(int row, int column) {
         Ball ball;
         ArrayList<Ball> balls = new ArrayList<>();
         if (checkSurroundings(row , column)) {
