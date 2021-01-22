@@ -281,7 +281,7 @@ public class Client implements Runnable {
             out.write(message);
             out.newLine();
             out.flush();
-            TUI.print(Misc.logTime() + "You sent    - " + message);
+            TUI.printLog("You sent    - " + message);
         } catch (IOException e) {
             TUI.printError("sendmessage");
             e.printStackTrace();
@@ -300,7 +300,7 @@ public class Client implements Runnable {
             } catch (IOException e) {
                 TUI.printError("IOException while disconnecting from server");
             }
-            TUI.print(Misc.logTime() + "Disconnected from server");
+            TUI.printLog("Disconnected from server");
         }
     }
 
@@ -325,7 +325,7 @@ public class Client implements Runnable {
         try {
             TUI.print("Connecting to " + address + ":" + port);
             sock = new Socket(address, port);
-            TUI.print(Misc.logTime()+"Connected");
+            TUI.printLog("Connected");
         } catch (IOException e) {
             TUI.printError("IOException while trying to connect");
             e.printStackTrace();
@@ -344,7 +344,7 @@ public class Client implements Runnable {
         try {
             String line;
             while ((line = in.readLine()) != null) {
-                TUI.print(Misc.logTime()+"Server sent - "+line);
+                TUI.printLog("Server sent - "+line);
                 handleCommandIn(line);
             }
         } catch (IOException e) {

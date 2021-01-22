@@ -105,8 +105,16 @@ public class TUI {
     }
 
     public static void printError(String error) {
-        String cerror = "["+"\u001B[31m" + "ERROR" + "\u001B[0m"+"]";
-        System.out.println(Misc.logTime(false)+cerror+" "+error);
+        error = "["+"\u001B[31m" + "ERROR" + "\u001B[0m"+"] " + error;
+        printLog(error, false);
+    }
+
+    public static void printLog(String log) {
+        System.out.println(Misc.logTime() + log);
+    }
+
+    public static void printLog(String log, boolean dash) {
+        System.out.println(Misc.logTime(dash) + log);
     }
 
     public static void main(String[] args) {
