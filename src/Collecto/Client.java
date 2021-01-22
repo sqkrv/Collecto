@@ -301,29 +301,6 @@ public class Client implements Runnable {
         }
     }
 
-    protected void disconnect() {
-        if (socket != null) {
-            try {
-                socket.close();
-                in.close();
-                out.close();
-                socket = null;
-                game = null;
-//                in = null;
-//                out = null;
-//                socket = null;
-            } catch (IOException e) {
-                TUI.printError("IOException while disconnecting from server");
-            }
-            TUI.print("Connection to server lost");
-        }
-        printLogs(); //TODO: remove this when done with debugging
-    }
-
-    protected void exit() {
-        System.exit(0);
-    }
-
     protected void printHelp() {
         TUI.printHelpClient();
     }
@@ -356,7 +333,7 @@ public class Client implements Runnable {
 //            } else if (game.) {
 //                TUI.print("");
 //            }
-            } else {
+            else {
                 String message = params[0];
                 GridBoard.Direction direction;
                 GridBoard.Direction direction2 = null;
@@ -379,7 +356,7 @@ public class Client implements Runnable {
                 } else {
                     TUI.print("Move is not valid, please try again or ask for a hint");
                 }
-//            }
+            }
 //        } else {
 //            TUI.print("You are not in a game");
         }
