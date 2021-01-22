@@ -3,6 +3,8 @@ package Collecto;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static Collecto.Misc.Move;
+
 public class Player {
 //    private final ArrayList<Ball> balls;
     private final HashMap<Ball, Integer> count = new HashMap<>();
@@ -21,7 +23,7 @@ public class Player {
         }
     }
 
-    public int[] makeMove() {
+    public Move[] makeMove() {
         //TODO: add this method
         return null;
     }
