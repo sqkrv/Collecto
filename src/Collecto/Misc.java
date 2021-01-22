@@ -39,6 +39,15 @@ public class Misc {
         return null;
     }
 
+    protected static Integer parseInt(String string) {
+        try {
+            return Integer.parseInt(string);
+        } catch (IllegalArgumentException e) {
+//            sendError("Wrong arguments provided");
+        }
+        return null;
+    }
+
 //    public static void main(String[] args) {
 //        System.out.println(logTime());
 //    }

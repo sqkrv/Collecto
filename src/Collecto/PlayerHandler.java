@@ -181,11 +181,19 @@ public class PlayerHandler implements Runnable {
         } else if (params.length != 2 && params.length != 3) {
             sendError("Invalid amount of arguments provided");
         } else {
-            int firstMove;
-            int secondMove = -1;
-            firstMove = parseInt(params[1]);
+            Integer firstMove;
+            Integer secondMove = -1;
+            firstMove = Misc.parseInt(params[1]);
+            if (firstMove == null) {
+                sendError("Wrong move arguments provided");
+                return;
+            }
             if (params.length > 2) {
-                secondMove = parseInt(params[2]);
+                secondMove = Misc.parseInt(params[2]);
+                if (secondMove == null) {
+                    sendError("Wrong second move arguments provided");
+                    return;
+                }
             }
             if (!isPushValid(firstMove) ||
                     (secondMove != -1 && !isPushValid(secondMove))) {
@@ -272,15 +280,6 @@ public class PlayerHandler implements Runnable {
     private void sendError(String error) {
         error = "ERROR" + DELIMITER + error;
         sendMessage(error);
-    }
-
-    protected Integer parseInt(String string) {
-        try {
-            return Integer.parseInt(string);
-        } catch (IllegalArgumentException e) {
-            sendError("Wrong arguments provided");
-        }
-        return null;
     }
 
     protected void closeConnection() {
