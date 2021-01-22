@@ -268,12 +268,6 @@ public class Client implements Runnable {
         }
     }
 
-    protected void printLogs() {
-        for (String log : logs) {
-            TUI.print(log);
-        }
-    }
-
     protected void disconnect() {
         if (socket != null) {
             try {

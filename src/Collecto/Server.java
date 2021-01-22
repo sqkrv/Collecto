@@ -60,7 +60,7 @@ public class Server implements Runnable {
      */
     public boolean checkPlayer(String playerName) {
         for (PlayerHandler client : playerClients) {
-            if (client.name.equals(playerName)) return false;
+            if (client.getName().equals(playerName)) return false;
         }
         return true;
     }
@@ -83,7 +83,7 @@ public class Server implements Runnable {
     protected ArrayList<String> getPlayers() {
         ArrayList<String> players = new ArrayList<>();
         for (PlayerHandler client : playerClients) {
-            players.add(client.name);
+            players.add(client.getName());
         }
         return players;
     }
@@ -94,7 +94,7 @@ public class Server implements Runnable {
             // TODO: check whether queue synchronisation works properly, possible add to other methods as well
                 PlayerHandler player1 = queue.get(0);
                 PlayerHandler player2 = queue.get(1);
-                Game game = new Game(player1.name, player2.name);
+                Game game = new Game(player1.getName(), player2.getName());
                 inGame.add(player1);
                 inGame.add(player2);
                 player1.startNewGame(game, player2);

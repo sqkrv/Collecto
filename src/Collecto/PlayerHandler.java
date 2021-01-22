@@ -285,4 +285,8 @@ public class PlayerHandler implements Runnable {
         }
         server.removePlayer(this);
     }
+
+    public String getName() {
+        return name;
+    }
 }
