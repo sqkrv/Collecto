@@ -14,7 +14,7 @@ public class Server implements Runnable {
 
     private final ArrayList<PlayerHandler> playerClients;
     private final LinkedList<PlayerHandler> queue = new LinkedList<>();
-    private final ArrayList<Game> games = new ArrayList<>();
+    private final ArrayList<PlayerHandler> inGame = new ArrayList<>();
 
     protected final static String DESCRIPTION = "the server of Stan and Hein";
     public static final char DELIMITER = '~';
@@ -72,8 +72,10 @@ public class Server implements Runnable {
     }
 
     protected void addToQueue(PlayerHandler client) {
-        queue.add(client);
-        startNewGame();
+        if (!inGame.contains(client)) {
+            queue.add(client);
+            startNewGame();
+        }
     }
 
     protected void removeFromQueue(PlayerHandler client) {
@@ -89,13 +91,16 @@ public class Server implements Runnable {
     }
 
     private void startNewGame() {
-        if (queue.size() >= 2) {
-            // TODO: check whether queue synchronisation works properly
-            synchronized (queue) {
-                Game game = new Game();
-                games.add(game);
-                queue.get(0).startNewGame(game, true, queue.get(1));
-                queue.get(1).startNewGame(game, false, queue.get(0));
+        synchronized (queue) {
+            if (queue.size() >= 2) {
+            // TODO: check whether queue synchronisation works properly, possible add to other methods as well
+                PlayerHandler player1 = queue.get(0);
+                PlayerHandler player2 = queue.get(1);
+                Game game = new Game(player1.name, player2.name);
+                inGame.add(player1);
+                inGame.add(player2);
+                player1.startNewGame(game, player2);
+                player2.startNewGame(game, player1);
                 removeFromQueue(queue.get(0));
                 removeFromQueue(queue.get(0));
             }
