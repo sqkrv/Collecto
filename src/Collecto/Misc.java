@@ -3,6 +3,7 @@ package Collecto;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 
 public class Misc {
     static DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd.MM");
@@ -67,6 +68,14 @@ public class Misc {
 
         public int push() {
             return line + direction.ordinal()*7;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Move move = (Move) o;
+            return line == move.line && direction == move.direction;
         }
     }
 }
