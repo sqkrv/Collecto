@@ -5,7 +5,6 @@ import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Objects;
 
 public class Misc {
     static DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd.MM");
