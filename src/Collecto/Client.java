@@ -32,6 +32,7 @@ public class Client implements Runnable {
 
     private boolean saidHello = false;
     private boolean loggedIn = false;
+    private boolean useAI = false;
 
     public Client(Socket socket) throws IOException {
         this.socket = socket;
@@ -204,12 +205,39 @@ public class Client implements Runnable {
     private void useAI() {
         String answer = controller.promptUser("Do you want to use smartass computer to play for you? (y/n)");
         if (answer.equalsIgnoreCase("y") || answer.equalsIgnoreCase("yes")) {
-            answer = controller.promptUser("What level of AI do you want to use? (1/2)");
-            if (answer.equals("1") || answer.equals("2")) {
+            controller.choosingAI = true;
+            try {
+                synchronized (this) {
+                    this.wait();
+                }
+            } catch (InterruptedException e) {
+                logs.add(TUI.log("InterruptedException while waiting for useAI sequence"));
+            }
+            if (useAI) {
                 // TODO use an AI and disable some user inputs
+            } else {
+
             }
         }
         TUI.print("AI will not be used. It's in your hands my friend");
+    }
+
+    protected void chooseAI(String answer) {
+        while (true) {
+            if (answer.equals("y")) {
+                useAI = true;
+                break;
+            } else if (answer.equals("n")) {
+                useAI = false;
+                break;
+            } else {
+                TUI.print("Please respond with y or n");
+                answer = controller.promptUser();
+            }
+            synchronized (this) {
+                notify();
+            }
+        }
     }
 
 //    /**
@@ -277,6 +305,29 @@ public class Client implements Runnable {
         }
     }
 
+    protected void disconnect() {
+        if (socket != null) {
+            try {
+                socket.close();
+                in.close();
+                out.close();
+                socket = null;
+                game = null;
+//                in = null;
+//                out = null;
+//                socket = null;
+            } catch (IOException e) {
+                TUI.printError("IOException while disconnecting from server");
+            }
+            TUI.print("Connection to server lost");
+        }
+        printLogs(); //TODO: remove this when done with debugging
+    }
+
+    protected void exit() {
+        System.exit(0);
+    }
+
     protected void printHelp() {
         TUI.printHelpClient();
     }
@@ -291,7 +342,7 @@ public class Client implements Runnable {
             }
             TUI.print(answer);
         } else {
-            TUI.print("WOW! No more moves possible!");
+            TUI.print("No more moves possible!");
         }
     }
 

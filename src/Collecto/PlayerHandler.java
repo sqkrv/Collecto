@@ -168,8 +168,10 @@ public class PlayerHandler implements Runnable {
         }
         if (!server.queued(this)) {
             server.addToQueue(this);
+            TUI.print(TUI.log("added " + getName() + " to queue"));
         } else {
             server.removeFromQueue(this);
+            TUI.print(TUI.log("removed " + getName() + " from queue"));
         }
     }
 

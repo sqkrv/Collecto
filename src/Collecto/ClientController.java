@@ -2,6 +2,7 @@ package Collecto;
 
 public class ClientController extends Controller {
     private final Client client;
+    protected boolean choosingAI = false;
 
     public final static String COMMANDS = "LIST, QUEUE, MOVE, LOGS, HELP, DISCONNECT, EXIT";
 
@@ -20,9 +21,15 @@ public class ClientController extends Controller {
         if (input == null) {
             return;
         }
+
 //        input = input.replaceAll(" +", " ");
         String[] params = input.trim().split(" ");
         params[0] = params[0].toUpperCase();
+
+        if (choosingAI) {
+            client.chooseAI(params[0]);
+        }
+
         switch (params[0]) {
             case "DISCONNECT":
                 client.disconnect();
@@ -30,6 +37,12 @@ public class ClientController extends Controller {
             case "EXIT":
                 client.disconnect();
                 client.exit();
+                break;
+            case "HELP":
+                client.printHelp();
+                break;
+            case "HINT":
+                client.hint();
                 break;
             case "LOGS":
                 client.printLogs();
