@@ -268,6 +268,12 @@ public class Client implements Runnable {
         }
     }
 
+    protected void printLogs() {
+        for (String log : logs) {
+            TUI.print(log);
+        }
+    }
+
     protected void disconnect() {
         if (socket != null) {
             try {
@@ -295,14 +301,15 @@ public class Client implements Runnable {
         try {
             String line;
             while ((line = in.readLine()) != null) {
-                logs.add(TUI.log("Server sent - "+line));
+                logs.add(TUI.log("Server sent - " + line));
                 handleCommandIn(line);
             }
+//        } catch (SocketException ignored) {
         } catch (IOException e) {
             TUI.printError("IOException while listening to server");
-            disconnect();
-            exit();
         }
+        disconnect();
+        exit();
     }
 
     private void startUpClient() {
