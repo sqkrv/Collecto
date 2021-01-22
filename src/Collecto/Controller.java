@@ -10,12 +10,12 @@ public class Controller {
         this.scanner = new Scanner(System.in);
     }
 
-    protected String promptUser(String message) {
+    protected synchronized String promptUser(String message) {
         TUI.print(message);
         return promptUser();
     }
 
-    protected String promptUser() {
+    protected synchronized String promptUser() {
         return scanner.nextLine().trim();
     }
 
