@@ -6,15 +6,17 @@ import static Collecto.Misc.Move;
 
 public class Game {
     private final GridBoard board;
-//    public final Player player1;
-//    public final Player player2;
-//    private boolean turnPlayer1;
+    public Player player1;
+    public Player player2;
+    private boolean turnPlayer1 = true;
 
-    public Game() {
-        board = new GridBoard();
+    public Game(String player1Name, String player2Name) {
+        this(new GridBoard(), player1Name, player2Name);
     }
 
-    public Game(GridBoard board) {
+    public Game(GridBoard board, String player1Name, String player2Name) {
+        player1 = new Player(player1Name);
+        player2 = new Player(player2Name);
         this.board = board;
     }
 
@@ -29,8 +31,12 @@ public class Game {
     public boolean makeMove(Move move) {
         if (board.isMoveValid(move)) {
             board.moveLine(move);
-            board.removeBalls(move);
-            printBoard();
+            if (turnPlayer1) {
+                player1.addBalls(board.removeBalls(move));
+            } else {
+                player2.addBalls(board.removeBalls(move));
+            }
+            turnPlayer1 = !turnPlayer1;
             return true;
         } else {
             return false;
@@ -40,10 +46,7 @@ public class Game {
     public boolean makeMove(Move first, Move second) {
         if (board.isMoveValid(first, second)) {
             board.moveLine(first);
-            board.moveLine(second);
-            board.removeBalls(second);
-            printBoard();
-            return true;
+            return makeMove(second);
         } else {
             return false;
         }
@@ -58,7 +61,21 @@ public class Game {
     }
 
     public boolean possibleMoves() {
-        return false;
+        return board.possibleMoves();
+    }
+
+    public String getWinner() {
+        if (player1.getPoints() > player2.getPoints()) {
+            return player1.getName();
+        } else if (player2.getPoints() > player1.getPoints()) {
+            return player2.getName();
+        } else if (player1.showBalls().size() > player2.showBalls().size()) {
+            return player1.getName();
+        } else if (player2.showBalls().size() > player1.showBalls().size()) {
+            return player2.getName();
+        } else {
+            return null;
+        }
     }
 
 
