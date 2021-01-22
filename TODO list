@@ -3,7 +3,7 @@ Add indication of who plays (human or AI) and difficulty level if AI
 
 add a "single move still possible" error when provided with double moves
 
-change the logs on client and server to be prettier
+out logs server
 
 The client should be able to withstand:
  - randomly dropping connections
