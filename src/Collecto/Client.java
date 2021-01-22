@@ -3,12 +3,11 @@ package Collecto;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 import static Collecto.Server.DELIMITER;
-import static Collecto.Misc.Move;
+import static Collecto.Misc.*;
 
 public class Client implements Runnable {
     private Player player; //TODO: find use for this
@@ -19,7 +18,7 @@ public class Client implements Runnable {
     private BufferedReader in;
     private BufferedWriter out; // TODO again, Buffered or Print
     private final Scanner scanner;
-    private final Controller controller;
+    private final ClientController controller;
 
     private Game game = null;
 
@@ -41,29 +40,7 @@ public class Client implements Runnable {
         in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
         out = new BufferedWriter(new OutputStreamWriter(this.socket.getOutputStream()));
         scanner = new Scanner(System.in);
-        controller = new Controller(this);
-    }
-
-    private static InetAddress checkIP(String ip) {
-        try {
-            return InetAddress.getByName(ip);
-        } catch (UnknownHostException e) {
-            TUI.print(USAGE);
-            TUI.printError("host " + ip + " unknown");
-            System.exit(0);
-        }
-        return null;
-    }
-
-    private static Integer checkPort(String port) {
-        try {
-            return Integer.parseInt(port);
-        } catch (NumberFormatException e) {
-            TUI.print(USAGE);
-            TUI.printError("port " + port + " is not an integer");
-            System.exit(0);
-        }
-        return null;
+        controller = new ClientController(this);
     }
 
 //    private static void clearConnection() {
@@ -311,36 +288,6 @@ public class Client implements Runnable {
         System.exit(0);
     }
 
-    public static void main(String[] args) throws IOException {
-        if (args.length != 3) {
-            TUI.print(USAGE);
-            System.exit(0);
-        }
-//        if (args.length == 0) connectToServer();
-//            String name = args[0];
-            int port;
-            InetAddress address;
-            Socket sock = null;
-
-            address = checkIP(args[1]);
-            port = checkPort(args[2]);
-
-            try {
-                TUI.print("Connecting to " + address + ":" + port);
-                sock = new Socket(address, port);
-                TUI.printLog("Connected");
-            } catch (IOException e) {
-                TUI.printError("IOException while trying to connect");
-                e.printStackTrace();
-                System.exit(0);
-            }
-
-            Client client = new Client(sock);
-            Thread InputHandler = new Thread(client);
-            InputHandler.start();
-            client.startUpClient();
-    }
-
     @Override
     public void run() {
         // Server messages listener
@@ -405,9 +352,45 @@ public class Client implements Runnable {
         TUI.print("You have been logged in under the name: " + answer);
     }
 
-//    private static void connectToServer() {
-//
-//    }
+    public static void main(String[] args) throws IOException {
+        InetAddress ip;
+        Integer port;
+        Controller controller = new Controller();
+
+        if (args.length != 2) {
+            // IP prompt
+            ip = controller.promptIP();
+
+            // Port prompt
+            port = controller.promptPort();
+        } else {
+            ip = checkIP(args[0]);
+            port = checkPort(args[1]);
+            if (ip == null) ip = controller.promptIP();
+            if (port == null) port = controller.promptPort();
+        }
+
+        Socket sock;
+
+        while (true) {
+            try {
+                TUI.print("Trying to connect to " + ip + ":" + port);
+                sock = new Socket(ip, port);
+                TUI.print("Connected");
+                break;
+            } catch (IOException e) {
+                TUI.printError("IOException while trying to connect");
+            }
+            TUI.print("Cannot connect to server on "+ip+":"+port+". Try different parameters.");
+            ip = controller.promptIP();
+            port = controller.promptPort();
+        }
+
+        Client client = new Client(sock);
+        Thread InputHandler = new Thread(client);
+        InputHandler.start();
+        client.startUpClient();
+    }
 }
 
 
