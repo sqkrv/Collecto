@@ -111,7 +111,7 @@ public class Client implements Runnable {
         if (params.length <= 1) {
             TUI.printError("(no description of the error provided)");
         } else {
-            TUI.printError("Server sent an error"+params[0]);
+            TUI.printError("Server sent an error");
         }
         if (!saidHello) {
             TUI.printError("No HELLO response received");
@@ -281,7 +281,7 @@ public class Client implements Runnable {
             out.write(message);
             out.newLine();
             out.flush();
-            TUI.print("You sent: " + message);
+            TUI.print(Misc.logTime() + "You sent    - " + message);
         } catch (IOException e) {
             TUI.printError("sendmessage");
             e.printStackTrace();
