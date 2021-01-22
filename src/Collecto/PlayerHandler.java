@@ -51,7 +51,7 @@ public class PlayerHandler implements Runnable {
         }
         System.out.println(Misc.logTime(false)+"("+name+") — Client disconnected");
         // this is where the client is fully disconnected from the server
-        // TODO give win to opponent
+        opponent.handleGameOver("DISCONNECT");
     }
 
     private void handleCommand(String message) {
@@ -178,19 +178,47 @@ public class PlayerHandler implements Runnable {
                 sendError("invalid");
             } else {
                 respondMove(firstMove, secondMove);
+                Move move = new Move(firstMove);
                 if (secondMove == -1) {
-                    // TODO: let the other client make the move too
-                    game.makeMove(new Move(firstMove));
+                    opponent.game.makeMove(move);
+                    game.makeMove(move);
                 } else {
-                    game.makeMove(new Move(firstMove), new Move(secondMove));
+                    Move move2 = new Move(secondMove);
+                    opponent.game.makeMove(move, move2);
+                    game.makeMove(move, move2);
                 }
-                // TODO: add check to see if the game is over
+                if (!game.possibleMoves()) {
+                    opponent.handleGameOver();
+                    handleGameOver();
+                }
             }
         }
     }
 
     private boolean isPushValid(int push) {
         return 0 <= push && push <= 27;
+    }
+
+    private void handleGameOver() {
+        String winner = game.getWinner();
+        if (winner == null) {
+            handleGameOver("DRAW");
+        } else {
+            handleGameOver("VICTORY");
+        }
+    }
+
+    private void handleGameOver(String reason) {
+        String message = "GAMEOVER" + DELIMITER + reason;
+        if (!reason.equals("DRAW")) {
+            message += DELIMITER;
+            if (reason.equals("DISCONNECT")) {
+                message += this.name;
+            } else {
+                message += game.getWinner();
+            }
+        }
+        sendMessage(message);
     }
 
     private void respondMove(int firstMove, int secondMove) {
@@ -211,14 +239,14 @@ public class PlayerHandler implements Runnable {
         }
     }
 
-    protected void startNewGame(Game game, boolean starter, PlayerHandler opponent) {
+    protected void startNewGame(Game game, PlayerHandler opponent) {
         this.game = game;
-        myTurn = starter;
         String appendage;
-        if (starter) {
-            appendage = DELIMITER + name + DELIMITER + opponent;
+        if (game.player1.getName().equals(this.name)) {
+            appendage = DELIMITER + this.name + DELIMITER + opponent;
+            myTurn = true;
         } else {
-            appendage = DELIMITER + opponent.name + DELIMITER + name;
+            appendage = DELIMITER + opponent.name + DELIMITER + this.name;
         }
         this.opponent = opponent;
         sendMessage("NEWGAME" + game.getBoardString() + appendage);
