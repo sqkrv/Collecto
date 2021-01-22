@@ -1,5 +1,7 @@
 package Collecto;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -23,9 +25,30 @@ public class Misc {
         return dateFormat.format(date);
     }
 
-    public static void main(String[] args) {
-        System.out.println(logTime());
+    public static InetAddress checkIP(String ip) {
+        try {
+            return InetAddress.getByName(ip);
+        } catch (UnknownHostException e) {
+//            TUI.print(message);
+        }
+        return null;
     }
+
+    public static Integer checkPort(String string_port) {
+        int port;
+        try {
+            port = Integer.parseInt(string_port);
+            if (port > 0) return port;
+            return null;
+        } catch (NumberFormatException e) {
+//            TUI.print(message);
+        }
+        return null;
+    }
+
+//    public static void main(String[] args) {
+//        System.out.println(logTime());
+//    }
 
     public static class Move {
         private final GridBoard.Direction direction;
