@@ -15,9 +15,9 @@ public class Client implements Runnable {
     private static final String USAGE = "usage: <name> <address> <port>";
     public final static String DESCRIPTION = "Client of Hein and Stan";
 
-    private final Socket socket;
-    private final BufferedReader in;
-    private final BufferedWriter out; // TODO again, Buffered or Print
+    private Socket socket;
+    private BufferedReader in;
+    private BufferedWriter out; // TODO again, Buffered or Print
     private final Scanner scanner;
     private final Controller controller;
 
@@ -288,6 +288,26 @@ public class Client implements Runnable {
         }
     }
 
+    protected void disconnect() {
+        if (socket != null) {
+            try {
+                socket.close();
+                in.close();
+                out.close();
+//                in = null;
+//                out = null;
+//                socket = null;
+            } catch (IOException e) {
+                TUI.printError("IOException while disconnecting from server");
+            }
+            TUI.print(Misc.logTime() + "Disconnected from server");
+        }
+    }
+
+    protected void exit() {
+        System.exit(0);
+    }
+
     public static void main(String[] args) throws IOException {
         if (args.length != 3) {
             TUI.print(USAGE);
@@ -329,6 +349,7 @@ public class Client implements Runnable {
             }
         } catch (IOException e) {
             TUI.printError("IOException while listening to server");
+            disconnect();
         }
     }
 

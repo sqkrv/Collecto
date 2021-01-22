@@ -1,5 +1,6 @@
 package Collecto;
 
+import java.util.Locale;
 import java.util.Scanner;
 
 public class Controller {
@@ -25,13 +26,20 @@ public class Controller {
             return;
         }
         String[] params = input.trim().split(" ");
-        switch (params[0]) {
-            case "LIST":
-            case "QUEUE":
+        switch (params[0].toLowerCase()) {
+            case "list":
+            case "queue":
                 client.sendMessage(params[0]);
                 break;
-            case "MOVE":
+            case "move":
                 handleMove(params);
+                break;
+            case "disconnect":
+                client.disconnect();
+                break;
+            case "exit":
+                client.disconnect();
+                client.exit();
                 break;
             default:
                 TUI.printError("Unknown command: " + params[0]);
