@@ -164,6 +164,7 @@ public class Client implements Runnable {
             TUI.print(params[2] + " has won!");
         }
         game = null;
+        useAI = false;
     }
 
     private void handleMoveServer(String[] params) {
@@ -218,20 +219,6 @@ public class Client implements Runnable {
 
         }
         TUI.print("AI will not be used. It's in your hands my friend");
-    }
-
-    protected void chooseAI(String[] answer) {
-        if (answer[0].equals("y")) {
-            useAI = true;
-        } else if (answer[0].equals("n")) {
-            useAI = false;
-        } else {
-            TUI.print("Please specify if you will use an AI with y or n");
-            return;
-        }
-        synchronized (this) {
-            notify();
-        }
     }
 
 //    /**
@@ -299,29 +286,6 @@ public class Client implements Runnable {
         }
     }
 
-    protected void disconnect() {
-        if (socket != null) {
-            try {
-                socket.close();
-                in.close();
-                out.close();
-                socket = null;
-                game = null;
-//                in = null;
-//                out = null;
-//                socket = null;
-            } catch (IOException e) {
-                TUI.printError("IOException while disconnecting from server");
-            }
-            TUI.print("Connection to server lost");
-        }
-        printLogs(); //TODO: remove this when done with debugging
-    }
-
-    protected void exit() {
-        System.exit(0);
-    }
-
     protected void printHelp() {
         TUI.printHelpClient();
     }
@@ -332,7 +296,7 @@ public class Client implements Runnable {
             Move[] moves = ComputerPlayer.makeBeginnerMove(game.getBoard());
             String answer = "You can still do " + moves[0].getLine() + moves[0].getDirection();
             if (moves.length == 2) {
-                answer += "and then " + moves[1].getLine() + moves[1].getDirection();
+                answer += "and then " + (moves[1].getLine() + 1) + " "+ moves[1].getDirection();
             }
             TUI.print(answer);
         } else {
@@ -350,6 +314,10 @@ public class Client implements Runnable {
         if (game != null) {
             if (params.length != 3 && params.length != 5) {
                 TUI.print("Invalid amount of arguments, please try again");
+            }
+//            } else if (game.) {
+//                TUI.print("");
+//            }
             } else {
                 String message = params[0];
                 message = message.replaceAll(" +", " ");
@@ -364,8 +332,7 @@ public class Client implements Runnable {
                 }
                 Move firstMove = new Move(Integer.parseInt(params[1]), direction);
                 Move secondMove = null;
-                message += DELIMITER +
-                        firstMove.push();
+                message += DELIMITER + firstMove.push();
                 if (params.length >= 4) {
                     secondMove = new Move(Integer.parseInt(params[3]), direction2);
                     message += DELIMITER + secondMove.push();
@@ -375,9 +342,9 @@ public class Client implements Runnable {
                 } else {
                     TUI.print("Move is not valid, please try again or ask for a hint");
                 }
-            }
-        } else {
-            TUI.print("You are not in a game");
+//            }
+//        } else {
+//            TUI.print("You are not in a game");
         }
     }
 
