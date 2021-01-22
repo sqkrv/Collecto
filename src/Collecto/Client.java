@@ -312,7 +312,7 @@ public class Client implements Runnable {
     }
 
     public static void main(String[] args) throws IOException {
-        if (args.length != 3 && args.length != 0) {
+        if (args.length != 3) {
             TUI.print(USAGE);
             System.exit(0);
         }
@@ -409,5 +409,3 @@ public class Client implements Runnable {
 //
 //    }
 }
-
-
