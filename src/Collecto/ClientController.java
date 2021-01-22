@@ -38,12 +38,6 @@ public class ClientController extends Controller {
                 client.disconnect();
                 client.exit();
                 break;
-            case "HELP":
-                client.printHelp();
-                break;
-            case "HINT":
-                client.hint();
-                break;
             case "LOGS":
                 client.printLogs();
                 break;

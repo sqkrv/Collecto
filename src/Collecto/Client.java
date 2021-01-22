@@ -220,24 +220,6 @@ public class Client implements Runnable {
         TUI.print("AI will not be used. It's in your hands my friend");
     }
 
-    protected void chooseAI(String answer) {
-        while (true) {
-            if (answer.equals("y")) {
-                useAI = true;
-                break;
-            } else if (answer.equals("n")) {
-                useAI = false;
-                break;
-            } else {
-                TUI.print("Please respond with y or n");
-                answer = controller.promptUser();
-            }
-            synchronized (this) {
-                notify();
-            }
-        }
-    }
-
 //    /**
 //     * handles commands sent by the user using the terminal
 //     * @requires userInput != null
@@ -301,29 +283,6 @@ public class Client implements Runnable {
             TUI.printError("sendmessage");
             e.printStackTrace();
         }
-    }
-
-    protected void disconnect() {
-        if (socket != null) {
-            try {
-                socket.close();
-                in.close();
-                out.close();
-                socket = null;
-                game = null;
-//                in = null;
-//                out = null;
-//                socket = null;
-            } catch (IOException e) {
-                TUI.printError("IOException while disconnecting from server");
-            }
-            TUI.print("Connection to server lost");
-        }
-        printLogs(); //TODO: remove this when done with debugging
-    }
-
-    protected void exit() {
-        System.exit(0);
     }
 
     protected void printHelp() {
