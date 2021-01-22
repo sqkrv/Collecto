@@ -1,7 +1,7 @@
 Have the client verify the legality of a move before sending it to the server
 Add indication of who plays (human or AI) and difficulty level if AI
 
-add a "single move still possible" error when provided with double moves
+add a "single move still possible" error when provided with double moves in both server and client
 
 out logs server
 
@@ -12,8 +12,9 @@ The client should be able to withstand:
 
 Go through all classes and improve them / fix TODOs
 
+check in client if a player is not moving to give the correct response
 
-
+figure out if toString() in enum Direction is important
 
 
 write a BUNCH of tests (both unit and integration tests)

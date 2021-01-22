@@ -83,7 +83,7 @@ public class Misc {
         }
 
         public int push() {
-            return line + direction.ordinal()*7;
+            return (line + direction.ordinal()*7);
         }
 
         @Override

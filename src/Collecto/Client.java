@@ -209,16 +209,31 @@ public class Client implements Runnable {
         try {
             synchronized (this) {
                 this.wait();
+                controller.choosingAI = false;
             }
         } catch (InterruptedException e) {
             logs.add(TUI.log("InterruptedException while waiting for useAI sequence"));
         }
         if (useAI) {
+            TUI.print("AI engaged. Sit back and enjoy");
             // TODO use an AI and disable some user inputs
         } else {
-
+            TUI.print("AI will not be used. It's in your hands my friend");
         }
-        TUI.print("AI will not be used. It's in your hands my friend");
+    }
+
+    protected void chooseAI(String[] answer) {
+        if (answer[0].equals("Y")) {
+            useAI = true;
+        } else if (answer[0].equals("N")) {
+            useAI = false;
+        } else {
+            TUI.print("Please specify if you will use an AI with y or n");
+            return;
+        }
+        synchronized (this) {
+            notify();
+        }
     }
 
 //    /**
@@ -286,6 +301,29 @@ public class Client implements Runnable {
         }
     }
 
+    protected void disconnect() {
+        if (socket != null) {
+            try {
+                socket.close();
+                in.close();
+                out.close();
+                socket = null;
+                game = null;
+//                in = null;
+//                out = null;
+//                socket = null;
+            } catch (IOException e) {
+                TUI.printError("IOException while disconnecting from server");
+            }
+            TUI.print("Connection to server lost");
+        }
+        printLogs(); //TODO: remove this when done with debugging
+    }
+
+    protected void exit() {
+        System.exit(0);
+    }
+
     protected void printHelp() {
         TUI.printHelpClient();
     }
@@ -320,7 +358,6 @@ public class Client implements Runnable {
 //            }
             } else {
                 String message = params[0];
-                message = message.replaceAll(" +", " ");
                 GridBoard.Direction direction;
                 GridBoard.Direction direction2 = null;
                 try {
@@ -329,7 +366,7 @@ public class Client implements Runnable {
                 } catch (IllegalArgumentException i) {
                     TUI.print("Direction was wrong, please try again or typ help");
                     return;
-                }
+                } // TODO: handle what happens when the input is wrong
                 Move firstMove = new Move(Integer.parseInt(params[1]), direction);
                 Move secondMove = null;
                 message += DELIMITER + firstMove.push();
