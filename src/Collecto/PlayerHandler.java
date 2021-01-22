@@ -51,7 +51,9 @@ public class PlayerHandler implements Runnable {
         }
         System.out.println(Misc.logTime(false)+"("+name+") — Client disconnected");
         // this is where the client is fully disconnected from the server
-        opponent.handleGameOver("DISCONNECT");
+        if (game != null) {
+            opponent.handleGameOver("DISCONNECT");
+        }
     }
 
     private void handleCommand(String message) {
@@ -125,13 +127,16 @@ public class PlayerHandler implements Runnable {
         // CRYPT stuff if we do the bonus
         if (!saidHello) {
             sendError("Please say Hello before trying to log in");
-        } else if (params.length < 1) {
-            sendError("Insufficient parameters provided");
-        } else if (server.checkPlayer(params[1])) {
-            this.name = params[1];
-            this.loggedIn = true;
-            server.addPlayer(this);
-            sendMessage("LOGIN");
+        } else if (loggedIn) {
+            sendError("You cannot log in twice with the same client");
+        } else if (params.length != 2) {
+            sendError("Invalid number of parameters provided");
+        } else if (params[1].isBlank()) {
+            sendError("Username is blank");
+        } else if (params[1].length() > 32) {
+            sendError("Login name is too long");
+        } else if (!server.checkPlayer(params[1])) {
+            sendError("You are already logged in");
         } else {
             sendError("You are already logged in");
         }
