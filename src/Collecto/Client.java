@@ -9,18 +9,16 @@ import static Collecto.Server.DELIMITER;
 import static Collecto.Misc.*;
 
 public class Client implements Runnable {
-    private Player player; //TODO: find use for this
-    private static final String USAGE = "usage: <name> <address> <port>";
     public final static String DESCRIPTION = "Client of Hein and Stan";
 
     private Socket socket;
     private BufferedReader in;
     private BufferedWriter out; // TODO again, Buffered or Print
-    private final Scanner scanner;
     private final ClientController controller;
 
     private Game game = null;
     private ArrayList<String> logs = new ArrayList<>();
+    private String playerName;
 
     protected boolean chatSupport = false;
     protected boolean rankSupport = false;
@@ -39,7 +37,6 @@ public class Client implements Runnable {
         this.socket = socket;
         in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
         out = new BufferedWriter(new OutputStreamWriter(this.socket.getOutputStream()));
-        scanner = new Scanner(System.in);
         controller = new ClientController(this);
     }
 
@@ -147,7 +144,7 @@ public class Client implements Runnable {
         } else {
             String players = params[1];
             for (int i = 2; i < params.length; i++) {
-                players += " " + player;
+                players += " " + params[i];
             }
             TUI.print("Current players on server:\n" + players);
         }
@@ -280,12 +277,80 @@ public class Client implements Runnable {
         }
     }
 
-    protected void printHelp() {
-        TUI.printHelpClient();
+    protected void disconnect() {
+        if (socket != null) {
+            try {
+                socket.close();
+                in.close();
+                out.close();
+                socket = null;
+//                in = null;
+//                out = null;
+//                socket = null;
+            } catch (IOException e) {
+                TUI.printError("IOException while disconnecting from server");
+            }
+            TUI.print("Connection to server lost");
+        }
     }
 
     protected void exit() {
         System.exit(0);
+    }
+
+    protected void printHelp() {
+        TUI.printHelpClient();
+    }
+
+    protected void hint() {
+        TUI.print("Your friendly neighbourhood client is generating a hint, hold on...");
+        if (game.possibleMoves()) {
+            Move[] moves = ComputerPlayer.makeBeginnerMove(game.getBoard());
+            String answer = "You can still do " + moves[0].getLine() + moves[0].getDirection();
+            if (moves.length == 2) {
+                answer += "and then " + moves[1].getLine() + moves[1].getDirection();
+            }
+            TUI.print(answer);
+        } else {
+            TUI.print("WOW! No more moves possible!");
+        }
+    }
+
+    protected void printLogs() {
+        for (String log : logs) {
+            TUI.print(log);
+        }
+    }
+
+    protected void handleMove(String[] params) {
+        if (params.length != 3 && params.length != 5) {
+            TUI.print("Invalid amount of arguments, please try again");
+        } else {
+            String message = params[0];
+            message = message.replaceAll(" +", " ");
+            GridBoard.Direction direction;
+            GridBoard.Direction direction2 = null;
+            try {
+                direction = GridBoard.Direction.valueOf(params[2].toUpperCase());
+                if (params.length >= 4) direction2 = GridBoard.Direction.valueOf(params[4].toUpperCase());
+            } catch (IllegalArgumentException i) {
+                TUI.print("Direction was wrong, please try again or typ help");
+                return;
+            }
+            Move firstMove = new Move(Integer.parseInt(params[1]), direction);
+            Move secondMove = null;
+            message += DELIMITER +
+                    firstMove.push();
+            if (params.length >= 4) {
+                secondMove = new Move(Integer.parseInt(params[3]), direction2);
+                message += DELIMITER + secondMove.push();
+            }
+            if (game.isMoveValid(new Move[]{firstMove, secondMove})) {
+                sendMessage(message);
+            } else {
+                TUI.print("Move is not valid, please try again or ask for a hint");
+            }
+        }
     }
 
     @Override
@@ -342,6 +407,8 @@ public class Client implements Runnable {
             try {
                 TUI.print("Please enter a name to log in to the server:");
                 answer = controller.promptUser();
+                answer = answer.replaceAll(" +", " ");
+                this.playerName = answer;
                 sendMessage("LOGIN" + Server.DELIMITER + answer);
                 synchronized (this) {
                     this.wait();

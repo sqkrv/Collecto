@@ -1,25 +1,25 @@
-Add startup functionality to client
-Add startup functionality to server
-
-When server disconnects before you sent a name to log in with, and then you do send a name, there is an error (catch this error)
-
-Go through all classes and improve them / fix TODOs
-
 Have the client verify the legality of a move before sending it to the server
 Add indication of who plays (human or AI) and difficulty level if AI
-Ask server for a different port if one is already taken
-Ask a client user for an IP and a port
-Add help command
-Add hint command
-Terminate client cleanly when connection to the server is dropped
 
 add a "single move still possible" error when provided with double moves
 
-? Change the way prompts work to only use the same prompt
+change the logs on client and server to be prettier
 
 The client should be able to withstand:
  - randomly dropping connections
  - malformed networking messages
  - Illegal moves
 
+Go through all classes and improve them / fix TODOs
+
+
+
+
+
+write a BUNCH of tests (both unit and itegration tests)
+
+write TONS of javadoc
+
+write some in line comments
+--> (important: should not be about 'what' is happening, rather 'why' it is happening)
 

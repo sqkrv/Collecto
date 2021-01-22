@@ -51,7 +51,7 @@ public class PlayerHandler implements Runnable {
 
         this.closeConnection();
         server.removePlayer(this);
-        TUI.print(TUI.log("("+name+") — Client disconnected", false));
+        TUI.print(TUI.log("("+getName()+") — Client disconnected", false));
         // this is where the client is fully disconnected from the server
         if (game != null) {
             opponent.handleGameOver("DISCONNECT");
@@ -188,6 +188,7 @@ public class PlayerHandler implements Runnable {
                     (secondMove != -1 && !isPushValid(secondMove))) {
                 sendError("invalid");
             } else {
+                respondMove(firstMove, secondMove);
                 respondMove(firstMove, secondMove);
                 Move move = new Move(firstMove);
                 if (secondMove == -1) {

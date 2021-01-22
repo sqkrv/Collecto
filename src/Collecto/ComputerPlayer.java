@@ -46,8 +46,6 @@ public class ComputerPlayer extends Player {
                 return makeBeginnerMove(board);
             case 2:
                 return makeIntermediateMove(board);
-            case 3:
-                return makeExpertMove();
             default:
                 return null;
         }
@@ -150,9 +148,5 @@ public class ComputerPlayer extends Player {
 
         assert maxEntry != null;
         return maxEntry.getKey();
-    }
-
-    private Move[] makeExpertMove() {
-        return null;
     }
 }
