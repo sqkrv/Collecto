@@ -6,7 +6,12 @@ import static Collecto.Misc.Move;
 
 public class GridBoard {
     public enum Direction {
-        RIGHT, LEFT, DOWN, UP
+        LEFT, RIGHT, UP, DOWN;
+
+        @Override
+        public String toString() {
+            return super.toString();
+        }
     }
 
     private ArrayList<ArrayList<Ball>> board;

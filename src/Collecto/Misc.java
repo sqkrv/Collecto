@@ -64,5 +64,9 @@ public class Misc {
         public int getLine() {
             return line;
         }
+
+        public int push() {
+            return line + direction.ordinal()*7;
+        }
     }
 }
