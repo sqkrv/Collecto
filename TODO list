@@ -5,8 +5,6 @@ add a "single move still possible" error when provided with double moves
 
 change the logs on client and server to be prettier
 
-check if the client is in game
-
 The client should be able to withstand:
  - randomly dropping connections
  - malformed networking messages
@@ -18,10 +16,14 @@ Go through all classes and improve them / fix TODOs
 
 
 
-write a BUNCH of tests (both unit and itegration tests)
+write a BUNCH of tests (both unit and integration tests)
 
 write TONS of javadoc
 
 write some in line comments
 --> (important: should not be about 'what' is happening, rather 'why' it is happening)
 
+
+
+
+command for the client when s/he is in queue to choose whether s/he wants to play with AI when there are no other players in q
