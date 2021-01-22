@@ -233,6 +233,7 @@ public class PlayerHandler implements Runnable {
                 message += game.getWinner();
             }
         }
+        server.gameEnded(this);
         sendMessage(message);
     }
 
