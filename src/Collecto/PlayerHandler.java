@@ -123,12 +123,13 @@ public class PlayerHandler implements Runnable {
     private void handleLogin(String[] params) {
         // CRYPT stuff if we do the bonus
         if (!saidHello) {
-            sendError("Please say Hello first");
+            sendError("Please say Hello before trying to log in");
         } else if (params.length < 1) {
             sendError("Insufficient parameters provided");
         } else if (server.checkPlayer(params[1])) {
             this.name = params[1];
             this.loggedIn = true;
+            server.addPlayer(this);
             sendMessage("LOGIN");
         } else {
             sendError("You are already logged in");

@@ -47,8 +47,15 @@ public class Server implements Runnable {
         }
     }
 
+    protected void addPlayer(PlayerHandler player) {
+        this.playerClients.add(player);
+        this.players.add(player.name);
+    }
+
     protected void removePlayer(PlayerHandler player) {
         this.playerClients.remove(player);
+        this.players.remove(player.name);
+        // TODO: improve this
     }
 
     /**
@@ -82,7 +89,7 @@ public class Server implements Runnable {
     }
 
     private void startNewGame() {
-        if (queue.size() > 2) {
+        if (queue.size() >= 2) {
             Game game = new Game();
             games.add(game);
             queue.get(0).startNewGame(game, true, queue.get(1).name);

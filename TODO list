@@ -1,14 +1,15 @@
 Missing functionality from serverside:
  - Check for login name length
- - List doesn't work
- - Queue doesn't work
+ - Queue doesn't work [POSSIBLY FIXED: CHECK WITH TWO PLAYERS]
  - Game is not implemented (correctly)
 
-Add log tracking which is not shown to the user
+Add log tracking which is not shown to the user (using TUI.printLog, also handles ERROR)
 Add log command to controller to allow user to view logs
     - add showAllLogs to TUI, add showLastLog (for server) ?
 Add connect functionality to client
 Add reconnect functionality to client
+
+When server disconnects before you sent a name to log in with, and then you do send a name, there is an error (catch this error)
 
 ? move Misc class to other classes (TUI, seperate Move class, etc.)
 
