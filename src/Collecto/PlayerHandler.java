@@ -126,14 +126,16 @@ public class PlayerHandler implements Runnable {
 
     private void handleLogin(String[] params) {
         // CRYPT stuff if we do the bonus
-        params[1] = params[1].replaceAll(" +", " ");
         if (!saidHello) {
             sendError("Please say Hello before trying to log in");
         } else if (loggedIn) {
             sendError("You cannot log in twice with the same client");
         } else if (params.length != 2) {
             sendError("Invalid number of parameters provided");
-        } else if (params[1].isBlank()) {
+            return;
+        }
+        params[1] = params[1].replaceAll(" +", " ");
+        if (params[1].isBlank()) {
             sendError("Username is blank");
         } else if (params[1].length() > 32) {
             sendError("Login name is too long");
