@@ -1,9 +1,5 @@
 package Collecto;
 
-import java.net.InetAddress;
-import java.util.Locale;
-import java.util.Scanner;
-
 public class ClientController extends Controller {
     private final Client client;
 
@@ -34,12 +30,6 @@ public class ClientController extends Controller {
             case "EXIT":
                 client.disconnect();
                 client.exit();
-                break;
-            case "HELP":
-                client.printHelp();
-                break;
-            case "HINT":
-                client.hint();
                 break;
             case "LOGS":
                 client.printLogs();
