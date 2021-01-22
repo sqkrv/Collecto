@@ -127,6 +127,7 @@ public class PlayerHandler implements Runnable {
 
     private void handleLogin(String[] params) {
         // CRYPT stuff if we do the bonus
+        params[1] = params[1].replaceAll(" +", " ");
         if (!saidHello) {
             sendError("Please say Hello before trying to log in");
         } else if (loggedIn) {
@@ -187,7 +188,6 @@ public class PlayerHandler implements Runnable {
                     (secondMove != -1 && !isPushValid(secondMove))) {
                 sendError("invalid");
             } else {
-                respondMove(firstMove, secondMove);
                 respondMove(firstMove, secondMove);
                 Move move = new Move(firstMove);
                 if (secondMove == -1) {
