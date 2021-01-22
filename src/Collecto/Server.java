@@ -1,20 +1,20 @@
 package Collecto;
 
 import java.io.IOException;
-import java.net.InetAddress;
+import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class Server implements Runnable {
     private final int port;
-    private final InetAddress ip;
 
     private final ArrayList<PlayerHandler> playerClients;
     private final LinkedList<PlayerHandler> queue = new LinkedList<>();
     private final ArrayList<PlayerHandler> inGame = new ArrayList<>();
+
+    private static final ServerController controller = new ServerController();
 
     protected final static String DESCRIPTION = "the server of Stan and Hein";
     public static final char DELIMITER = '~';
@@ -24,10 +24,9 @@ public class Server implements Runnable {
     protected boolean authSupport = false;
     protected boolean cryptSupport = false;
 
-    public Server(InetAddress ip, int port) {
+    public Server(int port) {
         playerClients = new ArrayList<>();
         this.port = port;
-        this.ip = ip;
     }
 
     @Override
@@ -108,32 +107,30 @@ public class Server implements Runnable {
     }
 
     public static void main(String[] args) {
-        if (args.length != 2) {
-            System.out.println("dude");
-            System.exit(0);
+        Integer port = 0;
+
+        if (args.length != 1) {
+            // Port prompt
+            port = controller.promptPort();
         }
 
-        InetAddress ip = null;
-        try {
-            ip = InetAddress.getByName(args[0]);
-        } catch (UnknownHostException e) {
-            System.out.println("dude");
-            System.out.println("your ip "+args[0]+" sucks");
-            System.exit(0);
+        // Port check
+        while (true) {
+            try {
+                ServerSocket s = new ServerSocket(port);
+                s.close();
+                break;
+            } catch (BindException e) {
+                TUI.print("Cannot start server on port "+port);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            port = controller.promptPort();
         }
 
-        int port = 0;
-        try {
-            port = Integer.parseInt(args[1]);
-        } catch (NumberFormatException e) {
-            System.out.println("dude");
-            System.out.println("your port "+args[1]+" sucks");
-            System.exit(0);
-        }
-
-        Server server = new Server(ip, port);
-        System.out.println(Misc.logTime()+"Server starting");
+        TUI.print(TUI.log("Server starting"));
+        Server server = new Server(port);
         new Thread(server).start();
-        System.out.println(Misc.logTime()+"Server started on "+ip+":"+port);
+        TUI.print(TUI.log("Server started on port "+port));
     }
 }
