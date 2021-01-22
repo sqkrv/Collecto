@@ -301,6 +301,29 @@ public class Client implements Runnable {
         }
     }
 
+    protected void disconnect() {
+        if (socket != null) {
+            try {
+                socket.close();
+                in.close();
+                out.close();
+                socket = null;
+                game = null;
+//                in = null;
+//                out = null;
+//                socket = null;
+            } catch (IOException e) {
+                TUI.printError("IOException while disconnecting from server");
+            }
+            TUI.print("Connection to server lost");
+        }
+        printLogs(); //TODO: remove this when done with debugging
+    }
+
+    protected void exit() {
+        System.exit(0);
+    }
+
     protected void printHelp() {
         TUI.printHelpClient();
     }
@@ -346,10 +369,10 @@ public class Client implements Runnable {
                 } // TODO: handle what happens when the input is wrong
                 Move firstMove = new Move(Integer.parseInt(params[1]), direction);
                 Move secondMove = null;
-                message += DELIMITER + firstMove.push();
+                message += Character.toString(DELIMITER) + firstMove.push();
                 if (params.length >= 4) {
                     secondMove = new Move(Integer.parseInt(params[3]), direction2);
-                    message += DELIMITER + secondMove.push();
+                    message += Character.toString(DELIMITER) + secondMove.push();
                 }
                 if (game.isMoveValid(new Move[]{firstMove, secondMove})) {
                     sendMessage(message);
