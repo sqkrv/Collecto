@@ -24,6 +24,7 @@ public class ClientController extends Controller {
         if (input == null) {
             return;
         }
+//        input = input.replaceAll(" +", " ");
         String[] params = input.trim().split(" ");
         params[0] = params[0].toUpperCase();
         switch (params[0]) {
