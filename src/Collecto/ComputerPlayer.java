@@ -22,7 +22,7 @@ public class ComputerPlayer extends Player {
      */
     public ComputerPlayer(int level) {
         super("smartass");
-        assert level > 0 && level <= 3;
+        assert level > 0 && level <= 2;
         this.level = level;
     }
 
@@ -53,7 +53,7 @@ public class ComputerPlayer extends Player {
         }
     }
 
-    private Move[] makeBeginnerMoveSingle(GridBoard board) {
+    private static Move[] makeBeginnerMoveSingle(GridBoard board) {
         Move move;
         for (int i = 0; i < 7; i++) {
             for (GridBoard.Direction direction : GridBoard.Direction.values()) {
@@ -64,7 +64,7 @@ public class ComputerPlayer extends Player {
         return null;
     }
 
-    public Move[] makeBeginnerMove(GridBoard board) {
+    public static Move[] makeBeginnerMove(GridBoard board) {
         GridBoard copy;
 
         // check if single move exists
@@ -100,6 +100,7 @@ public class ComputerPlayer extends Player {
         int max = 0;
         int balls;
         Move max_move = null;
+
         for (int i = 0; i < 7; i++) {
             for (GridBoard.Direction direction : GridBoard.Direction.values()) {
                 move = new Move(i, direction);
@@ -112,43 +113,29 @@ public class ComputerPlayer extends Player {
                 }
             }
         }
-        return new Move[]{max_move};
+
+        return new Move[]{max_move, new Move(max)};
     }
 
     public Move[] makeIntermediateMove(GridBoard board) {
         GridBoard copy;
 
         // check if single move exists
-        Move[] moves = makeIntermediateMoveSingle(board);
+        Move[] moves = new Move[]{makeIntermediateMoveSingle(board)[0]};
         if (moves[0] != null) return moves;
 
         // if not - find two moves
-        int max;
-        Move max_move;
         HashMap<Move[], Integer> movesResults = new HashMap<>();
-        int balls;
         Move move1;
-        Move move2;
         for (int j = 0; j < 7; j++) {
             for (GridBoard.Direction direction : GridBoard.Direction.values()) {
                 copy = board.deepCopy();
                 move1 = new Move(j, direction);
                 copy.moveLine(move1);
                 if (!board.toString().equals(copy.toString())) {
-                    max = 0;
-                    max_move = null;
-                    for (int i = 0; i < 7; i++) {
-                        for (GridBoard.Direction direction2 : GridBoard.Direction.values()) {
-                            move2 = new Move(i, direction2);
-                            if (copy.isMoveValid(move2)) {
-                                balls = ballsFromMove(copy, move2);
-                                if (balls > max) {
-                                    max = balls;
-                                    max_move = move2;
-                                }
-                            }
-                        }
-                    }
+                    Move[] temp = makeIntermediateMoveSingle(copy);
+                    Move max_move = temp[0];
+                    int max = temp[1].push();
                     movesResults.put(new Move[]{move1, max_move}, max);
                 }
             }
