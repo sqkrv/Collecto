@@ -16,4 +16,12 @@ public class Temp {
         }
         return null;
     }
+
+//    public class Commands {
+//        public static final String HELP = "HELP";
+//    }
+//
+//    public enum Comms {
+//        HELP, LIST
+//    }
 }
