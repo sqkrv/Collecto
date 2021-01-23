@@ -3,8 +3,6 @@ add a "single move still possible" error when provided with double moves in both
 
 out logs server
 
-extra thread for AI question?
-
 The client should be able to withstand:
  - randomly dropping connections
  - malformed networking messages
@@ -26,10 +24,10 @@ write some in line comments
 --> (important: should not be about 'what' is happening, rather 'why' it is happening)
 
 
-idk maybe commands as enums or stuff
+idk maybe commands as enums or stuff (later ig)
 
 
-when username is already taken show the response from the server about it
++ when username is already taken show the response from the server about it
 
 
 command for the client when s/he is in queue to choose whether s/he wants to play with AI when there are no other players in q
