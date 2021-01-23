@@ -1,9 +1,7 @@
 Have the client verify the legality of a move before sending it to the server
-Add indication of who plays (human or AI) and difficulty level if AI
+Fix indication of who plays (human or AI) and difficulty level if AI
 
 add a "single move still possible" error when provided with double moves in both server and client
-
-out logs server
 
 The client should be able to withstand:
  - randomly dropping connections
@@ -11,29 +9,18 @@ The client should be able to withstand:
  - Illegal moves
 
 Go through all classes and improve them / fix TODOs
-
 check in client if a player is not moving to give the correct response
-
 figure out if toString() in enum Direction is important
-
-perhaps simplify the checks in server (and perhaps client) for example when checking if the game is null
-
 write a BUNCH of tests (both unit and integration tests)
-
 write TONS of javadoc
-
 change the client to display the new move made better, as well as the index for the hint
-
 perhaps display score and balls clientside
-
+perhaps simplify the checks in server (and perhaps client) for example when checking if the game is null
 
 timeout for ai prompt
 
-
 write some in line comments
 --> (important: should not be about 'what' is happening, rather 'why' it is happening)
-
-
-
+Test a lot
 
 command for the client when s/he is in queue to choose whether s/he wants to play with AI when there are no other players in q
