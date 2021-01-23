@@ -251,6 +251,8 @@ public class Client implements Runnable {
             if (!useAI) {
                 game.printBoard();
                 if (myTurn) TUI.print("It's you turn");
+            } else {
+                if (myTurn) AIMove();
             }
         }
     }
@@ -297,7 +299,6 @@ public class Client implements Runnable {
         synchronized (this) {
             controller.choosingAI = false;
             notify();
-            if (myTurn) AIMove();
         }
         TUI.print("AI engaged. Sit back and enjoy");
     }
