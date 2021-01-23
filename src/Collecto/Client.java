@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static Collecto.Server.DELIMITER;
 import static Collecto.Misc.*;
@@ -168,6 +169,7 @@ public class Client implements Runnable {
         }
         game = null;
         useAI = false;
+        myTurn = false;
     }
 
     private void handleMoveServer(String[] params) {
@@ -221,6 +223,21 @@ public class Client implements Runnable {
             AIMove();
         }
         game.printBoard();
+        showScore();
+    }
+
+    private void showScore() {
+        for (int i = 0; i < 2; i++) {
+            HashMap<Ball, Integer> ballMap= game.getBalls(i);
+            ArrayList<Ball> balls = new ArrayList<>();
+            for (Ball ball : ballMap.keySet()) {
+                for (int j = 0; j < ballMap.get(ball); j++) {
+                    balls.add(ball);
+                }
+            }
+            TUI.print(game.getPlayerName(i) + "[" + game.getScore(i)
+                    + "]:" + TUI.ballColours(balls));
+        }
     }
 
     private void AIMove() {
