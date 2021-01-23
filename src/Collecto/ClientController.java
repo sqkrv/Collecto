@@ -26,6 +26,7 @@ public class ClientController extends Controller {
         params[0] = params[0].toUpperCase();
 
         if (choosingAI) {
+
             if (client.useAI) {
                 client.chooseDifficulty(params);
             } else {

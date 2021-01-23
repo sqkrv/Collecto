@@ -54,7 +54,7 @@ public class Client implements Runnable {
         if (serverInput == null) {
             return;
         }
-        String[] params = serverInput.split(Character.toString(DELIMITER));
+        String[] params = serverInput.split(DELIMITER);
         switch (params[0]) {
             case "HELLO":
                 handleHelloServer(params);
@@ -251,8 +251,6 @@ public class Client implements Runnable {
             if (!useAI) {
                 game.printBoard();
                 if (myTurn) TUI.print("It's you turn");
-            } else {
-                AIMove();
             }
         }
     }
@@ -300,6 +298,7 @@ public class Client implements Runnable {
         synchronized (this) {
             controller.choosingAI = false;
             notify();
+            if (myTurn) AIMove();
         }
         TUI.print("AI engaged. Sit back and enjoy");
     }
@@ -442,7 +441,7 @@ public class Client implements Runnable {
                 }
                 Move firstMove = new Move(line - 1, direction);
                 Move secondMove = null;
-                message += Character.toString(DELIMITER) + firstMove.push();
+                message += DELIMITER + firstMove.push();
                 if (params.length >= 4) {
                     line = Misc.parseInt(params[3]);
                     if (line == null) {
@@ -450,7 +449,7 @@ public class Client implements Runnable {
                         return;
                     }
                     secondMove = new Move(line - 1, direction2);
-                    message += Character.toString(DELIMITER) + secondMove.push();
+                    message += DELIMITER + secondMove.push();
                 }
                 if (game.isMoveValid(firstMove, secondMove)) {
                     sendMessage(message);
