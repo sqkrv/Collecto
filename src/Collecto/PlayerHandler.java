@@ -221,7 +221,7 @@ public class PlayerHandler implements Runnable {
                     opponent.game.makeMove(firstMove);
                     game.makeMove(firstMove);
                 } else {
-                    opponent.game.makeMove(firstMove, secondMove);
+//                    opponent.game.makeMove(firstMove, secondMove);
                     game.makeMove(firstMove, secondMove);
                 }
                 if (!game.possibleMoves()) {
