@@ -2,7 +2,6 @@ package Collecto;
 
 public class ClientController extends Controller {
     private final Client client;
-    protected boolean choosingAI = false;
 
     public final static String COMMANDS = "LIST, QUEUE, MOVE, LOGS, HELP, DISCONNECT, EXIT";
 

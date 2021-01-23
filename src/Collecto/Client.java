@@ -35,6 +35,7 @@ public class Client implements Runnable {
     private boolean loggedIn = false;
     protected boolean useAI = false;
     private boolean myTurn = false;
+    protected boolean choosingAI = false;
 
     private ComputerPlayer AI;
 
@@ -247,7 +248,7 @@ public class Client implements Runnable {
             TUI.print("AI couldn't find a move");
             return;
         } else if (moves[0] == null) {
-            logs.add(TUI.log("No move move"));
+            addLog(TUI.log("No move move"));
             return;
         }
         String message = "MOVE" + DELIMITER + moves[0].push();
@@ -279,7 +280,7 @@ public class Client implements Runnable {
     }
 
     private void useAI() {
-        controller.choosingAI = true;
+        choosingAI = true;
         if (!useAI) {
             TUI.print("Do you want to use smartass computer to play for you? (y/n)");
         }
@@ -288,7 +289,7 @@ public class Client implements Runnable {
                 this.wait();
             }
         } catch (InterruptedException e) {
-            logs.add(TUI.log("InterruptedException while waiting for useAI sequence"));
+            addLog(TUI.log("InterruptedException while waiting for useAI sequence"));
         }
     }
 
@@ -318,7 +319,7 @@ public class Client implements Runnable {
             return;
         }
         synchronized (this) {
-            controller.choosingAI = false;
+            choosingAI = false;
             notify();
         }
         TUI.print("AI engaged. Sit back and enjoy");
@@ -382,7 +383,7 @@ public class Client implements Runnable {
             out.write(message);
             out.newLine();
             out.flush();
-            logs.add(TUI.log("[OUT] " + message));
+            addLog(TUI.log("[OUT] " + message));
         } catch (IOException e) {
             TUI.printError("sendmessage");
             e.printStackTrace();
@@ -450,7 +451,13 @@ public class Client implements Runnable {
                 GridBoard.Direction direction2 = null;
                 try {
                     direction = GridBoard.Direction.valueOf(params[2].toUpperCase());
-                    if (params.length >= 4) direction2 = GridBoard.Direction.valueOf(params[4].toUpperCase());
+                    if (params.length == 5) {
+                        direction2 = GridBoard.Direction.valueOf(params[4].toUpperCase());
+                        if (game.possibleFirstMove()) {
+                            TUI.print("Single move can still be played");
+                            return;
+                        }
+                    }
                 } catch (IllegalArgumentException i) {
                     TUI.print("Direction is wrong, please try again or type help");
                     return;
@@ -489,7 +496,7 @@ public class Client implements Runnable {
         try {
             String line;
             while ((line = in.readLine()) != null) {
-                logs.add(TUI.log("[IN ] " + line));
+                addLog(TUI.log("[IN ] " + line));
                 handleCommandIn(line);
             }
 //        } catch (SocketException ignored) {
@@ -549,6 +556,10 @@ public class Client implements Runnable {
             }
         }
         TUI.print("You have been logged in under the name: " + answer);
+    }
+
+    private synchronized void addLog(String log) {
+        logs.add(log);
     }
 
     public static void main(String[] args) throws IOException {

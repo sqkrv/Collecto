@@ -437,7 +437,7 @@ public class GridBoard {
      * @param isSecondTime boolean to define if it checks if the the move is possible with two moves
      * @return true if there is a valid move within one or two moves, false if there are no valid moves possible within two moves
      */
-    private boolean possibleMoves(boolean isSecondTime) {
+    public boolean possibleMoves(boolean isSecondTime) {
         for (int i = 0; i < 7; i++) {
             if (
                     isMoveValid(new Move(i, Direction.LEFT)) ||

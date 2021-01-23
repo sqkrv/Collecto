@@ -63,6 +63,10 @@ public class Game {
         return board.possibleMoves();
     }
 
+    public boolean possibleFirstMove() {
+        return board.possibleMoves(true);
+    }
+
     public String getWinner() {
         if (players[0].getPoints() > players[1].getPoints()) {
             return players[0].getName();
@@ -87,6 +91,18 @@ public class Game {
         } else {
             return board.isMoveValid(firstMove, secondMove);
         }
+    }
+
+    public int getScore(int i) {
+        return players[i].getPoints();
+    }
+
+    public HashMap<Ball, Integer> getBalls(int i) {
+        return players[i].showBalls();
+    }
+
+    public String getPlayerName(int i) {
+        return players[i].getName();
     }
 
     //    private final Player[] players = new Player[2];
