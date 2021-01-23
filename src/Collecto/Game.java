@@ -89,18 +89,6 @@ public class Game {
         }
     }
 
-    public int getScore(int i) {
-        return players[i].getPoints();
-    }
-
-    public HashMap<Ball, Integer> getBalls(int i) {
-        return players[i].showBalls();
-    }
-
-    public String getPlayerName(int i) {
-        return players[i].getName();
-    }
-
     //    private final Player[] players = new Player[2];
 //    private final Scanner input = new Scanner(System.in);
 //    public boolean myTurn = false;

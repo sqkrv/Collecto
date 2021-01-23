@@ -299,7 +299,7 @@ public class Client implements Runnable {
         } else if (answer[0].equals("N")) {
             useAI = false;
             TUI.print("AI will not be used. It's in your hands my friend");
-            controller.choosingAI = false;
+            choosingAI = false;
             synchronized (this) {
                 notify();
             }
