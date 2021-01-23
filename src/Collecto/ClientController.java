@@ -21,10 +21,19 @@ public class ClientController extends Controller {
         if (input == null) {
             return;
         }
-
 //        input = input.replaceAll(" +", " ");
         String[] params = input.trim().split(" ");
         params[0] = params[0].toUpperCase();
+
+        if (choosingAI) {
+            if (client.useAI) {
+                client.chooseDifficulty(params);
+            } else {
+                client.chooseAI(params);
+            }
+            return;
+        }
+
 
         switch (params[0]) {
             case "DISCONNECT":
@@ -37,26 +46,35 @@ public class ClientController extends Controller {
             case "HELP":
                 client.printHelp();
                 break;
-            case "HINT":
-                client.hint();
-                break;
             case "LOGS":
                 client.printLogs();
                 break;
-            case "MOVE":
-                client.handleMove(params);
-                break;
-            case "QUEUE":
             case "LIST":
                 client.sendMessage(params[0]);
                 break;
+            case "BOARD":
+                client.printBoard();
+                break;
             default:
-                if (choosingAI) {
-                    client.chooseAI(params);
-                    break;
+                if (!client.useAI) {
+                    switch (params[0]) {
+                        case "HINT":
+                            client.hint();
+                            break;
+                        case "QUEUE":
+                            client.sendMessage(params[0]);
+                            break;
+                        case "MOVE":
+                            client.handleMove(params);
+                            break;
+                        default:
+                            TUI.printError("Unknown command: " + params[0]);
+                            TUI.print("Instead use: " + COMMANDS);
+                    }
+                } else {
+                    TUI.printError("Unknown command: " + params[0]);
+                    TUI.print("Instead use: " + COMMANDS);
                 }
-                TUI.printError("Unknown command: " + params[0]);
-                TUI.print("Instead use: " + COMMANDS);
         }
     }
 }

@@ -140,7 +140,7 @@ public class PlayerHandler implements Runnable {
         } else if (params[1].length() > 32) {
             sendError("Login name is too long");
         } else if (!server.checkPlayer(params[1])) {
-            sendError("You are already logged in");
+            sendMessage("ALREADYLOGGEDIN");
         } else {
             this.name = params[1];
             server.addPlayer(this);
@@ -191,7 +191,7 @@ public class PlayerHandler implements Runnable {
             Move secondMove = null;
             try {
                 push = Integer.parseInt(params[1]);
-                if (!isPushValid(push)) {
+                if (!Temp.isPushValid(push)) {
                     sendError("Out of bounds move");
                     return;
                 }
@@ -199,7 +199,7 @@ public class PlayerHandler implements Runnable {
                 firstMove = new Move(push);
                 if (params.length > 2) {
                     push = Integer.parseInt(params[2]);
-                    if (!isPushValid(push)) {
+                    if (!Temp.isPushValid(push)) {
                         sendError("Out of bounds move");
                         return;
                     }
@@ -230,10 +230,6 @@ public class PlayerHandler implements Runnable {
                 }
             }
         }
-    }
-
-    private boolean isPushValid(int push) {
-        return 0 <= push && push <= 27;
     }
 
     private void handleGameOver() {
@@ -306,6 +302,8 @@ public class PlayerHandler implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        server.gameEnded(this);
+        server.removeFromQueue(this);
         server.removePlayer(this);
     }
 
