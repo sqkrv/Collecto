@@ -278,7 +278,7 @@ public class PlayerHandler implements Runnable {
     protected void startNewGame(Game game, PlayerHandler opponent) {
         this.game = game;
         String appendage;
-        if (game.player1.getName().equals(this.name)) {
+        if (game.getPlayerName(0).equals(this.name)) {
             appendage = DELIMITER + this.name + DELIMITER + opponent.name;
             myTurn = true;
         } else {
