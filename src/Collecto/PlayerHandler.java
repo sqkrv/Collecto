@@ -14,7 +14,7 @@ public class PlayerHandler implements Runnable {
     private BufferedWriter out;
     private Socket socket;
 
-    private Game game;
+    private Game game = null;
     private Server server;
     private PlayerHandler opponent = null;
 
@@ -165,7 +165,7 @@ public class PlayerHandler implements Runnable {
     private void handleQueue() {
         if (!loggedIn) {
             sendError("You are not yet logged in!");
-        } else if (game == null) {
+        } else if (game != null) {
             sendError("You are in a game, can't rejoin queue");
         } else {
             if (!server.queued(this)) {
@@ -217,14 +217,12 @@ public class PlayerHandler implements Runnable {
                 opponent.respondMove(firstMove, secondMove);
                 opponent.myTurn = true;
                 myTurn = false;
-                Move move = new Move(firstMove);
-                if (secondMove == -1) {
-                    opponent.game.makeMove(move);
-                    game.makeMove(move);
+                if (secondMove == null) {
+                    opponent.game.makeMove(firstMove);
+                    game.makeMove(firstMove);
                 } else {
-                    Move move2 = new Move(secondMove);
-                    opponent.game.makeMove(move, move2);
-                    game.makeMove(move, move2);
+                    opponent.game.makeMove(firstMove, secondMove);
+                    game.makeMove(firstMove, secondMove);
                 }
                 if (!game.possibleMoves()) {
                     opponent.handleGameOver();
@@ -257,9 +255,9 @@ public class PlayerHandler implements Runnable {
                 message += game.getWinner();
             }
         }
+        sendMessage(message);
         game = null;
         server.gameEnded(this);
-        sendMessage(message);
     }
 
     private void respondMove(Move firstMove, Move secondMove) {

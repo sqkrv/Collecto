@@ -86,7 +86,7 @@ public class Game {
         if (secondMove == null) {
             return board.isMoveValid(firstMove);
         } else {
-            return board.isMoveValid(moves[0], moves[1]);
+            return board.isMoveValid(firstMove, secondMove);
         }
     }
 

@@ -22,6 +22,14 @@ write a BUNCH of tests (both unit and integration tests)
 
 write TONS of javadoc
 
+change the client to display the new move made better, as well as the index for the hint
+
+perhaps display score and balls clientside
+
+
+timeout for ai prompt
+
+
 write some in line comments
 --> (important: should not be about 'what' is happening, rather 'why' it is happening)
 
