@@ -277,12 +277,11 @@ public class Client implements Runnable {
             useAI = false;
             TUI.print("AI will not be used. It's in your hands my friend");
             controller.choosingAI = false;
+            synchronized (this) {
+                notify();
+            }
         } else {
             TUI.print("Please specify if you will use an AI with y or n");
-            return;
-        }
-        synchronized (this) {
-            notify();
         }
     }
 
