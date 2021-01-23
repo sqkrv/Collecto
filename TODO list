@@ -3,8 +3,6 @@ add a "single move still possible" error when provided with double moves in both
 
 out logs server
 
-extra thread for AI question?
-
 The client should be able to withstand:
  - randomly dropping connections
  - malformed networking messages
