@@ -51,10 +51,6 @@ public class ClientController extends Controller {
                 client.sendMessage(params[0]);
                 break;
             default:
-                if (choosingAI) {
-                    client.chooseAI(params);
-                    break;
-                }
                 TUI.printError("Unknown command: " + params[0]);
                 TUI.print("Instead use: " + COMMANDS);
         }

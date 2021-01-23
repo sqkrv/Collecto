@@ -107,10 +107,6 @@ public class Server implements Runnable {
         }
     }
 
-    protected void gameEnded(PlayerHandler client) {
-        inGame.remove(client);
-    }
-
     public static void main(String[] args) {
         Integer port = 0;
 

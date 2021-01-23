@@ -171,18 +171,43 @@ public class Client implements Runnable {
         if (params.length  <= 1) {
             TUI.printError("Unknown move made");
         } else {
+            Integer push;
+            Move move;
+            Move move2;
             if (params.length == 2) {
-                if (game.makeMove(new Move(Integer.parseInt(params[1])))) {
-                    TUI.print("New move made: [" + params[1] + "]");
+                push = Temp.parsePush(params[1]);
+                if (push == null) {
+                    TUI.printError("Server sent incorrect move");
+                    return;
+                }
+                move = new Move(push);
+                if (game.makeMove(move)) {
+                    TUI.print("New move made: [" + move + "]");
                 } else {
                     TUI.printError("Server sent incorrect move");
+                    return;
                 }
             } else {
-                if (game.makeMove(new Move(Integer.parseInt(params[1])), new Move(Integer.parseInt(params[2])))) {
-                    TUI.print("Double move made: [" + params[1] + "] " +
-                            "and [" + params[2] + "]");
+                push = Temp.parsePush(params[1]);
+                if (push == null) {
+                    TUI.printError("Server sent incorrect move");
+                    return;
+                }
+                move = new Move(push);
+
+                push = Temp.parsePush(params[2]);
+                if (push == null) {
+                    TUI.printError("Server sent incorrect move");
+                    return;
+                }
+                move2 = new Move(push);
+
+                if (game.makeMove(move, move2)) {
+                    TUI.print("Double move made: [" + move + "] " +
+                            "and [" + move2 + "]");
                 } else {
                     TUI.printError("Server sent incorrect move");
+                    return;
                 }
             }
         }
