@@ -1,10 +1,24 @@
 package Collecto;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 public class TUI {
+    static DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd.MM");
+
+    public static String logTime() {
+        return "["+currentDateTime()+"] ";
+    }
+
+    public static String currentDateTime() {
+        Date date = new Date();
+        return dateFormat.format(date);
+    }
+
     private static String grey(String string) {
         return "\u001B[37m" + string + "\u001B[0m";
     }
@@ -128,22 +142,5 @@ public class TUI {
             output += (ball.ballColour() + "\u25CF" + Ball.WHITE.ballColour());
         }
         return output;
-    }
-
-    public static void main(String[] args) {
-        GridBoard board = new GridBoard();
-        GridBoard copy = board.deepCopy();
-
-//        board.moveLine(4, 4, GridBoard.Direction.DOWN);
-//        System.out.println(board.isMoveValid(4,4, GridBoard.Direction.DOWN));
-
-//        System.out.println(board.checkSurroundings(0, 0));
-//        System.out.println(board.possibleMoves());
-
-        System.out.println(toString(board));
-        System.out.println(plainTextBoard(board));
-        System.out.println(colouredBoard(board));
-
-        System.out.println("Is board the same: "+board.toString().equals(copy.toString()));
     }
 }
