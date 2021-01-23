@@ -6,8 +6,7 @@ import static Collecto.Misc.Move;
 
 public class Game {
     private final GridBoard board;
-    public Player player1;
-    public Player player2;
+    public Player[] players = new Player[2];
     private boolean turnPlayer1 = true;
 
     public Game(String player1Name, String player2Name) {
@@ -15,8 +14,8 @@ public class Game {
     }
 
     public Game(GridBoard board, String player1Name, String player2Name) {
-        player1 = new Player(player1Name);
-        player2 = new Player(player2Name);
+        players[0] = new Player(player1Name);
+        players[1] = new Player(player2Name);
         this.board = board;
     }
 
@@ -32,9 +31,9 @@ public class Game {
         if (board.isMoveValid(move)) {
             board.moveLine(move);
             if (turnPlayer1) {
-                player1.addBalls(board.removeBalls(move));
+                players[0].addBalls(board.removeBalls(move));
             } else {
-                player2.addBalls(board.removeBalls(move));
+                players[1].addBalls(board.removeBalls(move));
             }
             turnPlayer1 = !turnPlayer1;
             return true;
@@ -65,14 +64,14 @@ public class Game {
     }
 
     public String getWinner() {
-        if (player1.getPoints() > player2.getPoints()) {
-            return player1.getName();
-        } else if (player2.getPoints() > player1.getPoints()) {
-            return player2.getName();
-        } else if (player1.showBalls().size() > player2.showBalls().size()) {
-            return player1.getName();
-        } else if (player2.showBalls().size() > player1.showBalls().size()) {
-            return player2.getName();
+        if (players[0].getPoints() > players[1].getPoints()) {
+            return players[0].getName();
+        } else if (players[1].getPoints() > players[0].getPoints()) {
+            return players[1].getName();
+        } else if (players[0].showBalls().size() > players[1].showBalls().size()) {
+            return players[0].getName();
+        } else if (players[1].showBalls().size() > players[0].showBalls().size()) {
+            return players[1].getName();
         } else {
             return null;
         }
@@ -90,6 +89,17 @@ public class Game {
         }
     }
 
+    public int getScore(int i) {
+        return players[i].getPoints();
+    }
+
+    public HashMap<Ball, Integer> getBalls(int i) {
+        return players[i].showBalls();
+    }
+
+    public String getPlayerName(int i) {
+        return players[i].getName();
+    }
 
     //    private final Player[] players = new Player[2];
 //    private final Scanner input = new Scanner(System.in);
