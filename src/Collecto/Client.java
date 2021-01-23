@@ -9,7 +9,7 @@ import static Collecto.Server.DELIMITER;
 import static Collecto.Misc.*;
 
 public class Client implements Runnable {
-    public final static String DESCRIPTION = "Client of Hein and Stan";
+    public final static String DESCRIPTION = "test"; //"Client of Hein and Stan";
 
     private Socket socket;
     private BufferedReader in;
@@ -224,9 +224,13 @@ public class Client implements Runnable {
     }
 
     private void AIMove() {
-        Move[] moves = AI.makeMove(game.getBoard());
+        if (!game.possibleMoves()) return;
+            Move[] moves = AI.makeMove(game.getBoard());
         if (moves == null) {
             TUI.print("AI couldn't find a move");
+            return;
+        } else if (moves[0] == null) {
+            logs.add(TUI.log("No move move"));
             return;
         }
         String message = "MOVE" + DELIMITER + moves[0].push();

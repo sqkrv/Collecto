@@ -1,8 +1,6 @@
-Add AI and adjustable difficulty level if AI
 add a "single move still possible" error when provided with double moves in both server and client
 
 out logs server
-
 extra thread for AI question?
 
 The client should be able to withstand:
