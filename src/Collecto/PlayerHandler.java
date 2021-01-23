@@ -140,7 +140,7 @@ public class PlayerHandler implements Runnable {
         } else if (params[1].length() > 32) {
             sendError("Login name is too long");
         } else if (!server.checkPlayer(params[1])) {
-            sendError("You are already logged in");
+            sendMessage("ALREADYLOGGEDIN");
         } else {
             this.name = params[1];
             server.addPlayer(this);

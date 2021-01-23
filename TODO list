@@ -1,9 +1,9 @@
-Have the client verify the legality of a move before sending it to the server
-Add indication of who plays (human or AI) and difficulty level if AI
-
+Add AI and adjustable difficulty level if AI
 add a "single move still possible" error when provided with double moves in both server and client
 
 out logs server
+
+extra thread for AI question?
 
 The client should be able to withstand:
  - randomly dropping connections
@@ -28,7 +28,7 @@ perhaps display score and balls clientside
 
 timeout for ai prompt
 
-BOARD command to print board
++ BOARD command to print board
 
 
 write some in line comments

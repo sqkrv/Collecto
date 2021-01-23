@@ -32,7 +32,10 @@ public class Client implements Runnable {
 
     private boolean saidHello = false;
     private boolean loggedIn = false;
-    private boolean useAI = false;
+    protected boolean useAI = false;
+    private boolean myTurn = false;
+
+    private ComputerPlayer AI;
 
     public Client(Socket socket) throws IOException {
         this.socket = socket;
@@ -183,6 +186,7 @@ public class Client implements Runnable {
                 move = new Move(push);
                 if (game.makeMove(move)) {
                     TUI.print("New move made: [" + move + "]");
+                    myTurn = !myTurn;
                 } else {
                     TUI.printError("Server sent incorrect move");
                     return;
@@ -205,11 +209,16 @@ public class Client implements Runnable {
                 if (game.makeMove(move, move2)) {
                     TUI.print("Double move made: [" + move + "] " +
                             "and [" + move2 + "]");
+                    myTurn = !myTurn;
                 } else {
                     TUI.printError("Server sent incorrect move");
                     return;
                 }
             }
+        }
+        if (!useAI && myTurn) TUI.print("It's your turn");
+        if (myTurn && useAI) {
+            AIMove();
         }
         game.printBoard();
     }
@@ -237,19 +246,25 @@ public class Client implements Runnable {
         } else {
             game = new Game(parseStringBoard(params), params[50], params[51]);
             TUI.print("New game: " + params[50] + " versus " + params[51]);
-            game.printBoard();
-            if (params[50].equals(playerName)) TUI.print("It's your turn");
             useAI();
+            if (params[50].equals(playerName)) myTurn = true;
+            if (!useAI) {
+                game.printBoard();
+                if (myTurn) TUI.print("It's you turn");
+            } else {
+                AIMove();
+            }
         }
     }
 
     private void useAI() {
         controller.choosingAI = true;
-        TUI.print("Do you want to use smartass computer to play for you? (y/n)");
+        if (!useAI) {
+            TUI.print("Do you want to use smartass computer to play for you? (y/n)");
+        }
         try {
             synchronized (this) {
                 this.wait();
-                controller.choosingAI = false;
             }
         } catch (InterruptedException e) {
             logs.add(TUI.log("InterruptedException while waiting for useAI sequence"));
@@ -259,8 +274,11 @@ public class Client implements Runnable {
     protected void chooseAI(String[] answer) {
         if (answer[0].equals("Y")) {
             useAI = true;
+            TUI.print("Please specify the level of the ai with 1 or 2");
         } else if (answer[0].equals("N")) {
             useAI = false;
+            TUI.print("AI will not be used. It's in your hands my friend");
+            controller.choosingAI = false;
         } else {
             TUI.print("Please specify if you will use an AI with y or n");
             return;
@@ -268,6 +286,22 @@ public class Client implements Runnable {
         synchronized (this) {
             notify();
         }
+    }
+
+    protected void chooseDifficulty(String[] answer) {
+        if (answer[0].equals("1")) {
+            AI = new ComputerPlayer(1);
+        } else if (answer[0].equals("2")) {
+            AI = new ComputerPlayer(2);
+        } else {
+            TUI.print("Please specify the level of the ai with 1 or 2");
+            return;
+        }
+        synchronized (this) {
+            controller.choosingAI = false;
+            notify();
+        }
+        TUI.print("AI engaged. Sit back and enjoy");
     }
 
 //    /**
@@ -323,7 +357,7 @@ public class Client implements Runnable {
         return new GridBoard(board);
     }
 
-    protected void sendMessage(String message) {
+    protected synchronized void sendMessage(String message) {
         try {
             out.write(message);
             out.newLine();

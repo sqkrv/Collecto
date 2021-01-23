@@ -26,9 +26,14 @@ public class ClientController extends Controller {
         params[0] = params[0].toUpperCase();
 
         if (choosingAI) {
-            client.chooseAI(params);
+            if (client.useAI) {
+                client.chooseDifficulty(params);
+            } else {
+                client.chooseAI(params);
+            }
             return;
         }
+
 
         switch (params[0]) {
             case "DISCONNECT":
@@ -41,22 +46,35 @@ public class ClientController extends Controller {
             case "HELP":
                 client.printHelp();
                 break;
-            case "HINT":
-                client.hint();
-                break;
             case "LOGS":
                 client.printLogs();
                 break;
-            case "MOVE":
-                client.handleMove(params);
-                break;
-            case "QUEUE":
             case "LIST":
                 client.sendMessage(params[0]);
                 break;
+            case "BOARD":
+                client.printBoard();
+                break;
             default:
-                TUI.printError("Unknown command: " + params[0]);
-                TUI.print("Instead use: " + COMMANDS);
+                if (!client.useAI) {
+                    switch (params[0]) {
+                        case "HINT":
+                            client.hint();
+                            break;
+                        case "QUEUE":
+                            client.sendMessage(params[0]);
+                            break;
+                        case "MOVE":
+                            client.handleMove(params);
+                            break;
+                        default:
+                            TUI.printError("Unknown command: " + params[0]);
+                            TUI.print("Instead use: " + COMMANDS);
+                    }
+                } else {
+                    TUI.printError("Unknown command: " + params[0]);
+                    TUI.print("Instead use: " + COMMANDS);
+                }
         }
     }
 }
