@@ -6,8 +6,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.LinkedList;
-
-import static Collecto.Misc.checkPort;
+import java.util.Random;
 
 public class Server implements Runnable {
     private final int port;
