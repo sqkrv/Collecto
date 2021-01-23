@@ -32,4 +32,22 @@ public enum Ball {
             return "\u001B[37m" + "" + RESET_COLOUR;
         }
     }
+
+    public String ballColour() {
+        if (this == BLUE) {
+            return "\u001B[34m";
+        } else if (this == YELLOW) {
+            return "\u001B[93m";
+        } else if (this == RED) {
+            return "\u001B[31m";
+        } else if (this == ORANGE) {
+            return "\u001B[33m";
+        } else if (this == PURPLE) {
+            return "\u001B[35m";
+        } else if (this == GREEN) {
+            return "\u001B[32m";
+        } else {
+            return RESET_COLOUR;
+        }
+    }
 }
