@@ -229,6 +229,9 @@ public class Client implements Runnable {
         if (moves == null) {
             TUI.print("AI couldn't find a move");
             return;
+        } else if (moves[0] == null) {
+            logs.add(TUI.log("No move move"));
+            return;
         }
         String message = "MOVE" + DELIMITER + moves[0].push();
         if (moves.length == 2) message += DELIMITER + moves[1].push();
