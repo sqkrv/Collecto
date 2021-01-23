@@ -143,11 +143,11 @@ public class Client implements Runnable {
         if (params.length <= 1) {
             TUI.printError("Server sent empty List to print");
         } else {
-            String players = params[1];
-            for (int i = 2; i < params.length; i++) {
-                players += " " + params[i];
+            StringBuilder players = new StringBuilder();
+            for (int i = 1; i < params.length; i++) {
+                players.append("\n").append(i).append(". ").append(params[i]);
             }
-            TUI.print("Current players on server:\n" + players);
+            TUI.print("Current players on server:" + players);
         }
     }
 
@@ -214,6 +214,21 @@ public class Client implements Runnable {
         game.printBoard();
     }
 
+    private void AIMove() {
+        Move[] moves = AI.makeMove(game.getBoard());
+        if (moves == null) {
+            TUI.print("AI couldn't find a move");
+            return;
+        }
+        String message = "MOVE" + DELIMITER + moves[0].push();
+        if (moves.length == 2) message += DELIMITER + moves[1].push();
+        sendMessage(message);
+    }
+
+    void printBoard() {
+        game.printBoard();
+    }
+
     private void handleNewGame(String[] params) {
         if (game != null) {
             TUI.printError("Still in a game, can't start a new game");
@@ -238,12 +253,6 @@ public class Client implements Runnable {
             }
         } catch (InterruptedException e) {
             logs.add(TUI.log("InterruptedException while waiting for useAI sequence"));
-        }
-        if (useAI) {
-            TUI.print("AI engaged. Sit back and enjoy");
-            // TODO use an AI and disable some user inputs
-        } else {
-            TUI.print("AI will not be used. It's in your hands my friend");
         }
     }
 
