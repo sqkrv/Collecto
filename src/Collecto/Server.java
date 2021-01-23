@@ -79,7 +79,9 @@ public class Server implements Runnable {
     }
 
     protected void removeFromQueue(PlayerHandler client) {
-       queue.remove(client);
+       if (queued(client)) {
+           queue.remove(client);
+       }
     }
 
     protected ArrayList<String> getPlayers() {
@@ -105,6 +107,16 @@ public class Server implements Runnable {
                 removeFromQueue(queue.get(0));
             }
         }
+    }
+
+    protected void gameEnded(PlayerHandler client) {
+        if (isInGame(client)) {
+            inGame.remove(client);
+        }
+    }
+
+    protected boolean isInGame(PlayerHandler client) {
+        return inGame.contains(client);
     }
 
     public static void main(String[] args) {

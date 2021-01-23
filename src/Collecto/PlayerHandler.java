@@ -302,6 +302,8 @@ public class PlayerHandler implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        server.gameEnded(this);
+        server.removeFromQueue(this);
         server.removePlayer(this);
     }
 

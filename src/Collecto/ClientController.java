@@ -21,10 +21,14 @@ public class ClientController extends Controller {
         if (input == null) {
             return;
         }
-
 //        input = input.replaceAll(" +", " ");
         String[] params = input.trim().split(" ");
         params[0] = params[0].toUpperCase();
+
+        if (choosingAI) {
+            client.chooseAI(params);
+            return;
+        }
 
         switch (params[0]) {
             case "DISCONNECT":
