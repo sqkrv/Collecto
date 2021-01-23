@@ -3,31 +3,24 @@ add a "single move still possible" error when provided with double moves in both
 
 out logs server
 
+extra thread for AI question?
+
 The client should be able to withstand:
  - randomly dropping connections
  - malformed networking messages
  - Illegal moves
 
 Go through all classes and improve them / fix TODOs
-
 check in client if a player is not moving to give the correct response
-
 figure out if toString() in enum Direction is important
-
 perhaps simplify the checks in server (and perhaps client) for example when checking if the game is null
-
 write a BUNCH of tests (both unit and integration tests)
-
 write TONS of javadoc
 
-
 perhaps display score and balls clientside
-
-
-timeout for ai prompt
-
 + BOARD command to print board
 
+timeout for ai prompt
 
 write some in line comments
 --> (important: should not be about 'what' is happening, rather 'why' it is happening)

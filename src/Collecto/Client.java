@@ -251,8 +251,6 @@ public class Client implements Runnable {
             if (!useAI) {
                 game.printBoard();
                 if (myTurn) TUI.print("It's you turn");
-            } else {
-                AIMove();
             }
         }
     }
@@ -286,6 +284,23 @@ public class Client implements Runnable {
         synchronized (this) {
             notify();
         }
+    }
+
+    protected void chooseDifficulty(String[] answer) {
+        if (answer[0].equals("1")) {
+            AI = new ComputerPlayer(1);
+        } else if (answer[0].equals("2")) {
+            AI = new ComputerPlayer(2);
+        } else {
+            TUI.print("Please specify the level of the ai with 1 or 2");
+            return;
+        }
+        synchronized (this) {
+            controller.choosingAI = false;
+            notify();
+            if (myTurn) AIMove();
+        }
+        TUI.print("AI engaged. Sit back and enjoy");
     }
 
 //    /**

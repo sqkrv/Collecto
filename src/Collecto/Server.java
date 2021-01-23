@@ -19,7 +19,7 @@ public class Server implements Runnable {
     private static final ServerController controller = new ServerController();
 
     protected final static String DESCRIPTION = "the server of Stan and Hein";
-    public static final char DELIMITER = '~';
+    public static final String DELIMITER = "~";
 
     protected boolean chatSupport = false;
     protected boolean rankSupport = false;
