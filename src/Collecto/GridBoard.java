@@ -407,6 +407,7 @@ public class GridBoard {
 
     public boolean isMoveValid(Move first, Move second) {
         GridBoard copy = deepCopy();
+        if (!isMoveValid(first)) return false;
         copy.moveLine(first);
         return isMoveValidCheck(second, copy);
     }

@@ -332,9 +332,9 @@ public class Client implements Runnable {
         TUI.print("Your friendly neighbourhood client is generating a hint, hold on...");
         if (game.possibleMoves()) {
             Move[] moves = ComputerPlayer.makeBeginnerMove(game.getBoard());
-            String answer = "You can still do " + moves[0].getLine() + moves[0].getDirection();
+            String answer = "You can still do " + (moves[0].getLine() + 1) + " " + moves[0].getDirection();
             if (moves.length == 2) {
-                answer += "and then " + (moves[1].getLine() + 1) + " "+ moves[1].getDirection();
+                answer += " and then " + (moves[1].getLine() + 1) + " " + moves[1].getDirection();
             }
             TUI.print(answer);
         } else {
@@ -384,7 +384,7 @@ public class Client implements Runnable {
                     secondMove = new Move(line - 1, direction2);
                     message += Character.toString(DELIMITER) + secondMove.push();
                 }
-                if (game.isMoveValid(new Move[]{firstMove, secondMove})) {
+                if (game.isMoveValid(firstMove, secondMove)) {
                     sendMessage(message);
                 } else {
                     TUI.print("Move is not valid, please try again or ask for a hint");

@@ -186,23 +186,32 @@ public class PlayerHandler implements Runnable {
         } else if (game == null) {
             sendError("You are not in a game");
         } else {
-            Integer firstMove;
-            Integer secondMove = -1;
-            firstMove = Misc.parseInt(params[1]);
-            if (firstMove == null) {
-                sendError("Wrong move arguments provided");
-                return;
-            }
-            if (params.length > 2) {
-                secondMove = Misc.parseInt(params[2]);
-                if (secondMove == null) {
-                    sendError("Wrong second move arguments provided");
+            int push;
+            Move firstMove;
+            Move secondMove = null;
+            try {
+                push = Integer.parseInt(params[1]);
+                if (!isPushValid(push)) {
+                    sendError("Out of bounds move");
                     return;
                 }
+
+                firstMove = new Move(push);
+                if (params.length > 2) {
+                    push = Integer.parseInt(params[2]);
+                    if (!isPushValid(push)) {
+                        sendError("Out of bounds move");
+                        return;
+                    }
+                    secondMove = new Move(push);
+                }
+            } catch (IllegalArgumentException e) {
+                sendError("Wrong move argument provided");
+                return;
             }
-            if (!isPushValid(firstMove) ||
-                    (secondMove != -1 && !isPushValid(secondMove))) {
-                sendError("invalid");
+
+            if (!game.isMoveValid(firstMove, secondMove)) {
+                sendError("Move is not valid");
             } else {
                 respondMove(firstMove, secondMove);
                 opponent.respondMove(firstMove, secondMove);
@@ -253,11 +262,11 @@ public class PlayerHandler implements Runnable {
         sendMessage(message);
     }
 
-    private void respondMove(int firstMove, int secondMove) {
-        if (secondMove == -1) {
-            sendMessage("MOVE" + DELIMITER + firstMove);
+    private void respondMove(Move firstMove, Move secondMove) {
+        if (secondMove == null) {
+            sendMessage("MOVE" + DELIMITER + firstMove.push());
         } else {
-            sendMessage("MOVE" + DELIMITER + firstMove + DELIMITER + secondMove);
+            sendMessage("MOVE" + DELIMITER + firstMove.push() + DELIMITER + secondMove.push());
         }
     }
 
