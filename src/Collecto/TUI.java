@@ -1,5 +1,6 @@
 package Collecto;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -119,6 +120,14 @@ public class TUI {
                 "To make a move, typ: MOVE [row/column] [direction]\n" +
                 "For a double move: MOVE [row/column] [direction] [row/column] [direction]\n" +
                 "Where [row/column] is an integer, and direction is UP/DOWN/LEFT/RIGHT");
+    }
+
+    public static String ballColours(ArrayList<Ball> balls) {
+        String output = "";
+        for (Ball ball : balls) {
+            output += (ball.ballColour() + "\u25CF" + Ball.WHITE.ballColour());
+        }
+        return output;
     }
 
     public static void main(String[] args) {
