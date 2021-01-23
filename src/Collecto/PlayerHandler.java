@@ -65,7 +65,7 @@ public class PlayerHandler implements Runnable {
             sendError("suck"); // TODO perhaps change this vulgar wording or smth
             return;
         }
-        String[] params = message.split(Character.toString(DELIMITER));
+        String[] params = message.split(DELIMITER);
 
         switch (params[0].strip()) {
             case "HELLO":

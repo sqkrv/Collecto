@@ -54,7 +54,7 @@ public class Client implements Runnable {
         if (serverInput == null) {
             return;
         }
-        String[] params = serverInput.split(Character.toString(DELIMITER));
+        String[] params = serverInput.split(DELIMITER);
         switch (params[0]) {
             case "HELLO":
                 handleHelloServer(params);
@@ -288,22 +288,6 @@ public class Client implements Runnable {
         }
     }
 
-    protected void chooseDifficulty(String[] answer) {
-        if (answer[0].equals("1")) {
-            AI = new ComputerPlayer(1);
-        } else if (answer[0].equals("2")) {
-            AI = new ComputerPlayer(2);
-        } else {
-            TUI.print("Please specify the level of the ai with 1 or 2");
-            return;
-        }
-        synchronized (this) {
-            controller.choosingAI = false;
-            notify();
-        }
-        TUI.print("AI engaged. Sit back and enjoy");
-    }
-
 //    /**
 //     * handles commands sent by the user using the terminal
 //     * @requires userInput != null
@@ -442,7 +426,7 @@ public class Client implements Runnable {
                 }
                 Move firstMove = new Move(line - 1, direction);
                 Move secondMove = null;
-                message += Character.toString(DELIMITER) + firstMove.push();
+                message += DELIMITER + firstMove.push();
                 if (params.length >= 4) {
                     line = Misc.parseInt(params[3]);
                     if (line == null) {
@@ -450,7 +434,7 @@ public class Client implements Runnable {
                         return;
                     }
                     secondMove = new Move(line - 1, direction2);
-                    message += Character.toString(DELIMITER) + secondMove.push();
+                    message += DELIMITER + secondMove.push();
                 }
                 if (game.isMoveValid(firstMove, secondMove)) {
                     sendMessage(message);
