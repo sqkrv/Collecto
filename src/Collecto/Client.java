@@ -18,7 +18,7 @@ public class Client implements Runnable {
     private final ClientController controller;
 
     private Game game = null;
-    private ArrayList<String> logs = new ArrayList<>();
+    private final ArrayList<String> logs = new ArrayList<>();
     private String playerName;
 
     protected boolean chatSupport = false;
@@ -46,44 +46,43 @@ public class Client implements Runnable {
         controller = new ClientController(this);
     }
 
-//    private static void clearConnection() {
-//        socket = null;
-//        in = null;
-//        out = null;
-//    }
-
+    /**
+     * @requires serverInput != null
+     * @ensures serverInput is handled correctly
+     * @param serverInput String input from the server
+     */
     public void handleCommandIn(String serverInput) {
         if (serverInput == null) {
             return;
         }
         String[] params = serverInput.split(DELIMITER);
         switch (params[0]) {
-            case "HELLO":
+            case HELLO:
                 handleHelloServer(params);
                 break;
-            case "LOGIN":
+            case LOGIN:
                 handleLoginServer();
                 break;
-            case "ALREADYLOGGEDIN":
+            case ALREADY_LOGGED_IN:
                 handleAlreadyLoggedIn();
                 break;
-            case "LIST":
+            case LIST:
                 handleListServer(params);
                 break;
-            case "NEWGAME":
+            case NEWGAME:
                 handleNewGame(params);
                 break;
-            case "MOVE":
+            case MOVE:
                 handleMoveServer(params);
                 break;
-            case "GAMEOVER":
+            case GAMEOVER:
                 handleGameOver(params);
                 break;
-            case "ERROR":
+            case ERROR:
                 handleError(params);
                 break;
             default:
-                TUI.printError("Server sent unknown command: ");
+                TUI.printError("Server sent unknown command: "+params[0]);
         }
     }
 
@@ -91,17 +90,18 @@ public class Client implements Runnable {
         if (params.length <= 1) {
             TUI.printError("(no description of the error provided)");
         } else {
-            TUI.printError("Server sent an error");
-        }
-        if (!saidHello) {
-            TUI.printError("No HELLO response received");
-            synchronized (this) {
-                notify();
-            }
-        } else if (!loggedIn) {
-            TUI.printError("No LOGIN response received");
-            synchronized (this) {
-                notify();
+            if (!saidHello) {
+                TUI.printError("No " + HELLO + " response received");
+                synchronized (this) {
+                    notify();
+                }
+            } else if (!loggedIn) {
+                TUI.printError("No " + LOGIN + " response received");
+                synchronized (this) {
+                    notify();
+                }
+            } else {
+                TUI.printError(params[1]);
             }
         }
     }
@@ -227,39 +227,105 @@ public class Client implements Runnable {
         showScore();
     }
 
-    private void showScore() {
-        for (int i = 0; i < 2; i++) {
-            HashMap<Ball, Integer> ballMap= game.getBalls(i);
-            ArrayList<Ball> balls = new ArrayList<>();
-            for (Ball ball : ballMap.keySet()) {
-                for (int j = 0; j < ballMap.get(ball); j++) {
-                    balls.add(ball);
-                }
+    /**
+     * checks if the move made by the server is correct, and if so prints it
+     * @param params server input
+     */
+    private void moveServer(String[] params) {
+        Integer push;
+        Integer push2;
+        Move move;
+        Move move2 = null;
+        push = Global.parsePush(params[1]);
+        if (push == null) {
+            TUI.printError("Server sent incorrect move");
+            return;
+        }
+        move = new Move(push);
+        if (params.length == 3) {
+            push2 = Global.parsePush(params[2]);
+            if (push2 == null) {
+                TUI.printError("Server sent incorrect move");
+                return;
+            } else {
+                move2 = new Move(push2);
             }
-            TUI.print(game.getPlayerName(i) + "[" + game.getScore(i)
-                    + "]:" + TUI.ballColours(balls));
+        }
+        if (game.isMoveValid(move, move2)) {
+            String output = "Move made: [" + move + "]";
+            if (move2 != null) {
+                game.makeMove(move, move2);
+                output = "Double move " + output + " and [" + move2 + "]";
+            } else {
+                game.makeMove(move);
+            }
+            TUI.print(output);
+            myTurn = !myTurn;
+        } else {
+            TUI.printError("Server sent incorrect move");
         }
     }
 
-    private void AIMove() {
-        if (!game.possibleMoves()) return;
-            Move[] moves = AI.makeMove(game.getBoard());
-        if (moves == null) {
-            TUI.print("AI couldn't find a move");
-            return;
-        } else if (moves[0] == null) {
-            addLog(TUI.log("No move move"));
+    /**
+     * handles a move input from the use using a client
+     * @requires game != null && params.length == 3 || params.length == 5
+     * @param params user input
+     */
+    protected void handleMove(String[] params) {
+        if (game == null) {
+            TUI.print("You are not in a game");
             return;
         }
-        String message = "MOVE" + DELIMITER + moves[0].push();
-        if (moves.length == 2) message += DELIMITER + moves[1].push();
-        sendMessage(message);
+        if (params.length != 3 && params.length != 5) {
+            TUI.print("Invalid amount of arguments, please try again");
+        } else {
+            String message = params[0];
+            GridBoard.Direction direction;
+            GridBoard.Direction direction2 = null;
+            try {
+                direction = GridBoard.Direction.valueOf(params[2].toUpperCase());
+                if (params.length == 5) {
+                    direction2 = GridBoard.Direction.valueOf(params[4].toUpperCase());
+                    if (game.possibleFirstMove()) {
+                        TUI.print("Single move can still be played");
+                        return;
+                    }
+                }
+            } catch (IllegalArgumentException i) {
+                TUI.print("Direction is wrong, please try again or type help");
+                return;
+            } // TODO: handle what happens when the input is wrong
+            Integer line = Global.parseInt(params[1]);
+            if (line == null) {
+                TUI.print("Line parameter is wrong, please try again");
+                return;
+            }
+            Move firstMove = new Move(line - 1, direction);
+            Move secondMove = null;
+            message += DELIMITER + firstMove.push();
+            if (params.length >= 4) {
+                line = Global.parseInt(params[3]);
+                if (line == null) {
+                    TUI.print("Line parameter is wrong, please try again");
+                    return;
+                }
+                secondMove = new Move(line - 1, direction2);
+                message += DELIMITER + secondMove.push();
+            }
+            if (game.isMoveValid(firstMove, secondMove)) {
+                sendMessage(message);
+            } else {
+                TUI.print("Move is not valid, please try again or ask for a hint");
+            }
+        }
     }
 
-    void printBoard() {
-        game.printBoard();
-    }
-
+    /**
+     * handles the server responding with a new game
+     * @requires game == null
+     * @ensures params[1] up to and including params[49] are parsed into a new board for the game
+     * @param params server input
+     */
     private void handleNewGame(String[] params) {
         if (game != null) {
             TUI.printError("Still in a game, can't start a new game");
@@ -279,6 +345,30 @@ public class Client implements Runnable {
         }
     }
 
+
+    /**
+     * lets an AI make a move
+     * @requires game.possibleMoves() == true
+     */
+    private void AIMove() {
+        if (!game.possibleMoves()) return;
+        Move[] moves = AI.makeMove(game.getBoard());
+        if (moves == null) {
+            TUI.print("AI couldn't find a move");
+            return;
+        } else if (moves[0] == null) {
+            addLog(TUI.log("No move move"));
+            return;
+        }
+        String message = "MOVE" + DELIMITER + moves[0].push();
+        if (moves.length == 2) message += DELIMITER + moves[1].push();
+        sendMessage(message);
+    }
+
+    /**
+     * waits for a user to select an AI or decide to play for themself when a new game starts
+     * @ensures the server input thread waits until the AI selection is done
+     */
     private void useAI() {
         choosingAI = true;
         if (!useAI) {
@@ -325,39 +415,31 @@ public class Client implements Runnable {
         TUI.print("AI engaged. Sit back and enjoy");
     }
 
-//    /**
-//     * handles commands sent by the user using the terminal
-//     * @requires userInput != null
-//     * @ensures userInput is handled correctly, or an error is displayed
-//     * @param userInput String with input from the user
-//     */
-//    public void handleCommandOut(String userInput) {
-//        TUI.print(Misc.logTime()+userInput);
-//        String[] params = userInput.split(" ");
-//        switch (params[0]) {
-//            case "LIST":
-//            case "QUEUE":
-//                sendMessage(params[0]);
-//                break;
-//            case "MOVE":
-//                handleMove(params);
-//                break;
-//            default:
-//                TUI.printError("Unknown command: " + params[0]);
-//                TUI.print("Instead use: " + Controller.COMMANDS);
-//        }
-//    }
-//
-//    private void handleMove(String[] params) {
-//        if (params.length <= 1) {
-//            TUI.print("Insufficient arguments, try again");
-//        } else {
-//            String message = params[0] + Server.DELIMITER + params[1];
-//            if (params.length >= 3) message += Server.DELIMITER + params[2];
-//            sendMessage(message);
-//        }
-//    }
+    /**
+     * shows the score and balls of players in a game
+     * @requires game != null
+     */
+    private void showScore() {
+        if (game != null) {
+            for (int i = 0; i < 2; i++) {
+                HashMap<Ball, Integer> ballMap = game.getBalls(i);
+                ArrayList<Ball> balls = new ArrayList<>();
+                for (Ball ball : ballMap.keySet()) {
+                    for (int j = 0; j < ballMap.get(ball); j++) {
+                        balls.add(ball);
+                    }
+                }
+                TUI.print(game.getPlayerName(i) + "[" + game.getScore(i) + "]:" + TUI.ballColours(balls));
+            }
+        }
+    }
 
+    /**
+     * parses the String of a board to make a new GridBoard object containing that board
+     * @requires fields[1] up to and including fields[49] are integers
+     * @param fields String containing a board
+     * @return GridBoard with a board of the given String
+     */
     private GridBoard parseStringBoard(String[] fields) {
         if (fields.length != 52) {
             return null;
@@ -378,45 +460,10 @@ public class Client implements Runnable {
         return new GridBoard(board);
     }
 
-    protected synchronized void sendMessage(String message) {
-        try {
-            out.write(message);
-            out.newLine();
-            out.flush();
-            addLog(TUI.log("[OUT] " + message));
-        } catch (IOException e) {
-            TUI.printError("sendmessage");
-            e.printStackTrace();
-        }
-    }
-
-    protected void disconnect() {
-        if (socket != null) {
-            try {
-                socket.close();
-                in.close();
-                out.close();
-                socket = null;
-                game = null;
-//                in = null;
-//                out = null;
-//                socket = null;
-            } catch (IOException e) {
-                TUI.printError("IOException while disconnecting from server");
-            }
-            TUI.print("Connection to server lost");
-        }
-        printLogs(); //TODO: remove this when done with debugging
-    }
-
-    protected void exit() {
-        System.exit(0);
-    }
-
-    protected void printHelp() {
-        TUI.printHelpClient();
-    }
-
+    /**
+     * generates a hint for the player and displays it
+     * @requires game != null
+     */
     protected void hint() {
         TUI.print("Your friendly neighbourhood client is generating a hint, hold on...");
         if (game.possibleMoves()) {
@@ -431,88 +478,116 @@ public class Client implements Runnable {
         }
     }
 
+    /**
+     * sends a String message to a connected server
+     * @requires message != null
+     * @param message message to be sent to the server
+     */
+    protected synchronized void sendMessage(String message) {
+        if (message == null) {
+            return;
+        }
+        try {
+            out.write(message);
+            out.newLine();
+            out.flush();
+            addLog(TUI.log("[" + cyan("OUT") + "] " + message));
+        } catch (IOException e) {
+            TUI.printError("IOException while sending a message to the server");
+        }
+    }
+
+    /**
+     * prints the board of a current game
+     * @requires game != null
+     */
+    protected void printBoard() {
+        if (game != null) game.printBoard();
+        else TUI.print("You are not in a game");
+    }
+
+    /**
+     * prints the logs for the user to see
+     */
     protected void printLogs() {
         for (String log : logs) {
             TUI.print(log);
         }
     }
 
-    protected void handleMove(String[] params) {
-        if (game != null) {
-            if (params.length != 3 && params.length != 5) {
-                TUI.print("Invalid amount of arguments, please try again");
+    /**
+     * disconnects from a server
+     * @requires socket != null
+     */
+    protected void disconnect() {
+        if (socket != null) {
+            try {
+                socket.close();
+                in.close();
+                out.close();
+                socket = null;
+                game = null;
+            } catch (IOException e) {
+                TUI.printError("IOException while disconnecting from server");
             }
-//            } else if (game.) {
-//                TUI.print("");
-//            }
-            else {
-                String message = params[0];
-                GridBoard.Direction direction;
-                GridBoard.Direction direction2 = null;
-                try {
-                    direction = GridBoard.Direction.valueOf(params[2].toUpperCase());
-                    if (params.length == 5) {
-                        direction2 = GridBoard.Direction.valueOf(params[4].toUpperCase());
-                        if (game.possibleFirstMove()) {
-                            TUI.print("Single move can still be played");
-                            return;
-                        }
-                    }
-                } catch (IllegalArgumentException i) {
-                    TUI.print("Direction is wrong, please try again or type help");
-                    return;
-                } // TODO: handle what happens when the input is wrong
-                Integer line = Misc.parseInt(params[1]);
-                if (line == null) {
-                    TUI.print("Line parameter is wrong, please try again");
-                    return;
-                }
-                Move firstMove = new Move(line - 1, direction);
-                Move secondMove = null;
-                message += DELIMITER + firstMove.push();
-                if (params.length >= 4) {
-                    line = Misc.parseInt(params[3]);
-                    if (line == null) {
-                        TUI.print("Line parameter is wrong, please try again");
-                        return;
-                    }
-                    secondMove = new Move(line - 1, direction2);
-                    message += DELIMITER + secondMove.push();
-                }
-                if (game.isMoveValid(firstMove, secondMove)) {
-                    sendMessage(message);
-                } else {
-                    TUI.print("Move is not valid, please try again or ask for a hint");
-                }
-            }
-//        } else {
-//            TUI.print("You are not in a game");
+            TUI.print("Connection to server lost");
         }
+        printLogs(); //TODO: remove this when done with debugging
+        System.exit(0);
     }
 
-    @Override
-    public void run() {
-        // Server messages listener
-        try {
-            String line;
-            while ((line = in.readLine()) != null) {
-                addLog(TUI.log("[IN ] " + line));
-                handleCommandIn(line);
-            }
-//        } catch (SocketException ignored) {
-        } catch (IOException e) {
-            TUI.printError("IOException while listening to server");
-        }
-        disconnect();
-        exit();
+    /**
+     * prints a help menu for the user to read
+     */
+    protected void printHelp() {
+        TUI.printHelpClient();
     }
 
+    /**
+     * adds a log to logs
+     * @param log log String to be added
+     */
+    private synchronized void addLog(String log) {
+        logs.add(log);
+    }
+
+    /**
+     * prompts the user for a login name until the server confirms that it is not taken
+     */
+    private void requestLogin() {
+        String answer = null;
+        while (!loggedIn) {
+            try {
+                TUI.print("Please enter a name to log in to the server:");
+                answer = controller.promptUser();
+                answer = answer.replaceAll(" +", " ");
+                this.playerName = answer;
+                sendMessage("LOGIN" + DELIMITER + answer);
+                synchronized (this) {
+                    this.wait();
+                }
+            } catch (InterruptedException e) {
+                TUI.printError("requestlogin");
+                e.printStackTrace();
+            }
+        }
+        TUI.print("You have been logged in under the name: " + answer);
+    }
+
+    /**
+     * starts up the client and runs the controller
+     */
     private void startUpClient() {
         TUI.print("Setting up connection, please wait...");
         handleSetup();
         this.controller.start();
     }
 
+    /**
+     * handles the initial HELLO handshake response from a server
+     * @requires !saidHello
+     * @ensures information about server support is stored
+     */
     private void handleSetup() {
         if (saidHello) {
             TUI.printError("Already received HELLO confirmation");
@@ -538,28 +613,22 @@ public class Client implements Runnable {
         requestLogin();
     }
 
-    private void requestLogin() {
-        String answer = null;
-        while (!loggedIn) {
-            try {
-                TUI.print("Please enter a name to log in to the server:");
-                answer = controller.promptUser();
-                answer = answer.replaceAll(" +", " ");
-                this.playerName = answer;
-                sendMessage("LOGIN" + Server.DELIMITER + answer);
-                synchronized (this) {
-                    this.wait();
-                }
-            } catch (InterruptedException e) {
-                TUI.printError("requestlogin");
-                e.printStackTrace();
+    /**
+     * listens to the server once the connection has been set up
+     */
+    @Override
+    public void run() {
+        // Server messages listener
+        try {
+            String line;
+            while ((line = in.readLine()) != null) {
+                addLog(TUI.log("[" + purple("IN") + " ] " + line));
+                handleCommandIn(line);
             }
+        } catch (IOException e) {
+            TUI.printError("IOException while listening to server");
         }
-        TUI.print("You have been logged in under the name: " + answer);
-    }
-
-    private synchronized void addLog(String log) {
-        logs.add(log);
+        disconnect();
     }
 
     public static void main(String[] args) throws IOException {
@@ -569,7 +638,7 @@ public class Client implements Runnable {
 
         if (args.length != 2) {
             // IP prompt
-            ip = controller.promptIP();
+            ip = controller.promptAddress();
 
             // Port prompt
             port = controller.promptPort();
@@ -592,7 +661,7 @@ public class Client implements Runnable {
                 TUI.printError("IOException while trying to connect");
             }
             TUI.print("Cannot connect to server on "+ip+":"+port+". Try different parameters.");
-            ip = controller.promptIP();
+            ip = controller.promptAddress();
             port = controller.promptPort();
         }
 
