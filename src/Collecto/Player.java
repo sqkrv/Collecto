@@ -3,6 +3,14 @@ package Collecto;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * This class represents a player of the game, it stores the name of the player and tracks
+ * all the balls which have been earned while playing a game. It is used by the Game class
+ * by storing two Players who are playing that game.
+ *
+ * @see Game
+ * @see Ball
+ */
 public class Player {
     private final HashMap<Ball, Integer> balls = new HashMap<>();
 
@@ -49,6 +57,18 @@ public class Player {
      */
     public HashMap<Ball, Integer> getBalls() {
         return balls;
+    }
+
+    /**
+     * Returns the total amount of balls that this player currently has.
+     * @return amount of balls
+     */
+    public int getBallAmount() {
+        int total = 0;
+        for (Integer amount : balls.values()) {
+            total += amount;
+        }
+        return total;
     }
 
     /**

@@ -3,7 +3,21 @@ package Collecto;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ComputerPlayer extends Player {
+/**
+ * This class contains a beginner and an intermediate
+ * AI which can play Collecto instead of a regular user.
+ * It is integrated into the Client class so that a player
+ * can call on it to play a game for them.
+ * <p>The strategy of the beginner AI is to make the very first
+ * possible move that it encounters.
+ * <p>The strategy of the intermediate AI is to calculate all
+ * current possible moves, and see how many balls they would
+ * gain by making that move, and the move with the highest amount
+ * of balls gained is selected as the next move that the AI makes.
+ *
+ * @see Client
+ */
+public class ComputerPlayer {
     private final int level;
 
     /**
@@ -26,19 +40,25 @@ public class ComputerPlayer extends Player {
     }
 
     /**
-     * @return difficulty level of the ComputerPLayer
+     * Returns the difficulty level of this ComputerPlayer.
+     *
+     * @return difficulty level of the ComputerPlayer
      */
     public int getLevel() {
         return level;
     }
 
     /**
-     * determines the next move of the computer player
-     * @requires it is the turn of this computer player
-     * @ensures int move >= 0 && int move <= 27
-     * @return Move
+     * Determines the next move of the computer player using {@code makeBeginnerMove()} or
+     * {@code makeIntermediateMove()} depending on {@code level} of this ComputerPlayer instance.
+     *
+     * <p>If {@code level == 1} method uses {@link #makeBeginnerMove(GridBoard)},
+     * if {@code level == 2} method uses {@link #makeIntermediateMove(GridBoard)}.
+     * @requires board != null
+     * @ensures return is a valid move or null
+     * @param board the specified GridBoard on which the AI will attempt to make a move
+     * @return a determined move
      */
-
     public Move[] makeMove(GridBoard board) {
         switch (level) {
             case 1:
@@ -50,19 +70,42 @@ public class ComputerPlayer extends Player {
         }
     }
 
-    private static Move[] makeBeginnerMoveSingle(GridBoard board) {
+    /**
+     * Private help method to determine if there is
+     * a single move possible on board provided.
+     *
+     * <p>Works by iterating through all moves
+     * and trying to find a possible move.
+     * If such move is found — returns this move,
+     * if no possible moves found returns null.
+     *
+     * @requires board != null
+     * @param board the board used to determine a move
+     * @return first possible move or null
+     */
+    private static Move makeBeginnerMoveSingle(GridBoard board) {
         Move move;
         for (int i = 0; i < 7; i++) {
             for (Move.Direction direction : Move.Direction.values()) {
                 move = new Move(i, direction);
-                if (board.isMoveValid(move)) return new Move[]{move};
+                if (board.isMoveValid(move)) return move;
             }
         }
         return null;
     }
 
     /**
-     * Tries to find the possible move with one push. If can't - tries to find a move with two pushes.
+     * Looks for possible move in either one or two pushes.
+     * If no such move found returns null.
+     * <p>Description of work:
+     * <p>Firstly uses {@code makeBeginnerMoveSingle()}
+     * to see whether there is a move possible with single push.
+     * If it returns move - returns this move and finishes.
+     * If method returns null - tries to find a move with double pushes
+     * by iterating through all possible moves of lines
+     * and for each iteration looking for possible move
+     * using the same algorithm as {@code makeBeginnerSingleMove()}.
+     *
      * @param board board to find move on
      * @return an array of either 1 or 2 moves or null if no moves found
      */
@@ -70,8 +113,8 @@ public class ComputerPlayer extends Player {
         GridBoard copy;
 
         // check if single move exists
-        Move[] moves = makeBeginnerMoveSingle(board);
-        if (moves != null) return moves;
+        Move move = makeBeginnerMoveSingle(board);
+        if (move != null) return new Move[]{move};
 
         // if not - find two moves
         for (int j = 0; j < 7; j++) {
@@ -91,12 +134,36 @@ public class ComputerPlayer extends Player {
         return null;
     }
 
+    /**
+     * Determines the amount of balls gained from a certain move,
+     * so that the second level move determiner can use this
+     * as a score to see what move is the best move.
+     *
+     * @param board the board on which the move is made
+     * @param move the move that has to be checked
+     * @return amount of balls gained by making this move
+     */
     private int ballsFromMove(GridBoard board, Move move) {
         GridBoard copy = board.deepCopy();
         copy.moveLine(move);
         return copy.removeBalls(move).size();
     }
 
+    /**
+     * Private help method to determine if there is
+     * a single move possible on board provided by using second level algorithm.
+     *
+     * <p>Works by iterating through all moves
+     * and trying to find a possible move.
+     * If no possible moves found returns null.
+     * If any moves found — iterates through found moves
+     * and using {@link #ballsFromMove(GridBoard, Move)} determines
+     * the best move by comparing amount of balls gained from specific move.
+     * The best move is considered to be the move with most balls gained from this move.
+     *
+     * @param board the board on which the moves are made and compared
+     * @return best move in one push or null
+     */
     private Move[] makeIntermediateMoveSingle(GridBoard board) {
         Move move;
         int max = 0;
@@ -119,6 +186,21 @@ public class ComputerPlayer extends Player {
         return new Move[]{max_move, new Move(max)};
     }
 
+    /**
+     * Looks for possible move in either one or two pushes.
+     * If no such move found returns null.
+     * <p>Description of work:
+     * <p>Firstly uses {@code makeIntermediateMoveSingle()}
+     * to see whether there is a move possible with single push.
+     * If it returns move - returns this move and finishes.
+     * If method returns null - tries to find a move with double pushes
+     * by iterating through all possible moves of lines
+     * and for each iteration looking for possible move
+     * using the same algorithm as {@code makeIntermediateSingleMove()}.
+     *
+     * @param board the board on which the move is determined
+     * @return an array of either 1 or 2 moves or null if no moves found
+     */
     public Move[] makeIntermediateMove(GridBoard board) {
         GridBoard copy;
 

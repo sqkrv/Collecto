@@ -95,7 +95,7 @@ public class Misc {
         ArrayList<ArrayList<Ball>> copy_array = new ArrayList<>();
 
         for (ArrayList<Ball> row : array) {
-            copy_array.add((ArrayList<Ball>) row.clone());
+            copy_array.add(new ArrayList<>(row));
         }
 
         return copy_array;

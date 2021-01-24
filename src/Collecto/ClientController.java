@@ -15,10 +15,19 @@ import static Collecto.Global.Protocol.Commands.*;
 public class ClientController extends Controller {
     private final Client client;
 
+    /**
+     * Constructs ClientController with reference to provided client.
+     *
+     * @param client client reference
+     */
     public ClientController(Client client) {
         this.client = client;
     }
 
+    /**
+     * Starts this ClientController and continually listens for an input
+     * and then passes this input to {@code handleCommand()}.
+     */
     public void start() {
         String input;
         while ((input = scanner.nextLine()) != null) {
@@ -26,6 +35,15 @@ public class ClientController extends Controller {
         }
     }
 
+    /**
+     * Handles the command entered by the user by invoking the correct method corresponding to it, or invokes
+     * the method {@link Client#chooseAI(String[])} or {@link Client#chooseDifficulty(String[])} while
+     * the user is still deciding on using an AI.
+     *
+     * @requires {@code input != null}
+     * @param input input from the user as detected by the {@code start()} method
+     * @see Collecto.Global.Protocol.Commands
+     */
     private void handleCommand(String input) {
         if (input == null) {
             return;

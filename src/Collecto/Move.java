@@ -1,5 +1,22 @@
 package Collecto;
 
+/**
+ * This class stores and implements moves.
+ * It stores the direction and line of a move,
+ * where the direction is left, right, up or
+ * down, and the line is a row or a column.
+ * It supports conversion into a push, which
+ * is a move described as an integer between
+ * 0 and 27, where 0-6 is left, 7-13 is right,
+ * 14-20 is up, and 21-27 is down.
+ * It also contains the Direction enum class.
+ * It is used primarily by many classes,
+ * primarily the Game and GridBoard classes.
+ *
+ * @see Direction
+ * @see Game
+ * @see GridBoard
+ */
 public class Move {
     /**
      * This class is made for easy and convenient Move arguments handling.

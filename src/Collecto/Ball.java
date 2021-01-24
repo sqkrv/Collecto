@@ -2,6 +2,16 @@ package Collecto;
 
 import static Collecto.Colour.*;
 
+/**
+ * Enum class for all possible in-game balls.
+ * The white ball represents an empty field on
+ * a board, and is therefore placed at index 0.
+ * This class is used by many classes, mostly
+ * GridBoard and Player.
+ * @see Colour
+ * @see GridBoard
+ * @see Player
+ */
 public enum Ball {
     WHITE, BLUE, YELLOW, RED, ORANGE, PURPLE, GREEN;
 

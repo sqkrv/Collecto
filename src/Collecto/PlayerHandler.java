@@ -11,6 +11,27 @@ import static Collecto.Global.Protocol.*;
 import static Collecto.Global.Protocol.Misc.*;
 import static Collecto.Global.Protocol.Commands.*;
 
+/**
+ * This class handles clients that connect to a server.
+ * A server creates a PlayerHandler object for each
+ * client that connects to that server. The PlayerHandler
+ * then communicates with the client, and handles any
+ * communication with the client as well as games and
+ * opponents of that client. It also stores all necessary
+ * information about the client, and makes sure that the
+ * connection is cleanly terminated when a client disconnects.
+ * It communicates with its server only to check on whatever
+ * that must be stored on the server, meaning queues,
+ * login names, and adding or removing players. It only starts
+ * new games after the server tells it to do so. It is able
+ * to print log messages on the terminal of the user running
+ * the server using the TUI class.
+ *
+ * @see Server
+ * @see Client
+ * @see Game
+ * @see TUI
+ */
 public class PlayerHandler implements Runnable {
     
     private final BufferedReader in;

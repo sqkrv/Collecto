@@ -11,6 +11,19 @@ import static Collecto.Global.Protocol.Commands.*;
 import static Collecto.Global.Protocol.Misc.*;
 import static Collecto.Global.DELIMITER;
 
+/**
+ * This class contains the client used by users who want to connect to a server and play a game.
+ * Upon running this class it will prompt the user for an IP and a port to connect to a server, and
+ * it will then provide further functionality to communicate with the server, play the game, let
+ * an AI play the game, provide hints, and disconnect. It also uses the TUI class to print states
+ * of the game for the user to see.
+ * It stores socket for server communication, a game to play, logs to print if you encounter errors,
+ * the name of the player and a ClientController receive user input.
+ * @see Server
+ * @see TUI
+ * @see Game
+ * @see ClientController
+ */
 public class Client implements Runnable {
     public final static String DESCRIPTION = "Client of Hein and Stan";
 

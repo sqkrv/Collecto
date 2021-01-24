@@ -57,8 +57,8 @@ class ComputerPlayerTest {
     void getLevel() {
         assertEquals(player.getLevel(), 1);
         assertThrows(AssertionError.class, () -> new ComputerPlayer(4));
-        player = new ComputerPlayer(3);
-        assertEquals(player.getLevel(), 3);
+        player = new ComputerPlayer(2);
+        assertEquals(player.getLevel(), 2);
     }
 
     @Nested

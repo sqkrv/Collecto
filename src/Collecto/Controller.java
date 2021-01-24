@@ -16,7 +16,7 @@ public class Controller {
     protected final Scanner scanner;
 
     /**
-     * Constructs a Controller
+     * Constructs a Controller and initiates a new scanner for user input
      */
     public Controller() {
         this.scanner = new Scanner(System.in);

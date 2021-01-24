@@ -7,6 +7,22 @@ import java.util.Date;
 
 import static Collecto.Colour.red;
 
+/**
+ * This class contains the Textual User Interface
+ * used by all other classes in the Collecto program
+ * to print anything on the screen of a user.
+ * It contains methods to return logs with
+ * dates and time added to them, print strings,
+ * print errors, print a board, print a help menu
+ * and return a string with coloured balls. It is
+ * used by many classes, mainly the Game, Client,
+ * Server and PlayerHandler classes.
+ *
+ * @see Game
+ * @see Client
+ * @see Server
+ * @see PlayerHandler
+ */
 public class TUI {
     static DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd.MM");
 
@@ -81,8 +97,7 @@ public class TUI {
             string.append("\n");
             string.append("  ").append(i).append("  |");
             for (int j = 1; j <= 7; j++) {
-                if (coloured) string.append(String.format("%-16s|", gridBoard.getField(i-1, j-1).toColouredString()));
-                else string.append(String.format("%-7s|", gridBoard.getField(i-1, j-1)));
+                string.append(String.format("%-16s|", gridBoard.getField(i-1, j-1).toColouredString()));
             }
             string.append("\n");
         }
@@ -98,7 +113,7 @@ public class TUI {
      * @return
      */
     public static String colouredBoard(GridBoard gridBoard) {
-        return textBoard(gridBoard, true);
+        return textBoard(gridBoard);
     }
 
     static String boardString(GridBoard gridBoard) {
