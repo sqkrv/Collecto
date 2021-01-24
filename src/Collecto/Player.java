@@ -3,57 +3,58 @@ package Collecto;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static Collecto.Misc.Move;
-
 public class Player {
-//    private final ArrayList<Ball> balls;
-    private final HashMap<Ball, Integer> count = new HashMap<>();
+    private final HashMap<Ball, Integer> balls = new HashMap<>();
 
-    private String name;
+    private final String name;
 
     /**
-     * Player class constructor
+     * Constructs a Player instance with the specified name
+     * @param name the name of the player
      */
     public Player(String name) {
         this.name = name;
 
-//        balls = new ArrayList<>();
         for (Ball ball : Ball.values()) {
-            if (ball != Ball.WHITE) count.put(ball, 0);
+            if (ball != Ball.WHITE) balls.put(ball, 0);
         }
     }
 
-    public Move[] makeMove() {
-        //TODO: add this method
-        return null;
-    }
-
     /**
-     * @requires ball != Ball.WHITE
-     * @param balls a Ball to add to the player balls
+     * Adds balls in specified array to all player's balls
+     * @ensures no WHITE balls will be added
+     * @param balls an array of balls
      */
     public void addBalls(ArrayList<Ball> balls) {
-//        this.balls.addAll(balls);
         for (Ball ball : balls) {
-            if (ball != Ball.WHITE) count.put(ball, count.get(ball) + 1);
+            if (ball != Ball.WHITE) this.balls.put(ball, this.balls.get(ball) + 1);
         }
     }
 
     /**
+     * Returns calculated total point for this player
      * @return total points for this player
      */
     public int getPoints() {
         int points = 0;
-        for (int value : count.values()) {
+        for (int value : balls.values()) {
             points += value / 3;
         }
         return points;
     }
 
-    public HashMap<Ball, Integer> showBalls() {
-        return count;
+    /**
+     * Returns HashMap of player's balls with colours and corresponding amount of balls
+     * @return player's balls
+     */
+    public HashMap<Ball, Integer> getBalls() {
+        return balls;
     }
 
+    /**
+     * Returns the name of this player
+     * @return name of this player
+     */
     public String getName() {
         return name;
     }
