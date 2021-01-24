@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import static Collecto.Misc.Move;
-
 public class ComputerPlayer extends Player {
-    private int level;
+    private final int level;
 
     /**
      * Constructs a ComputerPlayer class with first level of difficulty
@@ -62,6 +60,11 @@ public class ComputerPlayer extends Player {
         return null;
     }
 
+    /**
+     * Tries to find the possible move with one push. If can't - tries to find a move with two pushes.
+     * @param board board to find move on
+     * @return an array of either 1 or 2 moves or null if no moves found
+     */
     public static Move[] makeBeginnerMove(GridBoard board) {
         GridBoard copy;
 
