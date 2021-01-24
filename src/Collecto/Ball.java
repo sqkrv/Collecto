@@ -5,16 +5,20 @@ import static Collecto.Colour.*;
 public enum Ball {
     WHITE, BLUE, YELLOW, RED, ORANGE, PURPLE, GREEN;
 
-    public String getColour() {
-        return this.name();
-    }
-
+    /**
+     *
+     * @return String name of the colour of a ball
+     */
     @Override
     public String toString() {
         if (this == WHITE) return "";
-        else return getColour();
+        else return this.name();
     }
 
+    /**
+     *
+     * @return coloured String name of the ball
+     */
     public String toColouredString() {
         if (this == BLUE) {
             return blue(this.toString());
@@ -33,6 +37,10 @@ public enum Ball {
         }
     }
 
+    /**
+     *
+     * @return the ANSI colour of a ball
+     */
     public String ballColour() {
         if (this == BLUE) {
             return Colour.BLUE;
@@ -47,7 +55,7 @@ public enum Ball {
         } else if (this == GREEN) {
             return Colour.GREEN;
         } else {
-            return RESET_COLOUR;
+            return RESET;
         }
     }
 }

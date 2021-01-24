@@ -186,7 +186,7 @@ public class PlayerHandler implements Runnable {
             sendError("Invalid amount of arguments provided");
         } else if (game == null) {
             sendError("You are not in a game");
-        } else if (game.possibleFirstMove()) {
+        } else if (params.length == 3 && game.possibleFirstMove()) {
             sendError("Single move still possible");
         } else {
             int push;

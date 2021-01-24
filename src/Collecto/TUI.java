@@ -87,19 +87,6 @@ public class TUI {
         return string.toString();
     }
 
-    public static void print(String string) {
-        System.out.println(string);
-    }
-
-    public static void printError(String error) {
-        error = "["+"\u001B[31m" + "ERROR" + "\u001B[0m"+"] " + error;
-        log(error);
-    }
-
-    public static String log(String log) {
-        return Misc.logTime() + log;
-    }
-
     public static void printHelpClient() {
         print(
                 "Valid inputs are: " + "LIST, QUEUE, MOVE, LOGS, HELP, DISCONNECT" + "\n" +

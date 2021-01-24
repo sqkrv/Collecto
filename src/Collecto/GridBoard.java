@@ -2,8 +2,6 @@ package Collecto;
 
 import java.util.*;
 
-import static Collecto.Misc.Move;
-
 public class GridBoard {
     public enum Direction {
         LEFT, RIGHT, UP, DOWN;

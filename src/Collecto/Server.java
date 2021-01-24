@@ -15,7 +15,7 @@ public class Server implements Runnable {
     private final LinkedList<PlayerHandler> queue = new LinkedList<>();
     private final ArrayList<PlayerHandler> inGame = new ArrayList<>();
 
-    private static final ServerController controller = new ServerController();
+    private static final Controller controller = new Controller();
 
     protected final static String DESCRIPTION = "the server of Stan and Hein";
 
@@ -95,6 +95,10 @@ public class Server implements Runnable {
             // TODO: check whether queue synchronisation works properly, possible add to other methods as well
                 PlayerHandler player1 = queue.get(0);
                 PlayerHandler player2 = queue.get(1);
+                if (new Random().nextInt(2) == 1) {
+                    player1 = queue.get(1);
+                    player2 = queue.get(0);
+                }
                 Game game = new Game(player1.getName(), player2.getName());
                 inGame.add(player1);
                 inGame.add(player2);
@@ -123,7 +127,7 @@ public class Server implements Runnable {
             // Port prompt
             port = controller.promptPort();
         } else {
-            port = checkPort(args[0]);
+            port = Global.checkPort(args[0]);
             if (port == null) port = controller.promptPort();
         }
 

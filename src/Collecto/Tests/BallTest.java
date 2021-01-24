@@ -30,16 +30,6 @@ class BallTest {
     }
 
     @Test
-    void testGetColour() {
-        assertEquals(blueBall.getColour(), "BLUE");
-        assertEquals(yellowBall.getColour(), "YELLOW");
-        assertEquals(redBall.getColour(), "RED");
-        assertEquals(orangeBall.getColour(), "ORANGE");
-        assertEquals(purpleBall.getColour(), "PURPLE");
-        assertEquals(whiteBall.getColour(), "WHITE");
-    }
-
-    @Test
     void testToString() {
         assertEquals(blueBall.toString(), "BLUE");
         assertNotEquals(blueBall.toString(), "\u001B[34m" + "BLUE" + ANSI_WHITE);

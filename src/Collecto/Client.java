@@ -6,15 +6,17 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static Collecto.Server.DELIMITER;
-import static Collecto.Misc.*;
+import static Collecto.Colour.*;
+import static Collecto.Global.Protocol.Commands.*;
+import static Collecto.Global.Protocol.Misc.*;
+import static Collecto.Global.DELIMITER;
 
 public class Client implements Runnable {
-    public final static String DESCRIPTION = "test"; //"Client of Hein and Stan";
+    public final static String DESCRIPTION = "Client of Hein and Stan";
 
     private Socket socket;
-    private BufferedReader in;
-    private BufferedWriter out; // TODO again, Buffered or Print
+    private final BufferedReader in;
+    private final BufferedWriter out;
     private final ClientController controller;
 
     private Game game = null;
@@ -39,6 +41,12 @@ public class Client implements Runnable {
 
     private ComputerPlayer AI;
 
+    /**
+     * Initializes communication with server and input from the user
+     * @requires socket != null
+     * @param socket socket connected to a server
+     * @throws IOException if the socket fails
+     */
     public Client(Socket socket) throws IOException {
         this.socket = socket;
         in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
@@ -86,6 +94,10 @@ public class Client implements Runnable {
         }
     }
 
+    /**
+     * Handles errors sent by the server, wakes up other threads if not logged in
+     * @param params server input
+     */
     private void handleError(String[] params) {
         if (params.length <= 1) {
             TUI.printError("(no description of the error provided)");
@@ -106,44 +118,74 @@ public class Client implements Runnable {
         }
     }
 
+    /**
+     * handles the hello handshake response from a server
+     * @requires !saidHello
+     * @param params server input
+     */
     private void handleHelloServer(String[] params) {
-        for (int i = 2; i < params.length; i++) {
-            switch (params[i]) {
-                case "CHAT":
-                    this.serverChatSupport = true;
-                    break;
-                case "RANK":
-                    this.serverRankSupport = true;
-                    break;
-                case "AUTH":
-                    this.serverAuthSupport = true;
-                    break;
-                case "CRYPT":
-                    this.serverCryptSupport = true;
-                    break;
+        if (!saidHello) {
+            for (int i = 2; i < params.length; i++) {
+                switch (params[i]) {
+                    case "CHAT":
+                        this.serverChatSupport = true;
+                        break;
+                    case "RANK":
+                        this.serverRankSupport = true;
+                        break;
+                    case "AUTH":
+                        this.serverAuthSupport = true;
+                        break;
+                    case "CRYPT":
+                        this.serverCryptSupport = true;
+                        break;
+                }
             }
-        }
-        saidHello = true;
-        synchronized (this) {
-            notify();
+            saidHello = true;
+            synchronized (this) {
+                notify();
+            }
+        } else {
+            TUI.printError("Server said hello again");
         }
     }
 
+    /**
+     * handles the login response from a server
+     * @requires !loggedIn
+     */
     private void handleLoginServer() {
-        loggedIn = true;
-        TUI.print("You are now logged in to the server");
-        synchronized (this) {
-            notify();
+        if (!loggedIn) {
+            loggedIn = true;
+            TUI.print("You are now logged in to the server");
+            synchronized (this) {
+                notify();
+            }
+        } else {
+            TUI.printError("Logged into the server again");
         }
     }
 
+    /**
+     * handles server responding that this name is already logged in
+     * @requires !loggedIn
+     */
     private void handleAlreadyLoggedIn() {
-        TUI.print("Username already taken, try again");
-        synchronized (this) {
-            notify();
+        if (!loggedIn) {
+            TUI.print("Username already taken, try again");
+            synchronized (this) {
+                notify();
+            }
+        } else {
+            TUI.printError("Server sent ALREADYLOGGEDIN again");
         }
     }
 
+    /**
+     * handles server responding with a list of online players
+     * @requires params.length > 1
+     * @param params input from server
+     */
     private void handleListServer(String[] params) {
         if (params.length <= 1) {
             TUI.printError("Server sent empty List to print");
@@ -156,6 +198,12 @@ public class Client implements Runnable {
         }
     }
 
+    /**
+     * handles server responding that a game is over
+     * @requires params.length >= 2 && (params[2] == "DRAW" ||
+     *      params[2] == "VICTORY" || params[2] == "DISCONNECT")
+     * @param params server input
+     */
     private void handleGameOver(String[] params) {
         TUI.print("Game has ended");
         if (params.length <= 2) {
@@ -165,7 +213,12 @@ public class Client implements Runnable {
                 TUI.printError("Insufficient arguments, winner unknown");
             }
         } else {
-            if (params[1].equals("DISCONNECT")) TUI.print("Opponent disconnected");
+            if (params[1].equals("DISCONNECT")) {
+                TUI.print("Opponent disconnected");
+            } else if (!params[1].equals("VICTORY")) {
+                TUI.printError("Server sent unknown reason for game end");
+                return;
+            }
             TUI.print(params[2] + " has won!");
         }
         game = null;
@@ -173,58 +226,23 @@ public class Client implements Runnable {
         myTurn = false;
     }
 
+    /**
+     * handles server responding with a move
+     * @requires params.length == 2 || params.length == 3
+     * @param params server input
+     */
     private void handleMoveServer(String[] params) {
-        if (params.length  <= 1) {
-            TUI.printError("Unknown move made");
+        if (params.length != 2 && params.length != 3) {
+            TUI.printError("Wrong length move response");
         } else {
-            Integer push;
-            Move move;
-            Move move2;
-            if (params.length == 2) {
-                push = Temp.parsePush(params[1]);
-                if (push == null) {
-                    TUI.printError("Server sent incorrect move");
-                    return;
-                }
-                move = new Move(push);
-                if (game.makeMove(move)) {
-                    TUI.print("New move made: [" + move + "]");
-                    myTurn = !myTurn;
-                } else {
-                    TUI.printError("Server sent incorrect move");
-                    return;
-                }
-            } else {
-                push = Temp.parsePush(params[1]);
-                if (push == null) {
-                    TUI.printError("Server sent incorrect move");
-                    return;
-                }
-                move = new Move(push);
-
-                push = Temp.parsePush(params[2]);
-                if (push == null) {
-                    TUI.printError("Server sent incorrect move");
-                    return;
-                }
-                move2 = new Move(push);
-
-                if (game.makeMove(move, move2)) {
-                    TUI.print("Double move made: [" + move + "] " +
-                            "and [" + move2 + "]");
-                    myTurn = !myTurn;
-                } else {
-                    TUI.printError("Server sent incorrect move");
-                    return;
-                }
-            }
+            moveServer(params);
         }
+        printBoard();
+        showScore();
         if (!useAI && myTurn) TUI.print("It's your turn");
-        if (myTurn && useAI) {
+        if (useAI && myTurn) {
             AIMove();
         }
-        game.printBoard();
-        showScore();
     }
 
     /**
@@ -337,8 +355,8 @@ public class Client implements Runnable {
             useAI();
             if (params[50].equals(playerName)) myTurn = true;
             if (!useAI) {
-                game.printBoard();
-                if (myTurn) TUI.print("It's you turn");
+                printBoard();
+                if (myTurn) TUI.print("It's your turn");
             } else {
                 if (myTurn) AIMove();
             }
@@ -383,6 +401,12 @@ public class Client implements Runnable {
         }
     }
 
+    /**
+     * lets the user choose to play with an AI or not
+     * @requires answer[0] == "Y" || answer[0] == "N"
+     * @ensures thread is notified if answer[0] == "N"
+     * @param answer user input
+     */
     protected void chooseAI(String[] answer) {
         if (answer[0].equals("Y")) {
             useAI = true;
@@ -399,6 +423,12 @@ public class Client implements Runnable {
         }
     }
 
+    /**
+     * lets the user choose a difficulty for their AI
+     * @requires answer[0] == "1" || answer[0] == "2"
+     * @ensures AI = new ComputerPlayer(1) || AI = new ComputerPlayer(2)
+     * @param answer user input
+     */
     protected void chooseDifficulty(String[] answer) {
         if (answer[0].equals("1")) {
             AI = new ComputerPlayer(1);
@@ -465,6 +495,9 @@ public class Client implements Runnable {
      * @requires game != null
      */
     protected void hint() {
+        if (game == null) {
+            return;
+        }
         TUI.print("Your friendly neighbourhood client is generating a hint, hold on...");
         if (game.possibleMoves()) {
             Move[] moves = ComputerPlayer.makeBeginnerMove(game.getBoard());
@@ -643,9 +676,9 @@ public class Client implements Runnable {
             // Port prompt
             port = controller.promptPort();
         } else {
-            ip = checkIP(args[0]);
-            port = checkPort(args[1]);
-            if (ip == null) ip = controller.promptIP();
+            ip = Global.checkAddress(args[0]);
+            port = Global.checkPort(args[1]);
+            if (ip == null) ip = controller.promptAddress();
             if (port == null) port = controller.promptPort();
         }
 

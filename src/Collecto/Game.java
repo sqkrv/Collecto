@@ -47,6 +47,10 @@ public class Game {
         return board.possibleMoves();
     }
 
+    public boolean possibleFirstMove() {
+        return board.possibleMoves(true);
+    }
+
     public String getWinner() {
         if (players[0].getPoints() > players[1].getPoints()) {
             return players[0].getName();

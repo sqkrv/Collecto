@@ -1,5 +1,6 @@
 out logs server
-extra thread for AI question?
+
+change error logs (client)
 
 The client should be able to withstand:
  - randomly dropping connections
@@ -7,20 +8,13 @@ The client should be able to withstand:
  - Illegal moves
 
 Go through all classes and improve them / fix TODOs
-check in client if a player is not moving to give the correct response
-figure out if toString() in enum Direction is important
 perhaps simplify the checks in server (and perhaps client) for example when checking if the game is null
+figure out if toString() in enum Direction is important
+
 write a BUNCH of tests (both unit and integration tests)
 write TONS of javadoc
-
-perhaps display score and balls clientside
-+ BOARD command to print board
-
-timeout for ai prompt
-
 write some in line comments
 --> (important: should not be about 'what' is happening, rather 'why' it is happening)
 
 idk maybe commands as enums or stuff (later ig)
-+ when username is already taken show the response from the server about it
-command for the client when s/he is in queue to choose whether s/he wants to play with AI when there are no other players in q
+~ command for the client when s/he is in queue to choose whether s/he wants to play with AI when there are no other players in q
