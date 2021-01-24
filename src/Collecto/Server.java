@@ -18,7 +18,6 @@ public class Server implements Runnable {
     private static final ServerController controller = new ServerController();
 
     protected final static String DESCRIPTION = "the server of Stan and Hein";
-    public static final String DELIMITER = "~";
 
     protected boolean chatSupport = false;
     protected boolean rankSupport = false;
@@ -33,7 +32,6 @@ public class Server implements Runnable {
     @Override
     public void run() {
         try (ServerSocket ssocket = new ServerSocket(port)) {
-//        try (ServerSocket ssocket = new ServerSocket(port)) {  // for external server
             while (true) {
                 Socket socket = ssocket.accept();
                 TUI.print(TUI.log("New player connected"));
@@ -119,7 +117,7 @@ public class Server implements Runnable {
     }
 
     public static void main(String[] args) {
-        Integer port = 0;
+        Integer port;
 
         if (args.length != 1) {
             // Port prompt
