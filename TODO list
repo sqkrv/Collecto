@@ -16,5 +16,8 @@ write TONS of javadoc
 write some in line comments
 --> (important: should not be about 'what' is happening, rather 'why' it is happening)
 
+go through all methods and properties and check their access keywords (private, protected, default)
+go through all methods and check if they need synchronisation
+
 idk maybe commands as enums or stuff (later ig)
 ~ command for the client when s/he is in queue to choose whether s/he wants to play with AI when there are no other players in q

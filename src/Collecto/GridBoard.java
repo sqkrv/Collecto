@@ -2,16 +2,14 @@ package Collecto;
 
 import java.util.*;
 
+/**
+ * This class contains the actual game board and handles all
+ * operations made on its attributes. It is mainly used by
+ * the Game class, and makes use of the Ball class.
+ * @see Game
+ * @see Ball
+ */
 public class GridBoard {
-    public enum Direction {
-        LEFT, RIGHT, UP, DOWN;
-
-        @Override
-        public String toString() {
-            return super.toString();
-        }
-    }
-
     private ArrayList<ArrayList<Ball>> board;
 
     public GridBoard(ArrayList<ArrayList<Ball>> customBoard) {
@@ -26,7 +24,7 @@ public class GridBoard {
      * Constructor
      */
     public GridBoard() {
-        construct();
+        this(true);
     }
 
     public void construct() {
@@ -100,7 +98,7 @@ public class GridBoard {
 
     public ArrayList<Ball> removeBalls(Move move) {
         ArrayList<Ball> balls = new ArrayList<>();
-        if (move.getDirection() == Direction.UP || move.getDirection() == Direction.DOWN) {
+        if (move.getDirection() == Move.Direction.UP || move.getDirection() == Move.Direction.DOWN) {
             for (int ro = 0; ro < 7; ro++) {
                 balls.addAll(removeBalls(ro, move.getLine()));
             }
@@ -270,7 +268,7 @@ public class GridBoard {
         GridBoard copy = new GridBoard(false);
         copy.board = new ArrayList<>();
         for (ArrayList<Ball> row : board) {
-            copy.board.add((ArrayList<Ball>) row.clone());
+            copy.board.add(new ArrayList<>(row));
         }
         return copy;
     }
@@ -280,7 +278,7 @@ public class GridBoard {
 //        TODO: move this check to parent method which will firstly check if first or second move
 //         is valid by using this function and then perform this move by using the same (this) function
         int removed;
-        if (move.getDirection() == Direction.UP) {
+        if (move.getDirection() == Move.Direction.UP) {
             for (int i=0; i < 7; i++) {
                 if (board.get(i).get(move.getLine()) == Ball.WHITE) {
                     for (int j=i; j < 7-1; j++) {
@@ -295,7 +293,7 @@ public class GridBoard {
                     board.get(6).set(move.getLine(), Ball.WHITE);
                 }
             }
-        } else if (move.getDirection() == Direction.DOWN) {
+        } else if (move.getDirection() == Move.Direction.DOWN) {
             for (int i=6; i >= 0; i--) {
                 if (board.get(i).get(move.getLine()) == Ball.WHITE) {
                     for (int j=i; j >= 1; j--) {
@@ -316,9 +314,9 @@ public class GridBoard {
                 board.get(move.getLine()).removeAll(Collections.singleton(Ball.WHITE));
                 removed = removed - board.get(move.getLine()).size();
 
-                if (move.getDirection() == Direction.LEFT) {
+                if (move.getDirection() == Move.Direction.LEFT) {
                     board.get(move.getLine()).addAll(7 - removed, Collections.nCopies(removed, Ball.WHITE));
-                } else if (move.getDirection() == Direction.RIGHT) {
+                } else if (move.getDirection() == Move.Direction.RIGHT) {
                     board.get(move.getLine()).addAll(0, Collections.nCopies(removed, Ball.WHITE));
                 }
             }
@@ -372,10 +370,13 @@ public class GridBoard {
 //    }
 
     /**
-     * @requires row && column are valid indices
-     * @ensures surroundings of indices are checked
+     * Checks the surroundings of a specified ball to see if any of the 4 adjacent balls in the
+     * cardinal directions are of the same colour or not.
+     *
+     * @requires both {@code validIndex(row)} and {@code validIndex(column)} to be true
+     * @ensures surroundings of specified fields are checked
      * @return false if no surrounding ball has the same colour as the ball
-     *  specified by the indices, true if at least 1 surrounding colour matches
+     * specified by the indices, true if at least 1 surrounding colour matches
      *  the ball specified by the indices
      * @param row row index
      * @param column column index
@@ -411,11 +412,11 @@ public class GridBoard {
 
     private boolean isMoveValidCheck(Move move, GridBoard copy) {
         copy.moveLine(move);
-        if (move.getDirection() == Direction.UP || move.getDirection() == Direction.DOWN) {
+        if (move.getDirection() == Move.Direction.UP || move.getDirection() == Move.Direction.DOWN) {
             for (int i=0; i < 7; i++) {
                 if (copy.checkSurroundings(i, move.getLine())) return true;
             }
-        } else if (move.getDirection() == Direction.LEFT || move.getDirection() == Direction.RIGHT) {
+        } else if (move.getDirection() == Move.Direction.LEFT || move.getDirection() == Move.Direction.RIGHT) {
             for (int i=0; i < 7; i++) {
                 if (copy.checkSurroundings(move.getLine(), i)) return true;
             }
@@ -424,24 +425,31 @@ public class GridBoard {
     }
 
     /**
-     * Public call for a {@code possibleMove} with false boolean argument
+     * Calls {@link #possibleMoves(boolean)} with a false boolean argument to check if there are any single or
+     * double moves possible on the board of this GridBoard object.
+     *
+     * @return true if there is possible move, false otherwise
      */
     public boolean possibleMoves() {
         return possibleMoves(false);
     }
 
     /**
-     * Algorithm for checking if there are possible moves for the current board
-     * @param isSecondTime boolean to define if it checks if the the move is possible with two moves
+     * Depending on parameter isSecondTime checks if there are any single moves possible on the board,
+     * or if there are any single or double moves possible on the board of this GridBoard object.
+     *
+     * @param isSecondTime boolean to define if check is for possibility of single or double moves
+     * @ensures checks only a single move if {@code isSecondTime} is true, checks for single and double moves if
+     * {@code isSecondTime} is false
      * @return true if there is a valid move within one or two moves, false if there are no valid moves possible within two moves
      */
     public boolean possibleMoves(boolean isSecondTime) {
         for (int i = 0; i < 7; i++) {
             if (
-                    isMoveValid(new Move(i, Direction.LEFT)) ||
-                    isMoveValid(new Move(i, Direction.RIGHT)) ||
-                    isMoveValid(new Move(i, Direction.UP)) ||
-                    isMoveValid(new Move(i, Direction.DOWN))
+                    isMoveValid(new Move(i, Move.Direction.LEFT)) ||
+                    isMoveValid(new Move(i, Move.Direction.RIGHT)) ||
+                    isMoveValid(new Move(i, Move.Direction.UP)) ||
+                    isMoveValid(new Move(i, Move.Direction.DOWN))
             ) {
                 return true;
             }
@@ -452,19 +460,19 @@ public class GridBoard {
         GridBoard copy;
         for (int i = 0; i < 7; i++) {
             copy = deepCopy();
-            copy.moveLine(new Move(i, Direction.LEFT));
+            copy.moveLine(new Move(i, Move.Direction.LEFT));
             if (copy.possibleMoves(true)) return true;
 
             copy = deepCopy();
-            copy.moveLine(new Move(i, Direction.RIGHT));
+            copy.moveLine(new Move(i, Move.Direction.RIGHT));
             if (copy.possibleMoves(true)) return true;
 
             copy = deepCopy();
-            copy.moveLine(new Move(i, Direction.UP));
+            copy.moveLine(new Move(i, Move.Direction.UP));
             if (copy.possibleMoves(true)) return true;
 
             copy = deepCopy();
-            copy.moveLine(new Move(i, Direction.DOWN));
+            copy.moveLine(new Move(i, Move.Direction.DOWN));
             if (copy.possibleMoves(true)) return true;
         }
         return false;
@@ -475,6 +483,14 @@ public class GridBoard {
         return TUI.boardString(this);
     }
 
+    /**
+     * Returns string representation of the board according to the project protocol.
+     * This protocol means that every ball on the board is represented by a number and
+     * placed in an array, where empty fields are represented as 0, and all numbers are
+     * separated by a delimiter as defined in {@link Global}.
+     *
+     * @return protocol representation of the board
+     */
     public String getBoardString() {
         StringBuilder result = new StringBuilder();
         for (ArrayList<Ball> array : board) {

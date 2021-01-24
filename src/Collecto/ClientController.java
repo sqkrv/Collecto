@@ -3,6 +3,15 @@ package Collecto;
 import static Collecto.Global.Protocol.TYPE_HELP;
 import static Collecto.Global.Protocol.Commands.*;
 
+/**
+ * This class is being used for controlling the Client
+ * and consists of a handler of all user inputs including parsing
+ * and passing these inputs to corresponding commands.
+ * This is a subclass of the Controller class.
+ *
+ * @see Controller
+ * @see Client
+ */
 public class ClientController extends Controller {
     private final Client client;
 
@@ -21,7 +30,8 @@ public class ClientController extends Controller {
         if (input == null) {
             return;
         }
-//        input = input.replaceAll(" +", " ");
+
+        input = input.replaceAll(" +", " "); // TODO i uncommented, but idk if this may brake smth
         String[] params = input.trim().split(" ");
         params[0] = params[0].toUpperCase();
 

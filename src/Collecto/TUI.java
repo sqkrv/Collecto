@@ -10,37 +10,64 @@ import static Collecto.Colour.red;
 public class TUI {
     static DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd.MM");
 
+    /**
+     * Returns current date and time in formatted datetime string
+     * @return current datetime string
+     */
     private static String currentDateTime() {
         Date date = new Date();
         return dateFormat.format(date);
     }
 
+    /**
+     * Returns grey coloured formatted current date and time in brackets for logging purposes
+     * @return log format datetime string
+     */
     public static String logTime() {
         return Colour.grey("["+currentDateTime()+"] ");
     }
 
+    /**
+     * Prints a string to the user console
+     * @param string string to print
+     */
     public static void print(String string) {
         System.out.println(string);
     }
 
+    /**
+     * Prints error to the user console in log format
+     * @param error error message to print
+     */
     public static void printError(String error) {
         print(logError(error));
     }
 
+    /**
+     * Returns formatted error message for logging purposes
+     * @param error error message
+     * @return formatted log string
+     */
     public static String logError(String error) {
         error = "[" + red("ERROR") + "] " + error;
         return log(error);
     }
 
+    /**
+     * Adds current formatted datetime to the log provided and returns resulting string
+     * @param log text of the log
+     * @return log provided with datetime at the beginning
+     */
     public static String log(String log) {
         return logTime() + log;
     }
 
-    public static String plainTextBoard(GridBoard gridBoard) {
-        return textBoard(gridBoard, false);
-    }
-
-    private static String textBoard(GridBoard gridBoard, boolean coloured) {
+    /**
+     * Private method which returns a coloured string representation of a provided board
+     * @param gridBoard GridBoard to represent as string
+     * @return coloured string representation of the provided board
+     */
+    private static String textBoard(GridBoard gridBoard) {
         StringBuilder string = new StringBuilder();
 
         string.append("     |");
@@ -65,11 +92,16 @@ public class TUI {
         return string.toString();
     }
 
+    /**
+     *
+     * @param gridBoard GridBoard to represent as string
+     * @return
+     */
     public static String colouredBoard(GridBoard gridBoard) {
         return textBoard(gridBoard, true);
     }
 
-    public static String boardString(GridBoard gridBoard) {
+    static String boardString(GridBoard gridBoard) {
         StringBuilder string = new StringBuilder();
 
         for (int i = 1; i <= 7; i++) {

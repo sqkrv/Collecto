@@ -7,19 +7,21 @@ public class ComputerPlayer extends Player {
     private final int level;
 
     /**
-     * Constructs a ComputerPlayer class with first level of difficulty
+     * Default constructor which constructs
+     * a ComputerPlayer with first level of difficulty.
      */
     public ComputerPlayer() {
         this(1);
     }
 
     /**
-     * @requires level > 0 && level <= 3
+     * Constructs a ComputerPlayer with name and provided level.
+     *
+     * @requires level to be either {@code 1} and {@code 2}
      * @param level requested difficulty level for this ComputerPlayer
      */
     public ComputerPlayer(int level) {
-        super("smartass");
-        assert level > 0 && level <= 2;
+        assert 1 <= level && level <= 2;
         this.level = level;
     }
 
@@ -51,7 +53,7 @@ public class ComputerPlayer extends Player {
     private static Move[] makeBeginnerMoveSingle(GridBoard board) {
         Move move;
         for (int i = 0; i < 7; i++) {
-            for (GridBoard.Direction direction : GridBoard.Direction.values()) {
+            for (Move.Direction direction : Move.Direction.values()) {
                 move = new Move(i, direction);
                 if (board.isMoveValid(move)) return new Move[]{move};
             }
@@ -73,12 +75,12 @@ public class ComputerPlayer extends Player {
 
         // if not - find two moves
         for (int j = 0; j < 7; j++) {
-            for (GridBoard.Direction direction : GridBoard.Direction.values()) {
+            for (Move.Direction direction : Move.Direction.values()) {
                 copy = board.deepCopy();
                 copy.moveLine(new Move(j, direction));
                 if (!board.toString().equals(copy.toString())) {
                     for (int k = 0; k < 7; k++) {
-                        for (GridBoard.Direction direction2 : GridBoard.Direction.values()) {
+                        for (Move.Direction direction2 : Move.Direction.values()) {
                             if (copy.isMoveValid(new Move(k, direction2)))
                                 return new Move[]{new Move(j, direction), new Move(k, direction2)};
                         }
@@ -102,7 +104,7 @@ public class ComputerPlayer extends Player {
         Move max_move = null;
 
         for (int i = 0; i < 7; i++) {
-            for (GridBoard.Direction direction : GridBoard.Direction.values()) {
+            for (Move.Direction direction : Move.Direction.values()) {
                 move = new Move(i, direction);
                 if (board.isMoveValid(move)) {
                     balls = ballsFromMove(board, move);
@@ -128,7 +130,7 @@ public class ComputerPlayer extends Player {
         HashMap<Move[], Integer> movesResults = new HashMap<>();
         Move move1;
         for (int j = 0; j < 7; j++) {
-            for (GridBoard.Direction direction : GridBoard.Direction.values()) {
+            for (Move.Direction direction : Move.Direction.values()) {
                 copy = board.deepCopy();
                 move1 = new Move(j, direction);
                 copy.moveLine(move1);

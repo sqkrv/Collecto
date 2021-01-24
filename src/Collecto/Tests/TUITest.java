@@ -69,8 +69,4 @@ class TUITest {
     @Test
     void ballColours() {
     }
-
-    @Test
-    void main() {
-    }
 }

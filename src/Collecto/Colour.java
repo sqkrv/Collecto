@@ -1,5 +1,13 @@
 package Collecto;
 
+/**
+ * This class is made for text colouring
+ * and consists of string of colour codes
+ * and methods to set the colour of a string.
+ * @see TUI
+ * @see Ball
+ * <p>This class uses ANSI escape codes to handle colouring of the strings.
+ */
 public class Colour {
     public static final String RESET = "\u001B[0m";
 

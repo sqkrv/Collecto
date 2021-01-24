@@ -3,6 +3,15 @@ package Collecto;
 import java.net.InetAddress;
 import java.util.Scanner;
 
+/**
+ * This class is a basic controller which can prompt the user
+ * for regular input, a port or an IP address.
+ * It is used by the Server class to initialize the server,
+ * and has a subclass ClientController.
+ *
+ * @see Server
+ * @see ClientController
+ */
 public class Controller {
     protected final Scanner scanner;
 

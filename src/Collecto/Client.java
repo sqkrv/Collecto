@@ -246,8 +246,8 @@ public class Client implements Runnable {
     }
 
     /**
-     * checks if the move made by the server is correct, and if so prints it
-     * @param params server input
+     * Checks if the move made by the server is correct, and if so prints it
+     * @param params array of split
      */
     private void moveServer(String[] params) {
         Integer push;
@@ -298,12 +298,12 @@ public class Client implements Runnable {
             TUI.print("Invalid amount of arguments, please try again");
         } else {
             String message = params[0];
-            GridBoard.Direction direction;
-            GridBoard.Direction direction2 = null;
+            Move.Direction direction;
+            Move.Direction direction2 = null;
             try {
-                direction = GridBoard.Direction.valueOf(params[2].toUpperCase());
+                direction = Move.Direction.valueOf(params[2].toUpperCase());
                 if (params.length == 5) {
-                    direction2 = GridBoard.Direction.valueOf(params[4].toUpperCase());
+                    direction2 = Move.Direction.valueOf(params[4].toUpperCase());
                     if (game.possibleFirstMove()) {
                         TUI.print("Single move can still be played");
                         return;
@@ -424,10 +424,10 @@ public class Client implements Runnable {
     }
 
     /**
-     * lets the user choose a difficulty for their AI
-     * @requires answer[0] == "1" || answer[0] == "2"
-     * @ensures AI = new ComputerPlayer(1) || AI = new ComputerPlayer(2)
-     * @param answer user input
+     * Handles user input for AI difficulty level specification.
+     * Will not initialise AI until answer will be either {@code 1} or {@code 2}.
+     *
+     * @param answer array of split user answer
      */
     protected void chooseDifficulty(String[] answer) {
         if (answer[0].equals("1")) {
@@ -446,8 +446,11 @@ public class Client implements Runnable {
     }
 
     /**
-     * shows the score and balls of players in a game
+     * Prints score and string representation of all balls for each player in game.
+     * The output is of the following format: {@code username[score]: balls}
+     *
      * @requires game != null
+     * @see TUI#print(String)
      */
     private void showScore() {
         if (game != null) {
@@ -465,9 +468,12 @@ public class Client implements Runnable {
     }
 
     /**
-     * parses the String of a board to make a new GridBoard object containing that board
-     * @requires fields[1] up to and including fields[49] are integers
-     * @param fields String containing a board
+     * Parses the protocol representation of the board
+     * and converts it to the {@line GridBoard} class instance with converted board.
+     *
+     * @requires fields[1] up to and including fields[49] to be valid
+     * protocol board representation means that this subarray must container only integers between 0 and 7
+     * @param fields protocol representation of the board
      * @return GridBoard with a board of the given String
      */
     private GridBoard parseStringBoard(String[] fields) {
@@ -491,8 +497,11 @@ public class Client implements Runnable {
     }
 
     /**
-     * generates a hint for the player and displays it
+     * Generates a hint using {@link ComputerPlayer} for the current
+     * game board and displays it.
+     *
      * @requires game != null
+     * @see ComputerPlayer#makeBeginnerMove(GridBoard) 
      */
     protected void hint() {
         if (game == null) {

@@ -72,8 +72,8 @@ class ComputerPlayerTest {
 
             Move[] moves = player.makeBeginnerMove(new GridBoard(array));
             assertTrue(
-                    moves[0].equals(new Move(0, GridBoard.Direction.LEFT)) ||
-                            moves[0].equals(new Move(0, GridBoard.Direction.RIGHT))
+                    moves[0].equals(new Move(0, Move.Direction.LEFT)) ||
+                            moves[0].equals(new Move(0, Move.Direction.RIGHT))
             );
         }
 
@@ -85,10 +85,10 @@ class ComputerPlayerTest {
             array.get(0).set(6, Ball.BLUE);
 
             Move[] moves = player.makeBeginnerMove(new GridBoard(array));
-            assertEquals(moves[0], new Move(3, GridBoard.Direction.DOWN));
+            assertEquals(moves[0], new Move(3, Move.Direction.DOWN));
             assertTrue(
-                    moves[1].equals(new Move(0, GridBoard.Direction.LEFT)) ||
-                            moves[1].equals(new Move(0, GridBoard.Direction.RIGHT))
+                    moves[1].equals(new Move(0, Move.Direction.LEFT)) ||
+                            moves[1].equals(new Move(0, Move.Direction.RIGHT))
             );
         }
     }
@@ -101,12 +101,12 @@ class ComputerPlayerTest {
             ArrayList<ArrayList<Ball>> array = copyArray(sampleBoardArray);
 
             Move[] moves = player.makeIntermediateMove(new GridBoard(array));
-            assertEquals(moves[0], new Move(3, GridBoard.Direction.LEFT));
+            assertEquals(moves[0], new Move(3, Move.Direction.LEFT));
 
             array.get(0).set(3, Ball.RED);
             array.get(1).set(3, Ball.PURPLE);
             moves = player.makeIntermediateMove(new GridBoard(array));
-            assertEquals(moves[0], new Move(3, GridBoard.Direction.DOWN));
+            assertEquals(moves[0], new Move(3, Move.Direction.DOWN));
         }
 
         @Test
@@ -117,10 +117,10 @@ class ComputerPlayerTest {
             array.get(0).set(6, Ball.BLUE);
 
             Move[] moves = player.makeIntermediateMove(new GridBoard(array));
-            assertEquals(moves[0], new Move(3, GridBoard.Direction.DOWN));
+            assertEquals(moves[0], new Move(3, Move.Direction.DOWN));
             assertTrue(
-                    moves[1].equals(new Move(0, GridBoard.Direction.LEFT)) ||
-                            moves[1].equals(new Move(0, GridBoard.Direction.RIGHT))
+                    moves[1].equals(new Move(0, Move.Direction.LEFT)) ||
+                            moves[1].equals(new Move(0, Move.Direction.RIGHT))
             );
         }
     }
