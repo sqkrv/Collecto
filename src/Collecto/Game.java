@@ -4,7 +4,7 @@ import java.util.*;
 
 public class Game {
     private final GridBoard board;
-    public Player[] players = new Player[2];
+    private Player[] players = new Player[2];
     private boolean turnPlayer1 = true;
 
     public Game(String player1Name, String player2Name) {

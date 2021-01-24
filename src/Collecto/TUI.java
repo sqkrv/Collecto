@@ -8,7 +8,7 @@ import java.util.Date;
 import static Collecto.Colour.red;
 
 public class TUI {
-    static DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd.MM");
+    public static DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd.MM");
 
     private static String currentDateTime() {
         Date date = new Date();
@@ -34,10 +34,6 @@ public class TUI {
 
     public static String log(String log) {
         return logTime() + log;
-    }
-
-    public static String plainTextBoard(GridBoard gridBoard) {
-        return textBoard(gridBoard, false);
     }
 
     private static String textBoard(GridBoard gridBoard, boolean coloured) {
