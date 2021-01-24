@@ -474,17 +474,14 @@ public class GridBoard {
 
     @Override
     public String toString() {
-        return TUI.toString(this);
+        return TUI.boardString(this);
     }
 
     public String getBoardString() {
         StringBuilder result = new StringBuilder();
         for (ArrayList<Ball> array : board) {
             for (Ball ball : array) {
-                result.append(Server.DELIMITER).append(ball.ordinal());
-//                for (int i = 0; i < Ball.values().length; i++) {
-//                    if (Ball.values()[i].equals(ball)) result.append(Server.DELIMITER).append(ball.name());
-//                }
+                result.append(Global.DELIMITER).append(ball.ordinal());
             }
         }
         return result.toString();

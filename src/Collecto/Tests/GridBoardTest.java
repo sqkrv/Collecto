@@ -3,11 +3,11 @@ package Collecto.Tests;
 import Collecto.Ball;
 import Collecto.GridBoard;
 import Collecto.TUI;
+import Collecto.Move;
 import org.junit.jupiter.api.*;
 
 import java.util.*;
 
-import static Collecto.Misc.Move;
 import static Collecto.Tests.Misc.copyArray;
 
 import static org.junit.jupiter.api.Assertions.*;
