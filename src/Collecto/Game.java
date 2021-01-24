@@ -2,8 +2,6 @@ package Collecto;
 
 import java.util.*;
 
-import static Collecto.Misc.Move;
-
 public class Game {
     private final GridBoard board;
     public Player[] players = new Player[2];
@@ -19,15 +17,7 @@ public class Game {
         this.board = board;
     }
 
-    /**
-     * Constructor that uses a custom board for the game
-     * @param customBoardArray custom board to game on
-     */
-    public Game(ArrayList<ArrayList<Ball>> customBoardArray) {
-        this.board = new GridBoard(customBoardArray);
-    }
-
-    public boolean makeMove(Move move) {
+    public void makeMove(Move move) {
         if (board.isMoveValid(move)) {
             board.moveLine(move);
             if (turnPlayer1) {
@@ -36,18 +26,12 @@ public class Game {
                 players[1].addBalls(board.removeBalls(move));
             }
             turnPlayer1 = !turnPlayer1;
-            return true;
-        } else {
-            return false;
         }
     }
 
-    public boolean makeMove(Move first, Move second) {
+    public void makeMove(Move first, Move second) {
         if (board.isMoveValid(first, second)) {
             board.moveLine(first);
-            return makeMove(second);
-        } else {
-            return false;
         }
     }
 
@@ -63,18 +47,14 @@ public class Game {
         return board.possibleMoves();
     }
 
-    public boolean possibleFirstMove() {
-        return board.possibleMoves(true);
-    }
-
     public String getWinner() {
         if (players[0].getPoints() > players[1].getPoints()) {
             return players[0].getName();
         } else if (players[1].getPoints() > players[0].getPoints()) {
             return players[1].getName();
-        } else if (players[0].showBalls().size() > players[1].showBalls().size()) {
+        } else if (players[0].getBalls().size() > players[1].getBalls().size()) {
             return players[0].getName();
-        } else if (players[1].showBalls().size() > players[0].showBalls().size()) {
+        } else if (players[1].getBalls().size() > players[0].getBalls().size()) {
             return players[1].getName();
         } else {
             return null;
@@ -93,141 +73,31 @@ public class Game {
         }
     }
 
-    public int getScore(int i) {
-        return players[i].getPoints();
+    /**
+     * Calculates the score of the player
+     * @requires playerIndex to be 0 or 1
+     * @param playerIndex index of the player
+     * @return current score of the player
+     */
+    public int getScore(int playerIndex) {
+        return players[playerIndex].getPoints();
     }
 
-    public HashMap<Ball, Integer> getBalls(int i) {
-        return players[i].showBalls();
+    /**
+     * @requires playerIndex to be 0 or 1
+     * @param playerIndex index of the player
+     * @return current amount of balls of each colour player has
+     */
+    public HashMap<Ball, Integer> getBalls(int playerIndex) {
+        return players[playerIndex].getBalls();
     }
 
-    public String getPlayerName(int i) {
-        return players[i].getName();
+    /**
+     * @requires playerIndex to be 0 or 1
+     * @param playerIndex index of the player
+     * @return the String which is the name of the player with the index passed
+     */
+    public String getPlayerName(int playerIndex) {
+        return players[playerIndex].getName();
     }
-
-    //    private final Player[] players = new Player[2];
-//    private final Scanner input = new Scanner(System.in);
-//    public boolean myTurn = false;
-//
-//    public Game(Player p1, Player p2) {
-//        board = new GridBoard();
-//        players[0] = p1;
-//        players[1] = p2;
-//
-//    /**
-//     * sets up the start of a new game
-//     */
-//    public void start() {
-//        boolean nextGame = true;
-//        while (nextGame) {
-//            play();
-//            System.out.println("Play again?");
-//            nextGame = input.nextLine().equals("y");
-//        }
-//    }
-//
-//    /**
-//     * resets the game and some attributes
-//     */
-//    public void reset() {
-//
-//    }
-//
-//        game.setup();
-//        Game game = new Game();
-//    public static void main(String[] args) {
-//    /**
-//     * any actual games play out within this method
-//     */
-//    public void play() {
-//        String answer;
-//        String[] answers;
-//        int line;
-//        int column;
-//        boolean inTwoMoves;
-//        GridBoard.Direction direction;
-//        Player player = players[(new Random()).nextInt(2)];
-
-//        while (inTwoMoves = board.possibleMoves()) {
-//            System.out.println(TUI.colouredBoard(board));
-//            System.out.println(player.getName() + ", make a move");
-//            System.out.println("Format = [row|column direction]");
-//            answer = input.nextLine();
-//            answer = answer.trim().replaceAll(" +", " ");
-//            answers = answer.split(" ");
-//            if (answers.length == 1) {
-//                answers = new String[2];
-//                answers[0] = answer.substring(0, 1);
-//                answers[1] = answer.substring(1);
-//            }
-//            try {
-//                line = Integer.parseInt(answers[0]) - 1;
-//                answers[1] = answers[1].toUpperCase();
-//
-//                try {
-//                    direction = GridBoard.Direction.valueOf(answers[1]);
-//                } catch (IllegalArgumentException i) {
-//                    switch (answers[1]) {
-//                        case "U":
-//                            direction = GridBoard.Direction.UP;
-//                            break;
-//                        case "D":
-//                            direction = GridBoard.Direction.DOWN;
-//                            break;
-//                        case "L":
-//                            direction = GridBoard.Direction.LEFT;
-//                            break;
-//                        case "R":
-//                            direction = GridBoard.Direction.RIGHT;
-//                            break;
-//                        default:
-//                            System.out.println("Incorrect input");
-//                            continue;
-//                    }
-//                }
-//            } catch (IllegalArgumentException a) {
-//                System.out.println("Incorrect input");
-//                continue;
-//            }
-//            if (board.isMoveValid(new Move(line, direction))) {
-//                board.moveLine(new Move(line, direction));
-//                ArrayList<Ball> balls = board.removeBalls(new Move(line, direction));
-//                player.addBalls(balls);
-//                if (player.equals(players[0])) {
-//                    player = players[1];
-//                } else {
-//                    player = players[0];
-//                }
-//            } else {
-//                System.out.println("Invalid move");
-//            }
-//            System.out.println(TUI.playersBoard(players[0], players[1]));
-//            System.out.println();
-//        }
-//    }
-//
-//    /**
-//     * sets up all the pre-game data, such as player names, bot difficulty, .....
-//     */
-//    public void setup() {
-//        String answer;
-//        System.out.println("Enter name of player 1");
-//        answer = input.nextLine();
-//        players[0] = new HumanPlayer(answer.trim());
-//        while (true) {
-//            System.out.println("Enter name of player 2");
-//            answer = input.nextLine();
-//            answer = answer.trim();
-//            if (!answer.equals(players[0].getName())) {
-//                players[1] = new HumanPlayer(answer);
-//                break;
-//            }
-//            System.out.println("Name is already taken by the first player");
-//        }
-//    }
-//
-//        game.start();
-//        game.play();
-//    }
-
 }
