@@ -4,11 +4,11 @@ import Collecto.ComputerPlayer;
 import Collecto.GridBoard;
 import org.junit.jupiter.api.*;
 import Collecto.Ball;
+import Collecto.Move;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import static Collecto.Misc.Move;
 import static Collecto.Tests.Misc.copyArray;
 
 class ComputerPlayerTest {
