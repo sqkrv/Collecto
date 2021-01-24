@@ -4,71 +4,43 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+
+import static Collecto.Colour.red;
 
 public class TUI {
     static DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd.MM");
 
-    public static String logTime() {
-        return "["+currentDateTime()+"] ";
-    }
-
-    public static String currentDateTime() {
+    private static String currentDateTime() {
         Date date = new Date();
         return dateFormat.format(date);
     }
 
-    private static String grey(String string) {
-        return "\u001B[37m" + string + "\u001B[0m";
+    public static String logTime() {
+        return Colour.grey("["+currentDateTime()+"] ");
     }
 
-    public static String playersBoard(Player player1, Player player2) {
-        StringBuilder string = new StringBuilder();
-        HashMap<Ball, Integer> p1Balls = player1.showBalls();
-        HashMap<Ball, Integer> p2Balls = player2.showBalls();
-
-        int max_length = player1.getName().length();
-        if (player2.getName().length() > max_length) max_length = player2.getName().length();
-
-        string.append(" ".repeat(max_length+1)).append(grey("|"));
-        for (Map.Entry<Ball, Integer> pair : p1Balls.entrySet()) {
-            string.append(String.format("%-16s"+grey("|"), pair.getKey().toColouredString()));
-        }
-        string.append("Points ").append(grey("|"));
-
-        string.append(player_row(player1, p1Balls, max_length));
-
-        string.append(player_row(player2, p2Balls, max_length));
-
-        string.append("\n");
-        string.append(grey("-".repeat(max_length+1)+"+"));
-        string.append(grey("-------+").repeat(7));
-
-        return string.toString();
+    public static void print(String string) {
+        System.out.println(string);
     }
 
-    private static String player_row(Player player, HashMap<Ball, Integer> balls, int max_length) {
-        StringBuilder string = new StringBuilder();
+    public static void printError(String error) {
+        print(logError(error));
+    }
 
-        string.append("\n");
-        string.append(grey("-".repeat(max_length+1)+"+"));
-        string.append(grey("-------+".repeat(7)));
-        string.append("\n");
-        string.append(String.format("%"+(max_length+1)+"s"+grey("|"), player.getName()));
-        for (Map.Entry<Ball, Integer> pair : balls.entrySet()) {
-            string.append(String.format("%-7s"+grey("|"), pair.getValue()));
-        }
-        string.append(String.format("%-7s", player.getPoints())).append(grey("|"));
+    public static String logError(String error) {
+        error = "[" + red("ERROR") + "] " + error;
+        return log(error);
+    }
 
-        return string.toString();
+    public static String log(String log) {
+        return logTime() + log;
     }
 
     public static String plainTextBoard(GridBoard gridBoard) {
-        return plainTextBoard(gridBoard, false);
+        return textBoard(gridBoard, false);
     }
 
-    private static String plainTextBoard(GridBoard gridBoard, boolean coloured) {
+    private static String textBoard(GridBoard gridBoard, boolean coloured) {
         StringBuilder string = new StringBuilder();
 
         string.append("     |");
@@ -94,10 +66,10 @@ public class TUI {
     }
 
     public static String colouredBoard(GridBoard gridBoard) {
-        return plainTextBoard(gridBoard, true);
+        return textBoard(gridBoard, true);
     }
 
-    public static String toString(GridBoard gridBoard) {
+    public static String boardString(GridBoard gridBoard) {
         StringBuilder string = new StringBuilder();
 
         for (int i = 1; i <= 7; i++) {
@@ -129,18 +101,20 @@ public class TUI {
     }
 
     public static void printHelpClient() {
-        print("Valid inputs are: " + ClientController.COMMANDS + "\n" +
+        print(
+                "Valid inputs are: " + "LIST, QUEUE, MOVE, LOGS, HELP, DISCONNECT" + "\n" +
                 "These can be upper or lowercase\n" +
                 "To make a move, typ: MOVE [row/column] [direction]\n" +
                 "For a double move: MOVE [row/column] [direction] [row/column] [direction]\n" +
-                "Where [row/column] is an integer, and direction is UP/DOWN/LEFT/RIGHT");
+                "Where [row/column] is an integer, and direction is UP/DOWN/LEFT/RIGHT"
+        );
     }
 
     public static String ballColours(ArrayList<Ball> balls) {
-        String output = "";
+        StringBuilder output = new StringBuilder();
         for (Ball ball : balls) {
-            output += (ball.ballColour() + "\u25CF" + Ball.WHITE.ballColour());
+            output.append(ball.ballColour()).append("\u25CF").append(Ball.WHITE.ballColour());
         }
-        return output;
+        return output.toString();
     }
 }
