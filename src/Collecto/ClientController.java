@@ -1,9 +1,10 @@
 package Collecto;
 
+import static Collecto.Global.Protocol.TYPE_HELP;
+import static Collecto.Global.Protocol.Commands.*;
+
 public class ClientController extends Controller {
     private final Client client;
-
-    public final static String COMMANDS = "LIST, QUEUE, MOVE, LOGS, HELP, DISCONNECT, EXIT";
 
     public ClientController(Client client) {
         this.client = client;
@@ -24,8 +25,7 @@ public class ClientController extends Controller {
         String[] params = input.trim().split(" ");
         params[0] = params[0].toUpperCase();
 
-        if (choosingAI) {
-
+        if (client.choosingAI) {
             if (client.useAI) {
                 client.chooseDifficulty(params);
             } else {
@@ -34,46 +34,40 @@ public class ClientController extends Controller {
             return;
         }
 
-
         switch (params[0]) {
-            case "DISCONNECT":
-                client.disconnect();
-                break;
-            case "EXIT":
-                client.disconnect();
-                client.exit();
-                break;
-            case "HELP":
+            case HELP:
                 client.printHelp();
                 break;
-            case "LOGS":
-                client.printLogs();
-                break;
-            case "LIST":
+            case LIST:
                 client.sendMessage(params[0]);
                 break;
-            case "BOARD":
+            case LOGS:
+                client.printLogs();
+                break;
+            case BOARD:
                 client.printBoard();
+                break;
+            case DISCONNECT:
+                client.disconnect();
                 break;
             default:
                 if (!client.useAI) {
                     switch (params[0]) {
-                        case "HINT":
+                        case HINT:
                             client.hint();
                             break;
-                        case "QUEUE":
+                        case QUEUE:
                             client.sendMessage(params[0]);
                             break;
-                        case "MOVE":
+                        case MOVE:
                             client.handleMove(params);
                             break;
                         default:
                             TUI.printError("Unknown command: " + params[0]);
-                            TUI.print("Instead use: " + COMMANDS);
+                            TUI.print(TYPE_HELP);
                     }
                 } else {
-                    TUI.printError("Unknown command: " + params[0]);
-                    TUI.print("Instead use: " + COMMANDS);
+                    TUI.printError("You can't use this command while using AI");
                 }
         }
     }
