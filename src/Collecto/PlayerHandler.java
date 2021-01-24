@@ -5,21 +5,23 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.*;
 
-import static Collecto.Server.DELIMITER;
-import static Collecto.Misc.Move;
+import static Collecto.Global.DELIMITER;
+import static Collecto.Colour.*;
+import static Collecto.Global.Protocol.*;
+import static Collecto.Global.Protocol.Misc.*;
+import static Collecto.Global.Protocol.Commands.*;
 
 public class PlayerHandler implements Runnable {
     
     private final BufferedReader in;
-    private BufferedWriter out;
-    private Socket socket;
+    private final BufferedWriter out;
+    private final Socket socket;
 
     private Game game = null;
-    private Server server;
+    private final Server server;
     private PlayerHandler opponent = null;
 
     protected String name;
-    private String description;
 
     private boolean chatSupport = false;
     private boolean rankSupport = false;
@@ -54,12 +56,12 @@ public class PlayerHandler implements Runnable {
         TUI.print(TUI.log("("+getName()+") — Client disconnected"));
         // this is where the client is fully disconnected from the server
         if (game != null) {
-            opponent.handleGameOver("DISCONNECT");
+            opponent.handleGameOver(Win.DISCONNECT);
         }
     }
 
     private void handleCommand(String message) {
-        TUI.print(TUI.log( "[IN ] " + "("+name+") — "+message));
+        TUI.print(TUI.log( "[" + purple("IN") + " ] " + "("+getName()+") — "+message));
         message = message.strip();
         if (message == null) {
             sendError("suck"); // TODO perhaps change this vulgar wording or smth
@@ -68,19 +70,19 @@ public class PlayerHandler implements Runnable {
         String[] params = message.split(DELIMITER);
 
         switch (params[0].strip()) {
-            case "HELLO":
+            case HELLO:
                 handleHello(params);
                 break;
-            case "LOGIN":
+            case LOGIN:
                 handleLogin(params);
                 break;
-            case "LIST":
+            case LIST:
                 handleList();
                 break;
-            case "QUEUE":
+            case QUEUE:
                 handleQueue();
                 break;
-            case "MOVE":
+            case MOVE:
                 handleMove(params);
                 break;
             default:
@@ -93,19 +95,18 @@ public class PlayerHandler implements Runnable {
             sendError("Insufficient parameters provided");
             return;
         }
-        this.description = params[1];
         for (int i = 2; i < params.length; i++) {
             switch (params[i]) {
-                case "CHAT":
+                case Extensions.CHAT:
                     this.chatSupport = true;
                     break;
-                case "RANK":
+                case Extensions.RANK:
                     this.rankSupport = true;
                     break;
-                case "AUTH":
+                case Extensions.AUTH:
                     this.authSupport = true;
                     break;
-                case "CRYPT":
+                case Extensions.CRYPT:
                     this.cryptSupport = true;
                     break;
             }
@@ -116,11 +117,11 @@ public class PlayerHandler implements Runnable {
     }
 
     private void respondHello() {
-        String response = "HELLO" + DELIMITER + Server.DESCRIPTION;
-        if (server.chatSupport) response += DELIMITER + "CHAT";
-        if (server.rankSupport) response += DELIMITER + "RANK";
-        if (server.authSupport) response += DELIMITER + "AUTH";
-        if (server.cryptSupport) response += DELIMITER + "CRYPT";
+        String response = HELLO + DELIMITER + Server.DESCRIPTION;
+        if (server.chatSupport) response += DELIMITER + Extensions.CHAT;
+        if (server.rankSupport) response += DELIMITER + Extensions.RANK;
+        if (server.authSupport) response += DELIMITER + Extensions.AUTH;
+        if (server.cryptSupport) response += DELIMITER + Extensions.CRYPT;
         sendMessage(response);
     }
 
@@ -140,12 +141,12 @@ public class PlayerHandler implements Runnable {
         } else if (params[1].length() > 32) {
             sendError("Login name is too long");
         } else if (!server.checkPlayer(params[1])) {
-            sendMessage("ALREADYLOGGEDIN");
+            sendMessage(ALREADY_LOGGED_IN);
         } else {
             this.name = params[1];
             server.addPlayer(this);
             this.loggedIn = true;
-            sendMessage("LOGIN");
+            sendMessage(LOGIN);
         }
     }
 
@@ -154,7 +155,7 @@ public class PlayerHandler implements Runnable {
              sendError("You are not yet logged in!");
              return;
          }
-         StringBuilder playerList = new StringBuilder("LIST");
+         StringBuilder playerList = new StringBuilder(LIST);
          ArrayList<String> players = server.getPlayers();
          for (String player : players) {
              playerList.append(DELIMITER).append(player);
@@ -193,7 +194,7 @@ public class PlayerHandler implements Runnable {
             Move secondMove = null;
             try {
                 push = Integer.parseInt(params[1]);
-                if (!Temp.isPushValid(push)) {
+                if (!Global.isPushValid(push)) {
                     sendError("Out of bounds move");
                     return;
                 }
@@ -201,7 +202,7 @@ public class PlayerHandler implements Runnable {
                 firstMove = new Move(push);
                 if (params.length > 2) {
                     push = Integer.parseInt(params[2]);
-                    if (!Temp.isPushValid(push)) {
+                    if (!Global.isPushValid(push)) {
                         sendError("Out of bounds move");
                         return;
                     }
@@ -220,10 +221,8 @@ public class PlayerHandler implements Runnable {
                 opponent.myTurn = true;
                 myTurn = false;
                 if (secondMove == null) {
-//                    opponent.game.makeMove(firstMove);
                     game.makeMove(firstMove);
                 } else {
-//                    opponent.game.makeMove(firstMove, secondMove);
                     game.makeMove(firstMove, secondMove);
                 }
                 if (!game.possibleMoves()) {
@@ -237,17 +236,17 @@ public class PlayerHandler implements Runnable {
     private void handleGameOver() {
         String winner = game.getWinner();
         if (winner == null) {
-            handleGameOver("DRAW");
+            handleGameOver(Win.DRAW);
         } else {
-            handleGameOver("VICTORY");
+            handleGameOver(Win.VICTORY);
         }
     }
 
     private void handleGameOver(String reason) {
-        String message = "GAMEOVER" + DELIMITER + reason;
-        if (!reason.equals("DRAW")) {
+        String message = GAMEOVER + DELIMITER + reason;
+        if (!reason.equals(Win.DRAW)) {
             message += DELIMITER;
-            if (reason.equals("DISCONNECT")) {
+            if (reason.equals(Win.DISCONNECT)) {
                 message += this.name;
             } else {
                 message += game.getWinner();
@@ -260,15 +259,15 @@ public class PlayerHandler implements Runnable {
 
     private void respondMove(Move firstMove, Move secondMove) {
         if (secondMove == null) {
-            sendMessage("MOVE" + DELIMITER + firstMove.push());
+            sendMessage(MOVE + DELIMITER + firstMove.push());
         } else {
-            sendMessage("MOVE" + DELIMITER + firstMove.push() + DELIMITER + secondMove.push());
+            sendMessage(MOVE + DELIMITER + firstMove.push() + DELIMITER + secondMove.push());
         }
     }
 
-    private void sendMessage(String message) {
+    private synchronized void sendMessage(String message) {
         try {
-            TUI.print(TUI.log("[OUT] " + message));
+            TUI.print(TUI.log("[" + cyan("OUT") + "] " + message));
             out.write(message);
             out.newLine();
             out.flush();
@@ -287,11 +286,11 @@ public class PlayerHandler implements Runnable {
             appendage = DELIMITER + opponent.name + DELIMITER + this.name;
         }
         this.opponent = opponent;
-        sendMessage("NEWGAME" + game.getBoardString() + appendage);
+        sendMessage(NEWGAME + game.getBoardString() + appendage);
     }
 
     private void sendError(String error) {
-        error = "ERROR" + DELIMITER + error;
+        error = ERROR + DELIMITER + error;
         sendMessage(error);
     }
 
@@ -310,6 +309,7 @@ public class PlayerHandler implements Runnable {
     }
 
     public String getName() {
-        return name;
+        if (name != null) return name;
+        else return "";
     }
 }
