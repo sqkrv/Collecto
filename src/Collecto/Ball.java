@@ -20,8 +20,11 @@ public enum Ball {
      */
     @Override
     public String toString() {
-        if (this == WHITE) return "";
-        else return this.name();
+        if (this == WHITE) {
+            return "";
+        } else {
+            return this.name();
+        }
     }
 
     /**
