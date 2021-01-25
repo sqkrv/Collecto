@@ -8,8 +8,10 @@ import java.util.Map;
  * AI which can play Collecto instead of a regular user.
  * It is integrated into the Client class so that a player
  * can call on it to play a game for them.
+ *
  * <p>The strategy of the beginner AI is to make the very first
  * possible move that it encounters.
+ *
  * <p>The strategy of the intermediate AI is to calculate all
  * current possible moves, and see how many balls they would
  * gain by making that move, after which the move that gains the
@@ -32,43 +34,12 @@ public class ComputerPlayer {
     /**
      * Constructs a ComputerPlayer with name and provided level.
      *
-     * @requires level to be either {@code 1} and {@code 2}
      * @param level requested difficulty level for this ComputerPlayer
+     * @requires level to be either {@code 1} and {@code 2}
      */
     public ComputerPlayer(int level) {
         assert 1 <= level && level <= 2;
         this.level = level;
-    }
-
-    /**
-     * Returns the difficulty level of this ComputerPlayer.
-     *
-     * @return difficulty level of the ComputerPlayer
-     */
-    public int getLevel() {
-        return level;
-    }
-
-    /**
-     * Determines the next move of the computer player using {@code makeBeginnerMove()} or
-     * {@code makeIntermediateMove()} depending on {@code level} of this ComputerPlayer instance.
-     *
-     * <p>If {@code level == 1} method uses {@link #makeBeginnerMove(GridBoard)},
-     * if {@code level == 2} method uses {@link #makeIntermediateMove(GridBoard)}.
-     * @requires board != null
-     * @ensures return is a valid move or null
-     * @param board the specified GridBoard on which the AI will attempt to make a move
-     * @return a determined move
-     */
-    public Move[] makeMove(GridBoard board) {
-        switch (level) {
-            case 1:
-                return makeBeginnerMove(board);
-            case 2:
-                return makeIntermediateMove(board);
-            default:
-                return null;
-        }
     }
 
     /**
@@ -80,7 +51,6 @@ public class ComputerPlayer {
      * If such move is found — returns this move,
      * if no possible moves found returns null.
      *
-     * @requires board != null
      * @param board the board used to determine a move
      * @return first possible move or null
      */
@@ -89,7 +59,9 @@ public class ComputerPlayer {
         for (int i = 0; i < 7; i++) {
             for (Move.Direction direction : Move.Direction.values()) {
                 move = new Move(i, direction);
-                if (board.isMoveValid(move)) return move;
+                if (board.isMoveValid(move)) {
+                    return move;
+                }
             }
         }
         return null;
@@ -115,7 +87,9 @@ public class ComputerPlayer {
 
         // check if single move exists
         Move move = makeBeginnerMoveSingle(board);
-        if (move != null) return new Move[]{move};
+        if (move != null) {
+            return new Move[]{move};
+        }
 
         // if not - find two moves
         for (int j = 0; j < 7; j++) {
@@ -125,14 +99,47 @@ public class ComputerPlayer {
                 if (!board.toString().equals(copy.toString())) {
                     for (int k = 0; k < 7; k++) {
                         for (Move.Direction direction2 : Move.Direction.values()) {
-                            if (copy.isMoveValid(new Move(k, direction2)))
+                            if (copy.isMoveValid(new Move(k, direction2))) {
                                 return new Move[]{new Move(j, direction), new Move(k, direction2)};
+                            }
                         }
                     }
                 }
             }
         }
         return null;
+    }
+
+    /**
+     * Returns the difficulty level of this ComputerPlayer.
+     *
+     * @return difficulty level of this ComputerPlayer
+     */
+    public int getLevel() {
+        return level;
+    }
+
+    /**
+     * Determines the next move of the computer player using {@code makeBeginnerMove()} or
+     * {@code makeIntermediateMove()} depending on the {@code level} of this ComputerPlayer.
+     *
+     * <p>If {@code level == 1}, this method uses {@link #makeBeginnerMove(GridBoard)},
+     * if {@code level == 2}, this method uses {@link #makeIntermediateMove(GridBoard)}.
+     *
+     * @param board the specified GridBoard on which the AI will attempt to make a move
+     * @requires board != null
+     * @ensures return is a valid move or null
+     * @return a determined move
+     */
+    public Move[] makeMove(GridBoard board) {
+        switch (level) {
+            case 1:
+                return makeBeginnerMove(board);
+            case 2:
+                return makeIntermediateMove(board);
+            default:
+                return null;
+        }
     }
 
     /**
@@ -169,7 +176,7 @@ public class ComputerPlayer {
         Move move;
         int max = 0;
         int balls;
-        Move max_move = null;
+        Move maxMove = null;
 
         for (int i = 0; i < 7; i++) {
             for (Move.Direction direction : Move.Direction.values()) {
@@ -178,13 +185,13 @@ public class ComputerPlayer {
                     balls = ballsFromMove(board, move);
                     if (balls > max) {
                         max = balls;
-                        max_move = move;
+                        maxMove = move;
                     }
                 }
             }
         }
 
-        return new Move[]{max_move, new Move(max)};
+        return new Move[]{maxMove, new Move(max)};
     }
 
     /**
@@ -207,7 +214,9 @@ public class ComputerPlayer {
 
         // check if single move exists
         Move[] moves = new Move[]{makeIntermediateMoveSingle(board)[0]};
-        if (moves[0] != null) return moves;
+        if (moves[0] != null) {
+            return moves;
+        }
 
         // if not - find two moves
         HashMap<Move[], Integer> movesResults = new HashMap<>();
@@ -219,13 +228,14 @@ public class ComputerPlayer {
                 copy.moveLine(move1);
                 if (!board.toString().equals(copy.toString())) {
                     Move[] temp = makeIntermediateMoveSingle(copy);
-                    Move max_move = temp[0];
+                    Move maxMove = temp[0];
                     int max = temp[1].push();
-                    movesResults.put(new Move[]{move1, max_move}, max);
+                    movesResults.put(new Move[]{move1, maxMove}, max);
                 }
             }
         }
 
+        // determine a move with max amount of balls gained
         Map.Entry<Move[], Integer> maxEntry = null;
         for (Map.Entry<Move[], Integer> entry : movesResults.entrySet()) {
             if (maxEntry == null || entry.getValue().compareTo(maxEntry.getValue()) > 0) {
