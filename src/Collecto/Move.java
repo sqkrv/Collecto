@@ -10,22 +10,21 @@ package Collecto;
  * 0 and 27, where 0-6 is left, 7-13 is right,
  * 14-20 is up, and 21-27 is down.
  * It also contains the Direction enum class.
- * It is used primarily by many classes,
- * primarily the Game and GridBoard classes.
+ * It is used by many classes, primarily by
+ * the Game and GridBoard classes.
  *
  * @see Game
  * @see GridBoard
  */
 public class Move {
-    /**
-     * This class is made for easy and convenient Move arguments handling.
-     * <p>This class can be constructed be either line and direction arguments or push argument.
-     */
     private final Direction direction;
     private final int line;
 
     /**
      * Constructs a move with specified line and direction arguments.
+     * This class is made for easy and convenient Move arguments handling.
+     * <p>This class can be constructed to be either line and direction arguments
+     * or a push argument.
      *
      * @param line      line of the move
      * @param direction direction of the move
@@ -107,7 +106,7 @@ public class Move {
      * <p>This method should be used whenever move should be printed
      * to the user in a readable format.
      *
-     * @return human string representation of the move
+     * @return readable string representation of the move
      */
     @Override
     public String toString() {
@@ -120,8 +119,8 @@ public class Move {
      * Otherwise it will return false.
      *
      * @param o object to check equality with
-     * @return true if {@code Object} is {@code Move} instance
-     * and {@code line} and {@code direction} properties are the same
+     * @return true if {@code Object} is a {@code Move} instance
+     * and all {@code line} and {@code direction} properties are the same
      */
     @Override
     public boolean equals(Object o) {

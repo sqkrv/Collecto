@@ -25,14 +25,14 @@ public class ComputerPlayer {
 
     /**
      * Default constructor which constructs
-     * a ComputerPlayer with beginner level of difficulty.
+     * a ComputerPlayer with beginner level difficulty.
      */
     public ComputerPlayer() {
         this(1);
     }
 
     /**
-     * Constructs a ComputerPlayer with name and provided level.
+     * Constructs a ComputerPlayer with a given level of difficulty.
      *
      * @param level requested difficulty level for this ComputerPlayer
      * @requires level to be either {@code 1} and {@code 2}
@@ -48,10 +48,11 @@ public class ComputerPlayer {
      *
      * <p>Works by iterating through all moves
      * and trying to find a possible move.
-     * If such move is found — returns this move,
+     * If such a move is found — returns this move,
      * if no possible moves found returns null.
      *
      * @param board the board used to determine a move
+     * @requires board != null
      * @return first possible move or null
      */
     private static Move makeBeginnerMoveSingle(GridBoard board) {
@@ -68,19 +69,19 @@ public class ComputerPlayer {
     }
 
     /**
-     * Looks for possible move in either one or two pushes.
-     * If no such move found returns null.
+     * Looks for possible single or double moves.
+     * If no move is found returns null.
      * <p>Description of work:
      * <p>Firstly uses {@code makeBeginnerMoveSingle()}
-     * to see whether there is a move possible with single push.
-     * If it returns move - returns this move and finishes.
-     * If method returns null - tries to find a move with double pushes
-     * by iterating through all possible moves of lines
-     * and for each iteration looking for possible move
+     * to see whether there is any move possible with a single push.
+     * If that method returns a move - return this move.
+     * If that method returns null - try to find a move with two pushes
+     * by iterating through all possible moves
+     * and for each iteration looking for possible second moves
      * using the same algorithm as {@code makeBeginnerSingleMove()}.
      *
-     * @param board board to find move on
-     * @return an array of either 1 or 2 moves or null if no moves found
+     * @param board board to find a move on
+     * @return an array of either 1 or 2 moves or null if no moves are found
      */
     public static Move[] makeBeginnerMove(GridBoard board) {
         GridBoard copy;
@@ -144,7 +145,7 @@ public class ComputerPlayer {
 
     /**
      * Determines the amount of balls gained from a certain move,
-     * so that the second level move determiner can use this
+     * so that the intermediate level AI can use this
      * as a score to see what move is the best move.
      *
      * @param board the board on which the move is made
@@ -159,14 +160,14 @@ public class ComputerPlayer {
 
     /**
      * Private help method to determine if there is
-     * a single move possible on board provided by using second level algorithm.
+     * a single move possible on a provided board by using the intermediate algorithm.
      *
      * <p>Works by iterating through all moves
      * and trying to find a possible move.
      * If no possible moves found returns null.
-     * If any moves found — iterates through found moves
-     * and using {@link #ballsFromMove(GridBoard, Move)} determines
-     * the best move by comparing amount of balls gained from specific move.
+     * If any moves found — finds the best move
+     * using {@link #ballsFromMove(GridBoard, Move)} and finds
+     * this best move by comparing amount of balls gained from that specific move.
      * The best move is considered to be the move with most balls gained from this move.
      *
      * @param board the board on which the moves are made and compared
@@ -196,14 +197,14 @@ public class ComputerPlayer {
 
     /**
      * Looks for possible move in either one or two pushes.
-     * If no such move found returns null.
-     * <p>Description of work:
+     * If no such move is found returns null.
+     * <p>Description of how this method works:
      * <p>Firstly uses {@code makeIntermediateMoveSingle()}
-     * to see whether there is a move possible with single push.
-     * If it returns move - returns this move and finishes.
-     * If method returns null - tries to find a move with double pushes
-     * by iterating through all possible moves of lines
-     * and for each iteration looking for possible move
+     * to see whether there is a move possible with a single push.
+     * If it returns a move - returns this move and finishes.
+     * If the method returns null - tries to find a move with double pushes
+     * by iterating over all possible moves
+     * and for each iteration looking for second possible moves
      * using the same algorithm as {@code makeIntermediateSingleMove()}.
      *
      * @param board the board on which the move is determined
