@@ -28,7 +28,7 @@ public class Global {
     }
 
     /**
-     * Parses the String of a move in push form to an integer. And checks if that push is valid.
+     * Parses the String of a move in push form to an integer, and checks if that push is valid.
      * @param string_push push in String form
      * @return integer of push if it is valid, or null
      */

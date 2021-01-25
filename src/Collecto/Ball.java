@@ -7,7 +7,7 @@ import static Collecto.Colour.*;
  * The white ball represents an empty field on
  * a board, and is therefore placed at index 0.
  * This class is used by many classes, mostly
- * GridBoard and Player.
+ * by GridBoard and Player.
  * @see Colour
  * @see GridBoard
  * @see Player
@@ -17,7 +17,7 @@ public enum Ball {
 
     /**
      *
-     * @return String name of the colour of a ball
+     * @return String name of the colour of a ball, return empty string if the ball is white
      */
     @Override
     public String toString() {
@@ -27,7 +27,7 @@ public enum Ball {
 
     /**
      *
-     * @return coloured String name of the ball
+     * @return coloured String of the name of this Ball, empty string if this is a white ball
      */
     public String toColouredString() {
         if (this == BLUE) {
@@ -49,7 +49,7 @@ public enum Ball {
 
     /**
      *
-     * @return the ANSI colour of a ball
+     * @return the ANSI colour of a ball, or a colour reset code if the ball is white
      */
     public String ballColour() {
         if (this == BLUE) {

@@ -13,7 +13,7 @@ import java.util.*;
  */
 public class Game {
     private final GridBoard board;
-    private Player[] players = new Player[2];
+    private final Player[] players = new Player[2];
     private boolean turnPlayer1 = true;
 
     /**
@@ -44,7 +44,7 @@ public class Game {
      * Gives the balls gained by making this move to player whose turn it is.
      * Uses {@link GridBoard#isMoveValid(Move)}, {@link GridBoard#moveLine(Move)} and {@link GridBoard#removeBalls(Move)}
      * @requires board.isMoveValid(move) == true
-     * @param move
+     * @param move the move to be made on the board
      */
     public void makeMove(Move move) {
         if (board.isMoveValid(move)) {
@@ -154,7 +154,8 @@ public class Game {
     }
 
     /**
-     * Calculates the score of the player
+     * Calculates the score of the player, where 1 point is awarded for every 3 balls of the
+     * same colour that the player has collected.
      * @requires playerIndex to be 0 or 1
      * @param playerIndex index of the player
      * @return current score of the player

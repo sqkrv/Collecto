@@ -17,8 +17,9 @@ import static Collecto.Global.DELIMITER;
  * it will then provide further functionality to communicate with the server, play the game, let
  * an AI play the game, provide hints, and disconnect. It also uses the TUI class to print states
  * of the game for the user to see.
- * It stores socket for server communication, a game to play, logs to print if you encounter errors,
- * the name of the player and a ClientController receive user input.
+ * It stores a socket for communication with a sever, a game to play, logs to print if you encounter
+ * errors, the name by which the player is logged in to a sever and a ClientController to receive
+ * user input.
  * @see Server
  * @see TUI
  * @see Game
@@ -35,6 +36,7 @@ public class Client implements Runnable {
     private Game game = null;
     private final ArrayList<String> logs = new ArrayList<>();
     private String playerName;
+    private ComputerPlayer AI;
 
     protected boolean chatSupport = false;
     protected boolean rankSupport = false;
@@ -48,14 +50,13 @@ public class Client implements Runnable {
 
     private boolean saidHello = false;
     private boolean loggedIn = false;
-    protected boolean useAI = false;
     private boolean myTurn = false;
+    protected boolean useAI = false;
     protected boolean choosingAI = false;
 
-    private ComputerPlayer AI;
-
     /**
-     * Initializes communication with server and input from the user
+     * Initializes communication with server and input from the user by creating a new BufferedReader,
+     * BufferedWriter, and ClientController, and using the socket given in the parameter.
      * @requires socket != null
      * @param socket socket connected to a server
      * @throws IOException if the socket fails
@@ -68,6 +69,12 @@ public class Client implements Runnable {
     }
 
     /**
+     * Handles commands sent by a connected server. Splits the serverInput on the delimiter as defined
+     * in {@link Global#DELIMITER} and assumes the first word is the command sent by the server, and
+     * the rest of the serverInput is information on what to do with that command. Based on the command
+     * this method calls other methods in this class to carry out the functionality. If the command is
+     * not recognized, the client prints an error by default stating it did not understand what command
+     * the server sent.
      * @requires serverInput != null
      * @ensures serverInput is handled correctly
      * @param serverInput String input from the server
@@ -108,8 +115,12 @@ public class Client implements Runnable {
     }
 
     /**
-     * Handles errors sent by the server, wakes up other threads if not logged in
-     * @param params server input
+     * Handles errors sent by the server. Adds the error description provided in params[1]
+     * to the logs and notifies the user that an error has been received. Never immediately
+     * shows the contents of the error to the user. Notifies the user if the hello-handshake
+     * sequence or the login sequence have not yet been completed, and wakes up the sleeping
+     * thread waiting for the server response about hello or login.
+     * @param params server input split into an array of strings
      */
     private void handleError(String[] params) {
         if (params.length <= 1) {
@@ -125,16 +136,19 @@ public class Client implements Runnable {
                 synchronized (this) {
                     notify();
                 }
-            } else {
-                TUI.printError(params[1]);
             }
+            addLog(params[1]);
+            TUI.printError("Server sent error, see logs for more info");
         }
     }
 
     /**
-     * handles the hello handshake response from a server
-     * @requires !saidHello
-     * @param params server input
+     * Handles the hello-handshake response from a server. Stores all the support that the
+     * server offers as specified in the parameter, and notifies the sleeping thread waiting
+     * for the server to send a hello response.
+     * @requires saidHello == false
+     * @ensures all server support is stored, sleeping thread is woken up, saidHello == true
+     * @param params server input containing the HELLO command and all server support
      */
     private void handleHelloServer(String[] params) {
         if (!saidHello) {
@@ -164,8 +178,10 @@ public class Client implements Runnable {
     }
 
     /**
-     * handles the login response from a server
-     * @requires !loggedIn
+     * Handles the login response from a server. Notifies the user that he is logged in to the server,
+     * and wakes up the sleeping thread waiting for the LOGIN command response from the server.
+     * @requires loggedIn == false
+     * @ensures sleeping thread is woken up, loggedIn == true
      */
     private void handleLoginServer() {
         if (!loggedIn) {
@@ -180,8 +196,11 @@ public class Client implements Runnable {
     }
 
     /**
-     * handles server responding that this name is already logged in
-     * @requires !loggedIn
+     * Handles server responding that this name is already logged in. Notifies the user that the username
+     * they tried to log in with is already taken, and wakes up the sleeping thread waiting for the LOGIN
+     * command response from the server.
+     * @requires loggedIn == false
+     * @ensures sleeping thread is woken up, loggedIn == true
      */
     private void handleAlreadyLoggedIn() {
         if (!loggedIn) {
@@ -195,9 +214,11 @@ public class Client implements Runnable {
     }
 
     /**
-     * handles server responding with a list of online players
+     * Handles server responding with a list of online players. Takes the list of players provided
+     * by the server and prints them onscreen in orderly fashion for the user to see.
      * @requires params.length > 1
-     * @param params input from server
+     * @param params input from server containing the LIST command and all online players in an
+     *               array of strings.
      */
     private void handleListServer(String[] params) {
         if (params.length <= 1) {
@@ -212,9 +233,11 @@ public class Client implements Runnable {
     }
 
     /**
-     * handles server responding that a game is over
-     * @requires params.length >= 2 && (params[2] == "DRAW" ||
+     * Handles server responding that a game is over. Notifies the user of the reason of the game being over,
+     * as well as the winner if there is one. Resets all game related parameters to be ready for a new game.
+     * @requires params.length == 2 || params.length == 3, (params[2] == "DRAW" ||
      *      params[2] == "VICTORY" || params[2] == "DISCONNECT")
+     * @ensures game == null, useAI == false, myTurn == false, user is notified of game end
      * @param params server input
      */
     private void handleGameOver(String[] params) {
@@ -240,8 +263,10 @@ public class Client implements Runnable {
     }
 
     /**
-     * handles server responding with a move
+     * Handles server responding with a move. Checks if the move is correct and subsequently adds that move
+     * to the Game object stored on this client, by invoking the {@link #moveServer(String[])} method.
      * @requires params.length == 2 || params.length == 3
+     * @ensures board is printed, score is shown, AI makes move if useAI==true
      * @param params server input
      */
     private void handleMoveServer(String[] params) {
@@ -259,8 +284,11 @@ public class Client implements Runnable {
     }
 
     /**
-     * Checks if the move made by the server is correct, and if so prints it
-     * @param params array of split
+     * Checks if the single or double move made by the server is correct, and adds that move to the current
+     * game object of this client. Invokes the {@link Game#isMoveValid(Move, Move)} and the
+     * {@link Game#makeMove(Move)} methods to do so. Displays an error to the user if the move made by the
+     * server is invalid for the current game.
+     * @param params array containing the MOVE command and the move or moves themselves
      */
     private void moveServer(String[] params) {
         Integer push;
@@ -298,8 +326,11 @@ public class Client implements Runnable {
     }
 
     /**
-     * handles a move input from the use using a client
-     * @requires game != null && params.length == 3 || params.length == 5
+     * Handles a move input from the user using this client. Checks whether the move is valid and
+     * parses it to a push format according to the protocol, meaning an integer between 0 and 27.
+     * Also checks if a double move is made, whether a single move could still be made, and if so
+     * notifies the user. Ultimately sends the move to the server if it passes all clientside checks.
+     * @requires game != null, params.length == 3 || params.length == 5
      * @param params user input
      */
     protected void handleMove(String[] params) {
@@ -325,7 +356,7 @@ public class Client implements Runnable {
             } catch (IllegalArgumentException i) {
                 TUI.print("Direction is wrong, please try again or type help");
                 return;
-            } // TODO: handle what happens when the input is wrong
+            }
             Integer line = Global.parseInt(params[1]);
             if (line == null) {
                 TUI.print("Line parameter is wrong, please try again");
@@ -352,8 +383,13 @@ public class Client implements Runnable {
     }
 
     /**
-     * handles the server responding with a new game
-     * @requires game == null
+     * Handles the server responding with a new game. Parses the strings containing the new board
+     * of the game to GridBoard object using the {@link #parseStringBoard(String[])} method, and
+     * creates a new Game object with it which is stored in the {@code game} attribute, along with
+     * the names of the players also provided in the parameter of this method. Prints the board for
+     * the user and if it is their turn, notifies them or lets the AI make a move using the
+     * {@link #AIMove()} method.
+     * @requires game == null, params.length == 52
      * @ensures params[1] up to and including params[49] are parsed into a new board for the game
      * @param params server input
      */
@@ -378,8 +414,10 @@ public class Client implements Runnable {
 
 
     /**
-     * lets an AI make a move
-     * @requires game.possibleMoves() == true
+     * Lets an AI make a move. The AI determines a move based on its difficulty, and if it can
+     * successfully find a move, sends it to the server. If it can not find a move, notifies the
+     * user of this client.
+     * @requires game.possibleMoves() == true, AI != null
      */
     private void AIMove() {
         if (!game.possibleMoves()) return;
@@ -388,7 +426,7 @@ public class Client implements Runnable {
             TUI.print("AI couldn't find a move");
             return;
         } else if (moves[0] == null) {
-            addLog(TUI.log("No move move"));
+            addLog(TUI.log("No AI move"));
             return;
         }
         String message = "MOVE" + DELIMITER + moves[0].push();
@@ -397,7 +435,12 @@ public class Client implements Runnable {
     }
 
     /**
-     * waits for a user to select an AI or decide to play for themself when a new game starts
+     * Waits for a user to select an AI or decide to play for themself.
+     * This method is triggered whenever a new game starts, and it asks the user if they want to
+     * use an AI, after which this thread, which is the thread that handles server input, sleeps
+     * until the user has completed AI sequence and has either chosen an AI level or decided not
+     * to use an AI.
+     * @requires triggered only when a new game starts
      * @ensures the server input thread waits until the AI selection is done
      */
     private void useAI() {
@@ -415,7 +458,10 @@ public class Client implements Runnable {
     }
 
     /**
-     * lets the user choose to play with an AI or not
+     * Checks the answers of the user to the question of whether they want to play with
+     * an AI or not. If not, the AI choosing sequence is ended and the sleeping server input
+     * thread is woken up. Otherwise, the user is asked to choose the level of the AI, and
+     * continues to the {@link #chooseDifficulty(String[])} method.
      * @requires answer[0] == "Y" || answer[0] == "N"
      * @ensures thread is notified if answer[0] == "N"
      * @param answer user input
@@ -439,7 +485,8 @@ public class Client implements Runnable {
     /**
      * Handles user input for AI difficulty level specification.
      * Will not initialise AI until answer will be either {@code 1} or {@code 2}.
-     *
+     * When a correct answer is chosen, ends the AI choosing sequence and wakes up the
+     * sleeping server input thread.
      * @param answer array of split user answer
      */
     protected void chooseDifficulty(String[] answer) {
@@ -461,7 +508,6 @@ public class Client implements Runnable {
     /**
      * Prints score and string representation of all balls for each player in game.
      * The output is of the following format: {@code username[score]: balls}
-     *
      * @requires game != null
      * @see TUI#print(String)
      */
@@ -481,11 +527,11 @@ public class Client implements Runnable {
     }
 
     /**
-     * Parses the protocol representation of the board
-     * and converts it to the {@line GridBoard} class instance with converted board.
-     *
-     * @requires fields[1] up to and including fields[49] to be valid
-     * protocol board representation means that this subarray must container only integers between 0 and 7
+     * Parses the protocol representation of the board and converts it to the {@link GridBoard}
+     * class instance with converted board. Protocol board representation means that in the
+     * subarray of fields[1] to fields[49] all strings must contain only integers from 0-6.
+     * @requires fields[1] up to and including fields[49] to be valid according to protocol,
+     *      fields.length == 52
      * @param fields protocol representation of the board
      * @return GridBoard with a board of the given String
      */
@@ -510,9 +556,9 @@ public class Client implements Runnable {
     }
 
     /**
-     * Generates a hint using {@link ComputerPlayer} for the current
-     * game board and displays it.
-     *
+     * Generates a hint using {@link ComputerPlayer} for the current game board and displays it.
+     * Uses the beginner AI to show to the user the first possible single move, or the first
+     * possible double move if no single move is possible.
      * @requires game != null
      * @see ComputerPlayer#makeBeginnerMove(GridBoard) 
      */
@@ -523,6 +569,10 @@ public class Client implements Runnable {
         TUI.print("Your friendly neighbourhood client is generating a hint, hold on...");
         if (game.possibleMoves()) {
             Move[] moves = ComputerPlayer.makeBeginnerMove(game.getBoard());
+            if (moves == null) {
+                TUI.print("No hints could be generated, sorry!");
+                return;
+            }
             String answer = "You can still do " + (moves[0].getLine() + 1) + " " + moves[0].getDirection();
             if (moves.length == 2) {
                 answer += " and then " + (moves[1].getLine() + 1) + " " + moves[1].getDirection();
@@ -534,7 +584,7 @@ public class Client implements Runnable {
     }
 
     /**
-     * sends a String message to a connected server
+     * Sends a String message to a connected server. Adds a log of every outgoing message.
      * @requires message != null
      * @param message message to be sent to the server
      */
@@ -553,16 +603,20 @@ public class Client implements Runnable {
     }
 
     /**
-     * prints the board of a current game
+     * Prints the board of a current game for the user to see.
      * @requires game != null
      */
     protected void printBoard() {
-        if (game != null) game.printBoard();
-        else TUI.print("You are not in a game");
+        if (game != null) {
+            game.printBoard();
+        } else  {
+            TUI.print("You are not in a game");
+        }
     }
 
     /**
-     * prints the logs for the user to see
+     * Prints all recorded logs for the user to see. This includes incoming and outgoing messages,
+     * internal errors, errors sent by the server, and other noteworthy events.
      */
     protected void printLogs() {
         for (String log : logs) {
@@ -571,7 +625,8 @@ public class Client implements Runnable {
     }
 
     /**
-     * disconnects from a server
+     * Disconnects from a server. Closes the socket, reader and writer, and clears the socket and
+     * the game of this client, and then gracefully terminates the program.
      * @requires socket != null
      */
     protected void disconnect() {
@@ -587,27 +642,28 @@ public class Client implements Runnable {
             }
             TUI.print("Connection to server lost");
         }
-        printLogs(); //TODO: remove this when done with debugging
         System.exit(0);
     }
 
     /**
-     * prints a help menu for the user to read
+     * Prints a help menu for the user to read.
      */
     protected void printHelp() {
         TUI.printHelpClient();
     }
 
     /**
-     * adds a log to logs
-     * @param log log String to be added
+     * Adds a log to the logs ArrayList of this client.
+     * @param log String that is added to the logs
      */
     private synchronized void addLog(String log) {
         logs.add(log);
     }
 
     /**
-     * prompts the user for a login name until the server confirms that it is not taken
+     * Prompts the user for a login name to return to the server. Repeats this process until
+     * the server sends confirmation that the username was not already in use, and the user
+     * was registered. Makes the user input thread sleep while it waits for server response.
      */
     private void requestLogin() {
         String answer = null;
@@ -630,7 +686,8 @@ public class Client implements Runnable {
     }
 
     /**
-     * starts up the client and runs the controller
+     * Starts up the client by using the {@link #handleSetup()} method, and starts the
+     * controller after the setup is complete.
      */
     private void startUpClient() {
         TUI.print("Setting up connection, please wait...");
@@ -639,9 +696,14 @@ public class Client implements Runnable {
     }
 
     /**
-     * handles the initial HELLO handshake response from a server
-     * @requires !saidHello
-     * @ensures information about server support is stored
+     * Handles the initial HELLO handshake response with a server. This method is triggered
+     * in the client start up sequence when a connection with a server has been established.
+     * It handles the HELLO handshake with the connected server without required user input,
+     * by sending a HELLO command to the server followed by all services that this client
+     * supports. It lets the user input thread sleep while it waits for the server to respond,
+     * after which it triggers the {@link #requestLogin()} method.
+     * @requires saidHello == false
+     * @ensures information about client services support is sent to the server
      */
     private void handleSetup() {
         if (saidHello) {
@@ -669,7 +731,12 @@ public class Client implements Runnable {
     }
 
     /**
-     * listens to the server once the connection has been set up
+     * Listens to the server. This command overrides the run() method from the Runnable
+     * interface, and is triggered in the main method when the server input thread is
+     * started. It then continuously listens to the server input until this client or
+     * the server disconnects. In case of the server disconnecting, it triggers the
+     * {@link #disconnect()} method to terminate this client. It also adds a log
+     * for every incoming message.
      */
     @Override
     public void run() {

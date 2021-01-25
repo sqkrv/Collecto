@@ -12,8 +12,9 @@ import java.util.Map;
  * possible move that it encounters.
  * <p>The strategy of the intermediate AI is to calculate all
  * current possible moves, and see how many balls they would
- * gain by making that move, and the move with the highest amount
- * of balls gained is selected as the next move that the AI makes.
+ * gain by making that move, after which the move that gains the
+ * the highest amount of balls is selected as the next move that
+ * the AI makes.
  *
  * @see Client
  */
@@ -22,7 +23,7 @@ public class ComputerPlayer {
 
     /**
      * Default constructor which constructs
-     * a ComputerPlayer with first level of difficulty.
+     * a ComputerPlayer with beginner level of difficulty.
      */
     public ComputerPlayer() {
         this(1);

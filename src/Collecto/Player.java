@@ -17,7 +17,7 @@ public class Player {
     private final String name;
 
     /**
-     * Constructs a Player instance with the specified name
+     * Constructs a Player instance with the specified name.
      * @param name the name of the player
      */
     public Player(String name) {
@@ -29,7 +29,7 @@ public class Player {
     }
 
     /**
-     * Adds balls in specified array to all player's balls
+     * Adds all balls in a specified array to this Player.
      * @ensures no WHITE balls will be added
      * @param balls an array of balls
      */
@@ -40,7 +40,8 @@ public class Player {
     }
 
     /**
-     * Returns calculated total point for this player
+     * Returns calculated total point for this Player, where 3 points are awarded for every
+     * 3 balls of the same colour which this Player has acquired.
      * @return total points for this player
      */
     public int getPoints() {
@@ -52,7 +53,8 @@ public class Player {
     }
 
     /**
-     * Returns HashMap of player's balls with colours and corresponding amount of balls
+     * Returns a HashMap of the balls of this player containing the balls and the corresponding amount that
+     * this player has acquired of that colour ball.
      * @return player's balls
      */
     public HashMap<Ball, Integer> getBalls() {

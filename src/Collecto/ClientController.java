@@ -26,7 +26,7 @@ public class ClientController extends Controller {
 
     /**
      * Starts this ClientController and continually listens for an input
-     * and then passes this input to {@code handleCommand()}.
+     * and then passes this input to the {@link #handleCommand(String)} method.
      */
     public void start() {
         String input;

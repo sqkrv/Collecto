@@ -16,14 +16,14 @@ public class Controller {
     protected final Scanner scanner;
 
     /**
-     * Constructs a Controller and initiates a new scanner for user input
+     * Constructs a Controller and initiates a new scanner for user input.
      */
     public Controller() {
         this.scanner = new Scanner(System.in);
     }
 
     /**
-     * Prints provided message and then returns line input by the user after the message containing no leading and trailing spaces
+     * Prints provided message and then returns line input by the user after the message containing no leading and trailing spaces.
      * @param message message to output before prompting the user
      * @ensures line contains no leading and trailing spaces
      * @return input line
@@ -34,7 +34,7 @@ public class Controller {
     }
 
     /**
-     * Returns line input by the user containing no leading and trailing spaces
+     * Returns line input by the user containing no leading and trailing spaces.
      * @ensures line contains no leading and trailing spaces
      * @return input line
      */

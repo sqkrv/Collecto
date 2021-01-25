@@ -105,10 +105,12 @@ public class Server implements Runnable {
      * @return true if the name is already in the system, false otherwise
      */
     public boolean checkPlayer(String playerName) {
-        for (PlayerHandler client : playerClients) {
-            if (client.getName().equals(playerName)) return false;
+        synchronized (playerClients) {
+            for (PlayerHandler client : playerClients) {
+                if (client.getName().equals(playerName)) return false;
+            }
+            return true;
         }
-        return true;
     }
 
     /**

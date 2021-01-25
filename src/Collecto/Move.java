@@ -29,7 +29,7 @@ public class Move {
      * Enums of all possible directions of the Move
      */
     public enum Direction {
-        LEFT, RIGHT, UP, DOWN;
+        LEFT, RIGHT, UP, DOWN
     }
 
     /**
@@ -75,7 +75,7 @@ public class Move {
     }
 
     /**
-     * Returns direction of this move.
+     * Returns the direction of this move.
      *
      * @ensures direction is a valid direction
      * @return direction of this move
@@ -85,7 +85,7 @@ public class Move {
     }
 
     /**
-     * Returns line of this move.
+     * Returns the line of this move.
      *
      * @ensures line is a valid line between 0 and 7
      * @return line of this move
@@ -95,22 +95,24 @@ public class Move {
     }
 
     /**
-     * Calculates and returns push representation of this move.
+     * Calculates and returns the push representation of this move.
      *
+     * @requires direction != null
      * @ensures returned push is a valid push according to protocol
      * @return push representation of this move
      */
     public int push() {
+        assert direction != null;
         return line + direction.ordinal()*7;
     }
 
     /**
-     * Override of {@code toString} method which returns human string representation of the move
-     * in format {@code line+1 direction} (<i>e.g. 4 RIGHT</i>).
+     * Overrides the {@code toString} method to return a more readable string representation of the move
+     * in format {@code line+1 direction}, e.g. {@code 4 RIGHT}.
      * This relies on string representation of the board specifically
      * on enumeration of the lines.
      *
-     * <p>This method should be used whenever move should be printed to the user in human readable format
+     * <p>This method should be used whenever move should be printed to the user in a readable format.
      *
      * @return human string representation of the move
      */
@@ -120,8 +122,9 @@ public class Move {
     }
 
     /**
-     * Checks two moves for equality. If provided object is Move instance and
-     * both line and direction are equal in both classes method returns true. Otherwise - false.
+     * Checks two moves for equality. If the provided object is an instance of the Move class and
+     * both line and direction are equal in both classes then the method returns true.
+     * Otherwise it will return false.
      *
      * @param o object to check equality with
      * @return true if {@code Object} is {@code Move} instance

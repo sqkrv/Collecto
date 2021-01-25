@@ -117,9 +117,9 @@ public class GridBoard {
     }
 
     /**
-     * Goes over the entire row or column in the direction of a given move, removes all balls with
-     * neighbours of the same colour recursively by calling the private {@link #removeBalls(int, int)} method
-     * and returns them as an ArrayList of balls.
+     * Goes over the entire row or column in the direction of a given move, removes all balls that have
+     * neighbours of the same colour by calling the {@link #removeBalls(int, int)} method and returning
+     * all removed balls in an ArrayList.
      *
      * @param move Move along which the {@code removeBalls()} method looks
      * @return ArrayList of balls containing all removed balls
@@ -186,7 +186,7 @@ public class GridBoard {
      * Creates and returns a new GridBoard object with copy of the board
      * on which this method has been called on.
      *
-     * @return a deep copy of current GridBoard
+     * @return a deep copy of this GridBoard
      */
     public GridBoard deepCopy() {
         GridBoard copy = new GridBoard(false);
@@ -254,7 +254,7 @@ public class GridBoard {
     /**
      * Retrieves a ball on a specified field.
      *
-     * @requires validIndex(row) && validIndex(column) == true
+     * @requires {@code validIndex(row) == true}, {@code validIndex(column) == true}
      * @ensures index is valid
      * @return Ball from a specified field, or null if an index is invalid
      */
@@ -268,7 +268,7 @@ public class GridBoard {
     /**
      * Puts a given ball on a specified field on the board.
      *
-     * @requires {@code validIndex(row) && validIndex(column) == true}
+     * @requires {@code validIndex(row) == true}, {@code validIndex(column) == true}
      * @param row index of the row of the ball
      * @param column index of the column of the ball
      * @param ball the specified ball to be set

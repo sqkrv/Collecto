@@ -55,7 +55,7 @@ public class PlayerHandler implements Runnable {
 
     public PlayerHandler(Socket socket, Server server) throws IOException {
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())); // TODO not sure about Buffered or Print
+        out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
         this.socket = socket;
         this.server = server;
     }
@@ -85,7 +85,8 @@ public class PlayerHandler implements Runnable {
         TUI.print(TUI.log( "[" + purple("IN") + " ] " + "("+getName()+") — "+message));
         message = message.strip();
         if (message == null) {
-            sendError("suck"); // TODO perhaps change this vulgar wording or smth
+            sendError("Sent null to server");
+            TUI.print(TUI.log("Client " + this.name + " sent null"));
             return;
         }
         String[] params = message.split(DELIMITER);
@@ -147,7 +148,6 @@ public class PlayerHandler implements Runnable {
     }
 
     private void handleLogin(String[] params) {
-        // CRYPT stuff if we do the bonus
         if (!saidHello) {
             sendError("Please say Hello before trying to log in");
         } else if (loggedIn) {
