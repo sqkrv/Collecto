@@ -13,7 +13,6 @@ package Collecto;
  * It is used primarily by many classes,
  * primarily the Game and GridBoard classes.
  *
- * @see Direction
  * @see Game
  * @see GridBoard
  */
@@ -26,19 +25,12 @@ public class Move {
     private final int line;
 
     /**
-     * Enums of all possible directions of the Move
-     */
-    public enum Direction {
-        LEFT, RIGHT, UP, DOWN
-    }
-
-    /**
      * Constructs a move with specified line and direction arguments.
      *
+     * @param line      line of the move
+     * @param direction direction of the move
      * @requires line argument to be between 0 and 7
      * @requires direction argument to be valid direction, not null
-     * @param line line of the move
-     * @param direction direction of the move
      */
     public Move(int line, Direction direction) {
         assert 0 <= line && line < 7;
@@ -50,8 +42,8 @@ public class Move {
     /**
      * Constructs a move with specified push argument.
      *
-     * @requires push argument to be between 0 and 27
      * @param push number of push (according to protocol)
+     * @requires push argument to be between 0 and 27
      */
     public Move(int push) {
         assert 0 <= push && push <= 27;
@@ -77,8 +69,8 @@ public class Move {
     /**
      * Returns the direction of this move.
      *
-     * @ensures direction is a valid direction
      * @return direction of this move
+     * @ensures direction is a valid direction
      */
     public Direction getDirection() {
         return direction;
@@ -87,8 +79,8 @@ public class Move {
     /**
      * Returns the line of this move.
      *
-     * @ensures line is a valid line between 0 and 7
      * @return line of this move
+     * @ensures line is a valid line between 0 and 7
      */
     public int getLine() {
         return line;
@@ -97,28 +89,29 @@ public class Move {
     /**
      * Calculates and returns the push representation of this move.
      *
-     * @requires direction != null
-     * @ensures returned push is a valid push according to protocol
      * @return push representation of this move
+     * @requires {@code direction != null}
+     * @ensures returned push is a valid push according to protocol
      */
     public int push() {
         assert direction != null;
-        return line + direction.ordinal()*7;
+        return line + direction.ordinal() * 7;
     }
 
     /**
-     * Overrides the {@code toString} method to return a more readable string representation of the move
-     * in format {@code line+1 direction}, e.g. {@code 4 RIGHT}.
+     * Overrides the {@code toString} method to return a more readable string representation
+     * of the move in format {@code line+1 direction}, e.g. {@code 4 RIGHT}.
      * This relies on string representation of the board specifically
      * on enumeration of the lines.
      *
-     * <p>This method should be used whenever move should be printed to the user in a readable format.
+     * <p>This method should be used whenever move should be printed
+     * to the user in a readable format.
      *
      * @return human string representation of the move
      */
     @Override
     public String toString() {
-        return (line+1)+" "+direction;
+        return (line + 1) + " " + direction;
     }
 
     /**
@@ -132,9 +125,20 @@ public class Move {
      */
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Move move = (Move) o;
         return line == move.line && direction == move.direction;
+    }
+
+    /**
+     * Enum of all possible directions of a Move.
+     */
+    public enum Direction {
+        LEFT, RIGHT, UP, DOWN
     }
 }
