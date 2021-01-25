@@ -4,20 +4,19 @@ import static Collecto.Colour.*;
 
 /**
  * Enum class for all possible in-game balls.
- * The white ball represents an empty field on
- * a board, and is therefore placed at index 0.
- * This class is used by many classes, mostly
- * by GridBoard and Player.
+ * The white ball represents an empty field on a board.
+ *
  * @see Colour
- * @see GridBoard
- * @see Player
  */
 public enum Ball {
     WHITE, BLUE, YELLOW, RED, ORANGE, PURPLE, GREEN;
 
     /**
+     * Returns string name of the colour of this ball.
+     * If ball is WHITE returns empty string.
+     * Returned colour string is all uppercase.
      *
-     * @return String name of the colour of a ball, return empty string if the ball is white
+     * @return string name of the colour of a ball, empty string if this ball is WHITE
      */
     @Override
     public String toString() {
@@ -26,8 +25,10 @@ public enum Ball {
     }
 
     /**
+     * Returns string name of the colour of this ball but with applied ANSI colour.
+     * If ball is WHITE returns empty string with white ANSI colour applied.
      *
-     * @return coloured String of the name of this Ball, empty string if this is a white ball
+     * @return coloured string of the name of this Ball, empty string if this ball is WHITE
      */
     public String toColouredString() {
         if (this == BLUE) {
@@ -48,8 +49,10 @@ public enum Ball {
     }
 
     /**
+     * Returns related ANSI code for this colour.
+     * If ball is WHITE returns {@link Colour#RESET} code.
      *
-     * @return the ANSI colour of a ball, or a colour reset code if the ball is white
+     * @return the ANSI colour of this ball, or a colour reset code if this ball is WHITE
      */
     public String ballColour() {
         if (this == BLUE) {
