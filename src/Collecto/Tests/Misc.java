@@ -100,4 +100,15 @@ public class Misc {
 
         return copy_array;
     }
+
+    public static ArrayList<ArrayList<Ball>> emptyBoardArray() {
+        ArrayList<ArrayList<Ball>> emptyBoardArray = new ArrayList<>();
+        for (int i = 0; i < 7; i++) {
+            emptyBoardArray.add(new ArrayList<>());
+            for (int j = 0; j < 7; j++) {
+                emptyBoardArray.get(i).add(Ball.WHITE);
+            }
+        }
+        return emptyBoardArray;
+    }
 }
