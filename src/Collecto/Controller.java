@@ -23,37 +23,44 @@ public class Controller {
     }
 
     /**
-     * Prints provided message and then returns line input by the user after the message containing no leading and trailing spaces.
+     * Prints provided message and then returns line input by the user
+     * after the message containing no leading and trailing spaces.
+     *
      * @param message message to output before prompting the user
-     * @ensures line contains no leading and trailing spaces
      * @return input line
+     * @ensures line contains no leading and trailing spaces
      */
-    protected synchronized String promptUser(String message) {
+    public synchronized String promptUser(String message) {
         TUI.print(message);
         return promptUser();
     }
 
     /**
      * Returns line input by the user containing no leading and trailing spaces.
-     * @ensures line contains no leading and trailing spaces
+     *
      * @return input line
+     * @ensures line contains no leading and trailing spaces
      */
-    protected synchronized String promptUser() {
+    public synchronized String promptUser() {
         return scanner.nextLine().trim();
     }
 
     /**
-     * Prompts user for an host address until it verifies validness of this address. Then returns this address.
-     * @ensures host address is valid InetAddress
+     * Prompts user for an host address until it verifies validness of this address.
+     * Then returns this address.
+     *
      * @return InetAddress to use in Sockets
+     * @ensures host address is valid InetAddress
      */
-    protected InetAddress promptAddress() {
+    public InetAddress promptAddress() {
         String prompt;
         InetAddress ip;
         while (true) {
             prompt = promptUser("Please enter host address:");
             ip = Global.checkAddress(prompt);
-            if (ip != null) break;
+            if (ip != null) {
+                break;
+            }
             TUI.print("Wrong address provided");
         }
         return ip;
@@ -61,8 +68,9 @@ public class Controller {
 
     /**
      * Prompts user for a port until it verifies validness of this port. Then returns this port.
-     * @ensures port is valid positive integer
+     *
      * @return port
+     * @ensures port is valid positive integer
      */
     protected Integer promptPort() {
         String prompt;
@@ -70,7 +78,9 @@ public class Controller {
         while (true) {
             prompt = promptUser("Please enter port of the server:");
             port = Global.checkPort(prompt);
-            if (port != null) break;
+            if (port != null) {
+                break;
+            }
             TUI.print("Wrong port provided");
         }
         return port;
