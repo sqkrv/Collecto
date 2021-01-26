@@ -13,12 +13,16 @@ import java.util.Scanner;
  * @see ClientController
  */
 public class Controller {
-    protected final Scanner scanner;
+    protected Scanner scanner;
 
     /**
      * Constructs a Controller and initiates a new scanner for user input.
      */
     public Controller() {
+        setScanner();
+    }
+
+    protected void setScanner() {
         this.scanner = new Scanner(System.in);
     }
 
@@ -72,7 +76,7 @@ public class Controller {
      * @return port
      * @ensures port is valid positive integer
      */
-    protected Integer promptPort() {
+    public Integer promptPort() {
         String prompt;
         Integer port;
         while (true) {
