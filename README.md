@@ -1,18 +1,14 @@
 # Collecto
 
-there should be:
-- Information about installation, indicating, for example, which directories and files are necessary and which conditions apply for installation
-- Steps on how to start the game, including example start commands if applicable.
-
 ## Installation
 
 No specific installation required.
 However, your computer should already have java installed. (Check with `java --version`. The version must be 11.x.x or higher)
 Once the project archive is unarchived there are two files jar `Server.jar` and `Client.jar`, `README.md` (this document) and `Source` folder.
-- `Server.jar` is needed to run a server.
-- `Client.jar` runs the client to connect to the server and play the game.
-- `Source` folder contains source code of the project including generated JavaDoc.
-    - `JavaDoc` folder contains generated JavaDoc for this project.
+- `Server.jar` is needed to run a server
+- `Client.jar` runs the client to connect to the server and play the game
+- `JavaDoc` folder contains generated JavaDoc for the source code of this project
+- `Source` folder contains source code of the project
 
 ## Usage
 > To run `.jar` files you can use `java -jar "filename.jar"`
