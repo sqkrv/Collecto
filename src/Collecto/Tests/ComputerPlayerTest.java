@@ -76,17 +76,7 @@ class ComputerPlayerTest {
 
         @Test
         void makeBeginnerMoveDouble() {
-            ArrayList<ArrayList<Ball>> array = copyArray(emptyBoardArray);
-            array.get(0).set(0, Ball.BLUE);
-            array.get(0).set(3, Ball.RED);
-            array.get(0).set(6, Ball.BLUE);
-
-            Move[] moves = ai1.makeMove(new GridBoard(array));
-            assertEquals(moves[0], new Move(3, Move.Direction.DOWN));
-            assertTrue(
-                    moves[1].equals(new Move(0, Move.Direction.LEFT)) ||
-                            moves[1].equals(new Move(0, Move.Direction.RIGHT))
-            );
+            checkMove(ai1);
         }
 
         @Test
@@ -96,6 +86,20 @@ class ComputerPlayerTest {
             Move[] moves = ai1.makeMove(new GridBoard(array));
             assertNull(moves);
         }
+    }
+
+    private void checkMove(ComputerPlayer ai) {
+        ArrayList<ArrayList<Ball>> array = copyArray(emptyBoardArray);
+        array.get(0).set(0, Ball.BLUE);
+        array.get(0).set(3, Ball.RED);
+        array.get(0).set(6, Ball.BLUE);
+
+        Move[] moves = ai.makeMove(new GridBoard(array));
+        assertEquals(moves[0], new Move(3, Move.Direction.DOWN));
+        assertTrue(
+                moves[1].equals(new Move(0, Move.Direction.LEFT)) ||
+                        moves[1].equals(new Move(0, Move.Direction.RIGHT))
+        );
     }
 
     @Nested
@@ -116,17 +120,7 @@ class ComputerPlayerTest {
 
         @Test
         void makeIntermediateMoveDouble() {
-            ArrayList<ArrayList<Ball>> array = copyArray(emptyBoardArray);
-            array.get(0).set(0, Ball.BLUE);
-            array.get(0).set(3, Ball.RED);
-            array.get(0).set(6, Ball.BLUE);
-
-            Move[] moves = ai2.makeMove(new GridBoard(array));
-            assertEquals(moves[0], new Move(3, Move.Direction.DOWN));
-            assertTrue(
-                    moves[1].equals(new Move(0, Move.Direction.LEFT)) ||
-                            moves[1].equals(new Move(0, Move.Direction.RIGHT))
-            );
+            checkMove(ai2);
         }
 
         @Test
