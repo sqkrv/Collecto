@@ -8,6 +8,14 @@
         <element id="file-copy" path="$PROJECT_DIR$/README.md" />
         <element id="directory" name="Source">
           <element id="dir-copy" path="$PROJECT_DIR$" />
+          <element id="directory" name="libs">
+            <element id="library" level="project" name="com.bluecatcode.mockito:mockito-1.10.19-extended:1.1.0" />
+            <element id="file-copy" path="$MAVEN_REPOSITORY$/org/jetbrains/annotations/20.1.0/annotations-20.1.0.jar" />
+            <element id="library" level="module" name="JUnit5.4" module-name="Collecto" />
+          </element>
+        </element>
+        <element id="directory" name="JavaDoc">
+          <element id="dir-copy" path="$PROJECT_DIR$/JavaDoc" />
         </element>
       </element>
     </root>
