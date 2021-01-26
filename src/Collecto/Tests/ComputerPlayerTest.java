@@ -1,30 +1,26 @@
 package Collecto.Tests;
 
+import Collecto.Ball;
 import Collecto.ComputerPlayer;
 import Collecto.GridBoard;
-import org.junit.jupiter.api.*;
-import Collecto.Ball;
 import Collecto.Move;
-import java.util.*;
+import org.junit.jupiter.api.*;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.ArrayList;
 
 import static Collecto.Tests.Misc.copyArray;
+import static org.junit.jupiter.api.Assertions.*;
 
 class ComputerPlayerTest {
-    ComputerPlayer player;
     static ArrayList<ArrayList<Ball>> emptyBoardArray = new ArrayList<>();
     static ArrayList<ArrayList<Ball>> testBoardArray = new ArrayList<>();
     private static ArrayList<ArrayList<Ball>> sampleBoardArray;
+    ComputerPlayer ai1;
+    ComputerPlayer ai2;
 
     @BeforeAll
     static void setEmptyBoardArray() {
-        for (int i = 0; i < 7; i++) {
-            emptyBoardArray.add(new ArrayList<>());
-            for (int j = 0; j < 7; j++) {
-                emptyBoardArray.get(i).add(Ball.WHITE);
-            }
-        }
+        emptyBoardArray = Misc.emptyBoardArray();
     }
 
     @BeforeAll
@@ -50,27 +46,28 @@ class ComputerPlayerTest {
 
     @BeforeEach
     void setUp() {
-        player = new ComputerPlayer();
+        ai1 = new ComputerPlayer();
+        ai2 = new ComputerPlayer(2);
     }
 
     @Test
     void getLevel() {
-        assertEquals(player.getLevel(), 1);
+        assertEquals(ai1.getLevel(), 1);
         assertThrows(AssertionError.class, () -> new ComputerPlayer(4));
-        player = new ComputerPlayer(2);
-        assertEquals(player.getLevel(), 2);
+        ai1 = new ComputerPlayer(2);
+        assertEquals(ai1.getLevel(), 2);
     }
 
     @Nested
     @DisplayName("Beginner moves")
-    class beginnerMoves {
+    class BeginnerMoves {
         @Test
         void makeBeginnerMoveSingle() {
             ArrayList<ArrayList<Ball>> array = copyArray(emptyBoardArray);
             array.get(0).set(0, Ball.BLUE);
             array.get(0).set(6, Ball.BLUE);
 
-            Move[] moves = player.makeBeginnerMove(new GridBoard(array));
+            Move[] moves = ai1.makeMove(new GridBoard(array));
             assertTrue(
                     moves[0].equals(new Move(0, Move.Direction.LEFT)) ||
                             moves[0].equals(new Move(0, Move.Direction.RIGHT))
@@ -84,28 +81,36 @@ class ComputerPlayerTest {
             array.get(0).set(3, Ball.RED);
             array.get(0).set(6, Ball.BLUE);
 
-            Move[] moves = player.makeBeginnerMove(new GridBoard(array));
+            Move[] moves = ai1.makeMove(new GridBoard(array));
             assertEquals(moves[0], new Move(3, Move.Direction.DOWN));
             assertTrue(
                     moves[1].equals(new Move(0, Move.Direction.LEFT)) ||
                             moves[1].equals(new Move(0, Move.Direction.RIGHT))
             );
         }
+
+        @Test
+        void makeBeginnerMoveEmpty() {
+            ArrayList<ArrayList<Ball>> array = copyArray(emptyBoardArray);
+
+            Move[] moves = ai1.makeMove(new GridBoard(array));
+            assertNull(moves);
+        }
     }
 
     @Nested
     @DisplayName("Intermediate moves")
-    class intermediateMoves {
+    class IntermediateMoves {
         @Test
         void makeIntermediateMoveSingle() {
             ArrayList<ArrayList<Ball>> array = copyArray(sampleBoardArray);
 
-            Move[] moves = player.makeIntermediateMove(new GridBoard(array));
+            Move[] moves = ai2.makeMove(new GridBoard(array));
             assertEquals(moves[0], new Move(3, Move.Direction.LEFT));
 
             array.get(0).set(3, Ball.RED);
             array.get(1).set(3, Ball.PURPLE);
-            moves = player.makeIntermediateMove(new GridBoard(array));
+            moves = ai2.makeMove(new GridBoard(array));
             assertEquals(moves[0], new Move(3, Move.Direction.DOWN));
         }
 
@@ -116,12 +121,20 @@ class ComputerPlayerTest {
             array.get(0).set(3, Ball.RED);
             array.get(0).set(6, Ball.BLUE);
 
-            Move[] moves = player.makeIntermediateMove(new GridBoard(array));
+            Move[] moves = ai2.makeMove(new GridBoard(array));
             assertEquals(moves[0], new Move(3, Move.Direction.DOWN));
             assertTrue(
                     moves[1].equals(new Move(0, Move.Direction.LEFT)) ||
                             moves[1].equals(new Move(0, Move.Direction.RIGHT))
             );
+        }
+
+        @Test
+        void makeBeginnerMoveEmpty() {
+            ArrayList<ArrayList<Ball>> array = copyArray(emptyBoardArray);
+
+            Move[] moves = ai2.makeMove(new GridBoard(array));
+            assertNull(moves);
         }
     }
 }
