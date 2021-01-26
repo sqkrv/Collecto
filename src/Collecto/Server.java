@@ -84,7 +84,7 @@ public class Server implements Runnable {
      *
      * @param player player to add to list
      */
-    protected void addPlayer(PlayerHandler player) {
+    protected synchronized void addPlayer(PlayerHandler player) {
         this.playerClients.add(player);
     }
 
@@ -94,7 +94,7 @@ public class Server implements Runnable {
      *
      * @param player player to remove from list
      */
-    protected void removePlayer(PlayerHandler player) {
+    protected synchronized void removePlayer(PlayerHandler player) {
         this.playerClients.remove(player);
     }
 
@@ -119,7 +119,7 @@ public class Server implements Runnable {
      * @param client client to check queue status for
      * @return true if client is in queue, false otherwise
      */
-    protected boolean queued(PlayerHandler client) {
+    protected synchronized boolean queued(PlayerHandler client) {
         return (queue.contains(client));
     }
 
@@ -132,8 +132,8 @@ public class Server implements Runnable {
      * @ensures client can be added only when not in game
      * @param client client to add to queue
      */
-    protected void addToQueue(PlayerHandler client) {
-        if (!inGame.contains(client)) {
+    protected synchronized void addToQueue(PlayerHandler client) {
+        if (!isInGame(client)) {
             queue.add(client);
             startNewGame();
         }
@@ -145,8 +145,8 @@ public class Server implements Runnable {
      * @requires {@code client != null}
      * @param client client to remove from queue
      */
-    protected void removeFromQueue(PlayerHandler client) {
-       if (queued(client)) {
+    protected synchronized void removeFromQueue(PlayerHandler client) {
+        if (queued(client)) {
            queue.remove(client);
        }
     }
@@ -157,11 +157,13 @@ public class Server implements Runnable {
      * @return array of names of all players currently being on server
      */
     protected ArrayList<String> getPlayers() {
-        ArrayList<String> players = new ArrayList<>();
-        for (PlayerHandler client : playerClients) {
-            players.add(client.getName());
+        synchronized (playerClients) {
+            ArrayList<String> players = new ArrayList<>();
+            for (PlayerHandler client : playerClients) {
+                players.add(client.getName());
+            }
+            return players;
         }
-        return players;
     }
 
     /**
@@ -175,7 +177,6 @@ public class Server implements Runnable {
     private void startNewGame() {
         synchronized (queue) {
             if (queue.size() >= 2) {
-            // TODO: check whether queue synchronisation works properly, possible add to other methods as well
                 PlayerHandler player1 = queue.get(0);
                 PlayerHandler player2 = queue.get(1);
                 if (new Random().nextInt(2) == 1) {
