@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact name="Project Archive">
+    <output-path>$PROJECT_DIR$/out/artifacts/Project_Archive</output-path>
+    <root id="root">
+      <element id="archive" name="Collecto.zip">
+        <element id="dir-copy" path="$PROJECT_DIR$" />
+      </element>
+    </root>
+  </artifact>
+</component>
