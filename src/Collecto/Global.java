@@ -116,6 +116,7 @@ public class Global {
             public static final String LOGS = "LOGS";
             public static final String DISCONNECT = "DISCONNECT";
             public static final String BOARD = "BOARD";
+            public static final String STATUS = "STATUS";
         }
 
         /**
