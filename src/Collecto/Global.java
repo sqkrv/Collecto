@@ -107,7 +107,7 @@ public class Global {
          * This class contains simple commands to be used by clients
          * to check for input from their users.
          */
-        static class Commands {
+        public static class Commands {
             public static final String LIST = "LIST";
             public static final String HELP = "HELP";
             public static final String MOVE = "MOVE";
@@ -122,7 +122,7 @@ public class Global {
          * This class contains some miscellaneous commands to be used by clients
          * and servers to compare to outside input.
          */
-        static class Misc {
+        public static class Misc {
             public static final String HELLO = "HELLO";
             public static final String LOGIN = "LOGIN";
             public static final String ALREADY_LOGGED_IN = "ALREADYLOGGEDIN";
@@ -134,7 +134,7 @@ public class Global {
         /**
          * This class contains strings for the possible extensions that a server or client can have.
          */
-        static class Extensions {
+        public static class Extensions {
             public static final String CHAT = "CHAT";
             public static final String RANK = "RANK";
             public static final String AUTH = "AUTH";
@@ -144,7 +144,7 @@ public class Global {
         /**
          * This class contains strings of reasons for winning a game.
          */
-        static class Win {
+        public static class Win {
             public static final String DRAW = "DRAW";
             public static final String VICTORY = "VICTORY";
             public static final String DISCONNECT = "DISCONNECT";
