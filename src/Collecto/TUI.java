@@ -32,7 +32,7 @@ public class TUI {
      *
      * @return current datetime string
      */
-    private static String currentDateTime() {
+    public static String currentDateTime() {
         Date date = new Date();
         return dateFormat.format(date);
     }
@@ -79,7 +79,7 @@ public class TUI {
      * Adds formatted datetime to the provided String and returns the resulting String.
      *
      * @param log text of the log
-     * @return log provided with datetime at the beginning
+     * @return provided log with datetime at the beginning
      */
     public static String log(String log) {
         return logTime() + log;
@@ -94,7 +94,7 @@ public class TUI {
      * @return coloured string representation of the provided board
      * @see Ball
      */
-    private static String textBoard(GridBoard gridBoard) {
+    public static String textBoard(GridBoard gridBoard) {
         StringBuilder string = new StringBuilder();
 
         string.append("     |");
@@ -123,8 +123,8 @@ public class TUI {
      * Returns coloured representation of the GridBoard provided.
      * Returned representation has line numeration starting from 1 and ANSI coloured balls names.
      *
-     * @param gridBoard GridBoard to represent as string
-     * @return
+     * @param gridBoard GridBoard to represent as a string
+     * @return coloured string representation of the given GridBoard
      */
     public static String colouredBoard(GridBoard gridBoard) {
         return textBoard(gridBoard);
