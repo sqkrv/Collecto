@@ -162,16 +162,16 @@ public class TUI {
     public static void printHelpClient() {
         print(
                 "Below is a list of all available commands. All commands are case-insensitive." +
-                "\n • " + LIST + " — request list of all players on the server" +
-                "\n • " + HELP + " — print this help" +
-                "\n • " + MOVE + " — make a move (works only in game, when not using AI)" +
-                "\n\tUsage: move <line> <direction> [<line> <direction>]" +
-                "\n • " + HINT + " — get a hint on current game board " +
+                        "\n • " + LIST + " — request list of all players on the server" +
+                        "\n • " + HELP + " — print this help" +
+                        "\n • " + MOVE + " — make a move (works only in game, when not using AI)" +
+                        "\n\tUsage: move <line> <direction> [<line> <direction>]" +
+                        "\n • " + HINT + " — get a hint on current game board " +
                         "(works only in game, when not using AI)" +
-                "\n • " + BOARD + " — print current board state (works only in game)" +
-                "\n • " + QUEUE + " — join server's queue" +
-                "\n • " + LOGS + " — print all logs" +
-                "\n • " + DISCONNECT + " — disconnect from the server " +
+                        "\n • " + BOARD + " — print current board state (works only in game)" +
+                        "\n • " + QUEUE + " — join server's queue" +
+                        "\n • " + LOGS + " — print all logs" +
+                        "\n • " + DISCONNECT + " — disconnect from the server " +
                         "and gracefully terminate the client"
         );
     }
