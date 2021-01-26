@@ -1,11 +1,15 @@
 package Collecto;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Random;
 
 /**
  * This class contains the actual game board and handles all
  * operations made on its attributes. It is mainly used by
  * the Game class, and makes use of the Ball class.
+ *
  * @see Game
  * @see Ball
  */
@@ -32,35 +36,39 @@ public class GridBoard {
     }
 
     /**
-     * Constructor that creates a new GridBoard object without constructing a new board. This method is
-     * set to private because it it only used by the {@link #deepCopy()} method to properly create a copy
+     * Constructor that creates a new GridBoard object without constructing a new board.
+     * This method is set to private because it it only used
+     * by the {@link #deepCopy()} method to properly create a copy
      * without causing infinite loops.
      *
      * @param construct whether board should be constructed
      */
     private GridBoard(boolean construct) {
-        if (construct) construct();
+        if (construct) {
+            construct();
+        }
     }
 
     /**
-     * Constructs a new valid pseudorandom 7*7 board and stores it in the board attribute of this GridBoard.
-     * <p>The board is constructed by first taking an array with 1 ball of each colour. This array is then randomised,
-     * and distributed over the first 6 fields of the first row. For each subsequent row the same is done, while
-     * checking to see that the balls no balls are placed next to balls of the same colour in the row above.
-     * Finally for the last column, which by then is the last empty column, a similar array is made, except the
-     * ball from the middle of the board is extracted from the middle and added to this array. The array is then
-     * placed into the last row randomly until no balls match the colour of their neighbours.
+     * Constructs a new valid pseudorandom 7*7 board and stores it
+     * in the board attribute of this GridBoard. It is used to generate a
+     * random new board whenever a new game is started, so that there is
+     * no way of knowing the board setup beforehand.
      */
     public void construct() {
         Random rand = new Random();
         board = new ArrayList<>();
 
-        ArrayList<Ball> balls = new ArrayList<>(Arrays.asList(Ball.BLUE, Ball.YELLOW, Ball.RED, Ball.ORANGE, Ball.PURPLE, Ball.GREEN));
+        ArrayList<Ball> balls = new ArrayList<>(Arrays.asList(
+                Ball.BLUE, Ball.YELLOW, Ball.RED, Ball.ORANGE, Ball.PURPLE, Ball.GREEN
+        ));
         Collections.shuffle(balls);
         board.add(balls);
         for (int row = 1; row < 7; row++) {
             board.add(new ArrayList<>());
-            balls = new ArrayList<>(Arrays.asList(Ball.BLUE, Ball.YELLOW, Ball.RED, Ball.ORANGE, Ball.PURPLE, Ball.GREEN));
+            balls = new ArrayList<>(Arrays.asList(
+                    Ball.BLUE, Ball.YELLOW, Ball.RED, Ball.ORANGE, Ball.PURPLE, Ball.GREEN
+            ));
             Collections.shuffle(balls);
             while (!balls.isEmpty()) {
                 Ball ball = balls.get(0);
@@ -79,14 +87,18 @@ public class GridBoard {
             }
         }
 
-        balls = new ArrayList<>(Arrays.asList(Ball.BLUE, Ball.YELLOW, Ball.RED, Ball.ORANGE, Ball.PURPLE, Ball.GREEN));
+        balls = new ArrayList<>(Arrays.asList(
+                Ball.BLUE, Ball.YELLOW, Ball.RED, Ball.ORANGE, Ball.PURPLE, Ball.GREEN
+        ));
         Collections.shuffle(balls);
         Ball ball = getField(3, 3);
         if (balls.get(balls.size() - 1) == ball) {
             int random = rand.nextInt(4);
             balls.add(balls.get(random));
             balls.set(random, ball);
-        } else balls.add(ball);
+        } else {
+            balls.add(ball);
+        }
         setField(3, 3, Ball.WHITE);
         for (int row = 0; row < 7; row++) {
             ball = balls.get(0);
@@ -95,17 +107,6 @@ public class GridBoard {
                     balls.add(balls.get(0));
                     balls.remove(0);
                     ball = balls.get(0);
-                } else {
-                    while (true) {
-                        int random = rand.nextInt(4);
-                        if (getField(random, 5) != ball && getField(random - 1, 6) != ball
-                                && getField(random + 1, 6) != ball) {
-                            Ball temp = getField(random, 6);
-                            setField(6, random, ball);
-                            ball = temp;
-                            break;
-                        }
-                    }
                 }
             }
             board.get(row).add(ball);
@@ -117,8 +118,9 @@ public class GridBoard {
     }
 
     /**
-     * Goes over the entire row or column in the direction of a given move, removes all balls that have
-     * neighbours of the same colour by calling the {@link #removeBalls(int, int)} method and returning
+     * Goes over the entire row or column in the direction of a given move,
+     * removes all balls that have neighbours of the same colour by calling
+     * the {@link #removeBalls(int, int)} method and returning
      * all removed balls in an ArrayList.
      *
      * @param move Move along which the {@code removeBalls()} method looks
@@ -126,7 +128,8 @@ public class GridBoard {
      */
     public ArrayList<Ball> removeBalls(Move move) {
         ArrayList<Ball> balls = new ArrayList<>();
-        if (move.getDirection() == Move.Direction.UP || move.getDirection() == Move.Direction.DOWN) {
+        if (move.getDirection() == Move.Direction.UP ||
+                move.getDirection() == Move.Direction.DOWN) {
             for (int ro = 0; ro < 7; ro++) {
                 balls.addAll(removeBalls(ro, move.getLine()));
             }
@@ -141,24 +144,26 @@ public class GridBoard {
     /**
      * Starts at the location on the board defined by row and column, selects that ball and looks
      * whether there are neighbouring balls of the same colour. If there are, the method recursively
-     * moves on to those balls while removing and storing them, until all adjacent balls of the colour
-     * of the original ball are removed, and returns an ArrayList of all removed balls.
+     * moves on to those balls while removing and storing them, until all adjacent balls of
+     * the colour of the original ball are removed, and returns an ArrayList of all removed balls.
      *
      * <p>This method should not be called directly, instead use {@link #removeBalls(Move)}.
      *
-     * @param row row on the board where this method starts
+     * @param row    row on the board where this method starts
      * @param column column on the board where this method starts
-     * @requires {@code row} and {@code column} to be between 0 and 7
      * @return all removed balls as an ArrayList of balls
+     * @requires {@code row} and {@code column} to be between 0 and 7
      */
     private ArrayList<Ball> removeBalls(int row, int column) {
         Ball ball;
         ArrayList<Ball> balls = new ArrayList<>();
-        if (checkSurroundings(row , column)) {
+        if (checkSurroundings(row, column)) {
             ball = getField(row, column);
             for (int j = -1; j <= 1; j += 2) {
                 if (getField(row, column + j) == ball) {
-                    if (getField(row, column) != Ball.WHITE) balls.add(ball);
+                    if (getField(row, column) != Ball.WHITE) {
+                        balls.add(ball);
+                    }
                     setField(row, column, Ball.WHITE);
                     if (checkSurroundings(row, column + j)) {
                         balls.addAll(removeBalls(row, column + j));
@@ -168,7 +173,9 @@ public class GridBoard {
                     }
                 }
                 if (getField(row + j, column) == ball) {
-                    if (getField(row, column) != Ball.WHITE) balls.add(ball);
+                    if (getField(row, column) != Ball.WHITE) {
+                        balls.add(ball);
+                    }
                     setField(row, column, Ball.WHITE);
                     if (checkSurroundings(row + j, column)) {
                         balls.addAll(removeBalls(row + j, column));
@@ -201,16 +208,16 @@ public class GridBoard {
      * Moves all balls in a row or column to one side,
      * where the line and direction are given in the provided {@code move} parameter.
      *
-     * @requires {@code {@link #isMoveValid(Move)} == true}
      * @param move move containing the direction and line to be moved
+     * @requires {@code {@link #isMoveValid(Move)} == true}
      */
     public void moveLine(Move move) {
         int removed;
         if (move.getDirection() == Move.Direction.UP) {
-            for (int i=0; i < 7; i++) {
+            for (int i = 0; i < 7; i++) {
                 if (board.get(i).get(move.getLine()) == Ball.WHITE) {
-                    for (int j=i; j < 7-1; j++) {
-                        for (int k=j+1; k < 7; k++) {
+                    for (int j = i; j < 7 - 1; j++) {
+                        for (int k = j + 1; k < 7; k++) {
                             if (board.get(k).get(move.getLine()) != Ball.WHITE) {
                                 board.get(j).set(move.getLine(), board.get(k).get(move.getLine()));
                                 board.get(k).set(move.getLine(), Ball.WHITE);
@@ -222,10 +229,10 @@ public class GridBoard {
                 }
             }
         } else if (move.getDirection() == Move.Direction.DOWN) {
-            for (int i=6; i >= 0; i--) {
+            for (int i = 6; i >= 0; i--) {
                 if (board.get(i).get(move.getLine()) == Ball.WHITE) {
-                    for (int j=i; j >= 1; j--) {
-                        for (int k=j-1; k >= 0; k--) {
+                    for (int j = i; j >= 1; j--) {
+                        for (int k = j - 1; k >= 0; k--) {
                             if (board.get(k).get(move.getLine()) != Ball.WHITE) {
                                 board.get(j).set(move.getLine(), board.get(k).get(move.getLine()));
                                 board.get(k).set(move.getLine(), Ball.WHITE);
@@ -243,7 +250,8 @@ public class GridBoard {
                 removed = removed - board.get(move.getLine()).size();
 
                 if (move.getDirection() == Move.Direction.LEFT) {
-                    board.get(move.getLine()).addAll(7 - removed, Collections.nCopies(removed, Ball.WHITE));
+                    board.get(move.getLine()).addAll(
+                            7 - removed, Collections.nCopies(removed, Ball.WHITE));
                 } else if (move.getDirection() == Move.Direction.RIGHT) {
                     board.get(move.getLine()).addAll(0, Collections.nCopies(removed, Ball.WHITE));
                 }
@@ -254,9 +262,9 @@ public class GridBoard {
     /**
      * Retrieves a ball on a specified field.
      *
+     * @return Ball from a specified field, or null if an index is invalid
      * @requires {@code validIndex(row) == true}, {@code validIndex(column) == true}
      * @ensures index is valid
-     * @return Ball from a specified field, or null if an index is invalid
      */
     public Ball getField(int row, int column) {
         if (validIndex(row) && validIndex(column)) {
@@ -268,10 +276,10 @@ public class GridBoard {
     /**
      * Puts a given ball on a specified field on the board.
      *
-     * @requires {@code validIndex(row) == true}, {@code validIndex(column) == true}
-     * @param row index of the row of the ball
+     * @param row    index of the row of the ball
      * @param column index of the column of the ball
-     * @param ball the specified ball to be set
+     * @param ball   the specified ball to be set
+     * @requires {@code validIndex(row) == true}, {@code validIndex(column) == true}
      */
     private void setField(int row, int column, Ball ball) {
         assert validIndex(row) && validIndex(column);
@@ -291,33 +299,36 @@ public class GridBoard {
      * Checks the surroundings of a specified ball to see if any of the 4 adjacent balls in the
      * cardinal directions are of the same colour or not.
      *
-     * @requires both {@code validIndex(row)} and {@code validIndex(column)} to be true
-     * @ensures surroundings of specified fields are checked
+     * @param row    row index
+     * @param column column index
      * @return false if no surrounding ball has the same colour as the ball
      * specified by the indices, true if at least 1 surrounding colour matches
-     *  the ball specified by the indices
-     * @param row row index
-     * @param column column index
+     * the ball specified by the indices
+     * @requires both {@code validIndex(row)} and {@code validIndex(column)} to be true
+     * @ensures surroundings of specified fields are checked
      */
     public boolean checkSurroundings(int row, int column) {
         assert validIndex(row) && validIndex(column);
         Ball colour = getField(row, column);
-        if (colour == Ball.WHITE) return false;
-        Ball up = getField(row-1, column);
-        Ball down = getField(row+1, column);
-        Ball left = getField(row, column-1);
-        Ball right = getField(row, column+1);
+        if (colour == Ball.WHITE) {
+            return false;
+        }
+        Ball up = getField(row - 1, column);
+        Ball down = getField(row + 1, column);
+        Ball left = getField(row, column - 1);
+        Ball right = getField(row, column + 1);
         return colour == up || colour == down ||
                 colour == left || colour == right;
     }
 
     /**
      * Checks provided {@code move} for validness.
-     * Move is valid if it results in two balls of the same colour being next to each other when made.
+     * Move is valid if it results in two balls of the same colour
+     * being next to each other when made.
      *
-     * @requires both {@code validIndex(row)} and {@code validIndex(column)} to be true
      * @param move new move being made
      * @return true if a specified move is valid, false otherwise
+     * @requires both {@code validIndex(row)} and {@code validIndex(column)} to be true
      */
     public boolean isMoveValid(Move move) {
         GridBoard copy = deepCopy();
@@ -332,9 +343,11 @@ public class GridBoard {
      *
      * <p>Check is being made by making both moves and checking the resulting move for validness
      * by invoking the {@link #isMoveValidCheck(Move, GridBoard)} method on the last move.
-     * @param first first move
+     *
+     * @param first  first move
      * @param second second move
-     * @return true if after making first move, second move is valid, false if second move is invalid
+     * @return true if after making first move, second move is valid,
+     * false if second move is invalid
      */
     public boolean isMoveValid(Move first, Move second) {
         GridBoard copy = deepCopy();
@@ -344,7 +357,8 @@ public class GridBoard {
 
     /**
      * Checks provided {@code move} to be valid on provided {@code board}.
-     * Move is valid if it results in two balls of the same colour being next to each other when made.
+     * Move is valid if it results in two balls of the same colour being next
+     * to each other when made.
      *
      * <p>This method should not be called directly because it affects the board passed.
      * Instead use {@link #isMoveValid(Move)} or {@link #isMoveValid(Move, Move)}.
@@ -355,21 +369,28 @@ public class GridBoard {
      */
     private boolean isMoveValidCheck(Move move, GridBoard copy) {
         copy.moveLine(move);
-        if (move.getDirection() == Move.Direction.UP || move.getDirection() == Move.Direction.DOWN) {
-            for (int i=0; i < 7; i++) {
-                if (copy.checkSurroundings(i, move.getLine())) return true;
+        if (move.getDirection() == Move.Direction.UP ||
+                move.getDirection() == Move.Direction.DOWN) {
+            for (int i = 0; i < 7; i++) {
+                if (copy.checkSurroundings(i, move.getLine())) {
+                    return true;
+                }
             }
-        } else if (move.getDirection() == Move.Direction.LEFT || move.getDirection() == Move.Direction.RIGHT) {
-            for (int i=0; i < 7; i++) {
-                if (copy.checkSurroundings(move.getLine(), i)) return true;
+        } else if (move.getDirection() == Move.Direction.LEFT ||
+                move.getDirection() == Move.Direction.RIGHT) {
+            for (int i = 0; i < 7; i++) {
+                if (copy.checkSurroundings(move.getLine(), i)) {
+                    return true;
+                }
             }
         }
         return false;
     }
 
     /**
-     * Calls {@link #possibleMoves(boolean)} with a false boolean argument to check if there are any single or
-     * double moves possible on the board of this GridBoard object.
+     * Calls {@link #possibleMoves(boolean)} with a false boolean argument
+     * to check if there are any single or double moves possible
+     * on the board of this GridBoard object.
      *
      * @return true if there is possible move, false otherwise
      */
@@ -378,52 +399,65 @@ public class GridBoard {
     }
 
     /**
-     * Depending on parameter isSecondTime checks if there are any single moves possible on the board,
-     * or if there are any single or double moves possible on the board of this GridBoard object.
+     * Depending on parameter isSecondTime checks if there
+     * are any single moves possible on the board, or if there
+     * are any single or double moves possible on the board of this GridBoard object.
      *
      * @param isSecondTime boolean to define if check is for possibility of single or double moves
-     * @ensures checks only a single move if {@code isSecondTime} is true, checks for single and double moves if
-     * {@code isSecondTime} is false
-     * @return true if there is a valid move within one or two moves, false if there are no valid moves possible within two moves
+     * @return true if there is a valid move within one or two moves,
+     * false if there are no valid moves possible within two moves
+     * @ensures checks only a single move if {@code isSecondTime} is true,
+     * checks for single and double moves if {@code isSecondTime} is false
      */
     public boolean possibleMoves(boolean isSecondTime) {
         for (int i = 0; i < 7; i++) {
             if (
                     isMoveValid(new Move(i, Move.Direction.LEFT)) ||
-                    isMoveValid(new Move(i, Move.Direction.RIGHT)) ||
-                    isMoveValid(new Move(i, Move.Direction.UP)) ||
-                    isMoveValid(new Move(i, Move.Direction.DOWN))
+                            isMoveValid(new Move(i, Move.Direction.RIGHT)) ||
+                            isMoveValid(new Move(i, Move.Direction.UP)) ||
+                            isMoveValid(new Move(i, Move.Direction.DOWN))
             ) {
                 return true;
             }
         }
 
-        if (isSecondTime) return false;
+        if (isSecondTime) {
+            return false;
+        }
 
         GridBoard copy;
         for (int i = 0; i < 7; i++) {
             copy = deepCopy();
             copy.moveLine(new Move(i, Move.Direction.LEFT));
-            if (copy.possibleMoves(true)) return true;
+            if (copy.possibleMoves(true)) {
+                return true;
+            }
 
             copy = deepCopy();
             copy.moveLine(new Move(i, Move.Direction.RIGHT));
-            if (copy.possibleMoves(true)) return true;
+            if (copy.possibleMoves(true)) {
+                return true;
+            }
 
             copy = deepCopy();
             copy.moveLine(new Move(i, Move.Direction.UP));
-            if (copy.possibleMoves(true)) return true;
+            if (copy.possibleMoves(true)) {
+                return true;
+            }
 
             copy = deepCopy();
             copy.moveLine(new Move(i, Move.Direction.DOWN));
-            if (copy.possibleMoves(true)) return true;
+            if (copy.possibleMoves(true)) {
+                return true;
+            }
         }
         return false;
     }
 
     /**
-     * Overrides toString to instead return nice visual string of the board of this GridBoard built by
-     * {@link TUI#boardString(GridBoard)} using this GridBoard as a parameter.
+     * Overrides toString to instead return nice visual string of the board
+     * of this GridBoard built by {@link TUI#boardString(GridBoard)}
+     * using this GridBoard as a parameter.
      *
      * @return String representation of this GridBoard
      */
