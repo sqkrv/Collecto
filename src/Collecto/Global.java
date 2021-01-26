@@ -100,7 +100,7 @@ public class Global {
      * @see Extensions
      * @see Win
      */
-    static class Protocol {
+    public static class Protocol {
         public static final String TYPE_HELP = "Type HELP to see list of all commands";
 
         /**
