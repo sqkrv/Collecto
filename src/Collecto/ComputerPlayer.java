@@ -210,7 +210,7 @@ public class ComputerPlayer {
      * @param board the board on which the move is determined
      * @return an array of either 1 or 2 moves or null if no moves found
      */
-    public Move[] makeIntermediateMove(GridBoard board) {
+    private Move[] makeIntermediateMove(GridBoard board) {
         GridBoard copy;
 
         // check if single move exists
@@ -244,7 +244,9 @@ public class ComputerPlayer {
             }
         }
 
-        assert maxEntry != null;
-        return maxEntry.getKey();
+        if (maxEntry != null) {
+            return maxEntry.getKey();
+        }
+        return null;
     }
 }
