@@ -1,13 +1,15 @@
 package Collecto.Tests;
 
 import Collecto.Ball;
+import Collecto.Colour;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class BallTest {
-    
+
+    public static final String ANSI_WHITE = "\u001B[0m";
     static Ball blueBall;
     static Ball yellowBall;
     static Ball redBall;
@@ -15,8 +17,6 @@ class BallTest {
     static Ball purpleBall;
     static Ball greenBall;
     static Ball whiteBall;
-
-    public static final String ANSI_WHITE = "\u001B[0m";
 
     @BeforeAll
     static void setUp() {
@@ -57,8 +57,25 @@ class BallTest {
 
     @Test
     void testValues() {
-        Ball[] testArray = new Ball[]{Ball.WHITE, Ball.BLUE, Ball.YELLOW, Ball.RED, Ball.ORANGE,
-                Ball.PURPLE, Ball.GREEN};
+        Ball[] testArray = new Ball[]{
+            Ball.WHITE,
+            Ball.BLUE,
+            Ball.YELLOW,
+            Ball.RED,
+            Ball.ORANGE,
+            Ball.PURPLE,
+            Ball.GREEN};
         assertArrayEquals(testArray, Ball.values());
+    }
+
+    @Test
+    void ballColour() {
+        assertEquals(blueBall.ballColour(), Colour.BLUE);
+        assertEquals(yellowBall.ballColour(), Colour.YELLOW);
+        assertEquals(redBall.ballColour(), Colour.RED);
+        assertEquals(orangeBall.ballColour(), Colour.ORANGE);
+        assertEquals(purpleBall.ballColour(), Colour.PURPLE);
+        assertEquals(greenBall.ballColour(), Colour.GREEN);
+        assertEquals(whiteBall.ballColour(), Colour.RESET);
     }
 }
