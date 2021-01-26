@@ -17,7 +17,7 @@ class GridBoardTest {
     private static GridBoard sampleBoard;
     private static GridBoard emptyBoard;
     private static ArrayList<ArrayList<Ball>> sampleBoardArray;
-    private static final ArrayList<ArrayList<Ball>> emptyBoardArray = new ArrayList<>();
+    private static ArrayList<ArrayList<Ball>> emptyBoardArray = new ArrayList<>();
 
     @BeforeAll
     static void setSampleBoardArray() {
@@ -26,23 +26,17 @@ class GridBoardTest {
 
     @BeforeAll
     static void setEmptyBoard() {
-        for (int i = 0; i < 7; i++) {
-            emptyBoardArray.add(new ArrayList<>());
-            for (int j = 0; j < 7; j++) {
-                emptyBoardArray.get(i).add(Ball.WHITE);
-            }
-        }
-//        emptyBoardArray.addAll(0, Collections.nCopies(7, Collections.nCopies(7, Ball.WHITE)));
-        emptyBoard = new GridBoard(emptyBoardArray);
+        emptyBoardArray = Misc.emptyBoardArray();
     }
 
     @BeforeEach
     void setUp() {
         board = new GridBoard();
         sampleBoard = new GridBoard(copyArray(sampleBoardArray));
+        emptyBoard = new GridBoard(copyArray(emptyBoardArray));
     }
 
-    @RepeatedTest(1000)
+    @RepeatedTest(100)
     void boardConstruction() {
         assertEquals(board.getField(3, 3), Ball.WHITE);
         for (int i = 0; i < 7; i++) {
@@ -61,111 +55,106 @@ class GridBoardTest {
         assertNotEquals(board.toString(), copy.toString());
     }
 
-//    @Nested
-//    @DisplayName("Tests for method moveLine")
-//    class moveLine {
+    @Nested
+    @DisplayName("Tests for rows and columns with blank spaces")
+    class moveLineWithBlank {
 
-        @Nested
-        @DisplayName("Tests for rows and columns with blank spaces")
-        class moveLineWithBlank {
-
-            @Test
-            @DisplayName("moveLine UP")
-            void moveLineWBUP() {
-                ArrayList<ArrayList<Ball>> copy = copyArray(sampleBoardArray);
-                sampleBoard.moveLine(new Move(3, Move.Direction.UP));
-                assertNotEquals(sampleBoard.toString(), (new GridBoard(copy)).toString());
-                copy.get(3).set(3, Ball.GREEN);
-                copy.get(4).set(3, Ball.YELLOW);
-                copy.get(5).set(3, Ball.RED);
-                copy.get(6).set(3, Ball.WHITE);
-                assertEquals(sampleBoard.toString(), (new GridBoard(copy)).toString());
-            }
-
-            @Test
-            @DisplayName("moveLine DOWN")
-            void moveLineWBDOWN() {
-                ArrayList<ArrayList<Ball>> copy = copyArray(sampleBoardArray);
-                sampleBoard.moveLine(new Move(3, Move.Direction.DOWN));
-                assertNotEquals(sampleBoard.toString(), (new GridBoard(copy)).toString());
-                copy.get(0).set(3, Ball.WHITE);
-                copy.get(1).set(3, Ball.GREEN);
-                copy.get(2).set(3, Ball.ORANGE);
-                copy.get(3).set(3, Ball.BLUE);
-                assertEquals(sampleBoard.toString(), (new GridBoard(copy)).toString());
-            }
-
-            @Test
-            @DisplayName("moveLine LEFT")
-            void moveLineWBLEFT() {
-                ArrayList<ArrayList<Ball>> copy = copyArray(sampleBoardArray);
-                sampleBoard.moveLine(new Move(3, Move.Direction.LEFT));
-                assertNotEquals(sampleBoard.toString(), (new GridBoard(copy)).toString());
-                copy.get(3).set(3, Ball.BLUE);
-                copy.get(3).set(4, Ball.RED);
-                copy.get(3).set(5, Ball.GREEN);
-                copy.get(3).set(6, Ball.WHITE);
-                assertEquals(sampleBoard.toString(), new GridBoard(copy).toString());
-            }
-
-            @Test
-            @DisplayName("moveLine RIGHT")
-            void moveLineWBRIGHT() {
-                ArrayList<ArrayList<Ball>> copy = copyArray(sampleBoardArray);
-                sampleBoard.moveLine(new Move(3, Move.Direction.RIGHT));
-                assertNotEquals(sampleBoard.toString(), (new GridBoard(copy)).toString());
-                copy.get(3).set(0, Ball.WHITE);
-                copy.get(3).set(1, Ball.PURPLE);
-                copy.get(3).set(2, Ball.YELLOW);
-                copy.get(3).set(3, Ball.GREEN);
-                assertEquals(sampleBoard.toString(), new GridBoard(copy).toString());
-            }
+        @Test
+        @DisplayName("moveLine UP")
+        void moveLineWBUP() {
+            ArrayList<ArrayList<Ball>> copy = copyArray(sampleBoardArray);
+            sampleBoard.moveLine(new Move(3, Move.Direction.UP));
+            assertNotEquals(sampleBoard.toString(), (new GridBoard(copy)).toString());
+            copy.get(3).set(3, Ball.GREEN);
+            copy.get(4).set(3, Ball.YELLOW);
+            copy.get(5).set(3, Ball.RED);
+            copy.get(6).set(3, Ball.WHITE);
+            assertEquals(sampleBoard.toString(), (new GridBoard(copy)).toString());
         }
 
-        @Nested
-        @DisplayName("Tests for rows and columns without spaces")
-        class moveLineWithoutBlank {
-            @Test
-            @DisplayName("moveLine (without WHITE) UP")
-            void moveLineWOBUP() {
-                ArrayList<ArrayList<Ball>> copy = copyArray(sampleBoardArray);
-                sampleBoard.moveLine(new Move(6, Move.Direction.UP));
-                assertEquals(sampleBoard.toString(), (new GridBoard(copy)).toString());
-                copy.get(6).set(6, Ball.WHITE);
-                assertNotEquals(sampleBoard.toString(), (new GridBoard(copy)).toString());
-            }
-
-            @Test
-            @DisplayName("moveLine (without WHITE) DOWN")
-            void moveLineWOBDOWN() {
-                ArrayList<ArrayList<Ball>> copy = copyArray(sampleBoardArray);
-                sampleBoard.moveLine(new Move(6, Move.Direction.DOWN));
-                assertEquals(sampleBoard.toString(), (new GridBoard(copy)).toString());
-                copy.get(6).set(6, Ball.WHITE);
-                assertNotEquals(sampleBoard.toString(), (new GridBoard(copy)).toString());
-            }
-
-            @Test
-            @DisplayName("moveLine (without WHITE) LEFT")
-            void moveLineWOBLEFT() {
-                ArrayList<ArrayList<Ball>> copy = copyArray(sampleBoardArray);
-                sampleBoard.moveLine(new Move(6, Move.Direction.LEFT));
-                assertEquals(sampleBoard.toString(), (new GridBoard(copy)).toString());
-                copy.get(6).set(6, Ball.WHITE);
-                assertNotEquals(sampleBoard.toString(), (new GridBoard(copy)).toString());
-            }
-
-            @Test
-            @DisplayName("moveLine (without WHITE) RIGHT")
-            void moveLineWOBRIGHT() {
-                ArrayList<ArrayList<Ball>> copy = copyArray(sampleBoardArray);
-                sampleBoard.moveLine(new Move(6, Move.Direction.RIGHT));
-                assertEquals(sampleBoard.toString(), (new GridBoard(copy)).toString());
-                copy.get(6).set(6, Ball.WHITE);
-                assertNotEquals(sampleBoard.toString(), (new GridBoard(copy)).toString());
-            }
+        @Test
+        @DisplayName("moveLine DOWN")
+        void moveLineWBDOWN() {
+            ArrayList<ArrayList<Ball>> copy = copyArray(sampleBoardArray);
+            sampleBoard.moveLine(new Move(3, Move.Direction.DOWN));
+            assertNotEquals(sampleBoard.toString(), (new GridBoard(copy)).toString());
+            copy.get(0).set(3, Ball.WHITE);
+            copy.get(1).set(3, Ball.GREEN);
+            copy.get(2).set(3, Ball.ORANGE);
+            copy.get(3).set(3, Ball.BLUE);
+            assertEquals(sampleBoard.toString(), (new GridBoard(copy)).toString());
         }
-//    }
+
+        @Test
+        @DisplayName("moveLine LEFT")
+        void moveLineWBLEFT() {
+            ArrayList<ArrayList<Ball>> copy = copyArray(sampleBoardArray);
+            sampleBoard.moveLine(new Move(3, Move.Direction.LEFT));
+            assertNotEquals(sampleBoard.toString(), (new GridBoard(copy)).toString());
+            copy.get(3).set(3, Ball.BLUE);
+            copy.get(3).set(4, Ball.RED);
+            copy.get(3).set(5, Ball.GREEN);
+            copy.get(3).set(6, Ball.WHITE);
+            assertEquals(sampleBoard.toString(), new GridBoard(copy).toString());
+        }
+
+        @Test
+        @DisplayName("moveLine RIGHT")
+        void moveLineWBRIGHT() {
+            ArrayList<ArrayList<Ball>> copy = copyArray(sampleBoardArray);
+            sampleBoard.moveLine(new Move(3, Move.Direction.RIGHT));
+            assertNotEquals(sampleBoard.toString(), (new GridBoard(copy)).toString());
+            copy.get(3).set(0, Ball.WHITE);
+            copy.get(3).set(1, Ball.PURPLE);
+            copy.get(3).set(2, Ball.YELLOW);
+            copy.get(3).set(3, Ball.GREEN);
+            assertEquals(sampleBoard.toString(), new GridBoard(copy).toString());
+        }
+    }
+
+    @Nested
+    @DisplayName("Tests for rows and columns without spaces")
+    class moveLineWithoutBlank {
+        @Test
+        @DisplayName("moveLine (without WHITE) UP")
+        void moveLineWOBUP() {
+            ArrayList<ArrayList<Ball>> copy = copyArray(sampleBoardArray);
+            sampleBoard.moveLine(new Move(6, Move.Direction.UP));
+            assertEquals(sampleBoard.toString(), (new GridBoard(copy)).toString());
+            copy.get(6).set(6, Ball.WHITE);
+            assertNotEquals(sampleBoard.toString(), (new GridBoard(copy)).toString());
+        }
+
+        @Test
+        @DisplayName("moveLine (without WHITE) DOWN")
+        void moveLineWOBDOWN() {
+            ArrayList<ArrayList<Ball>> copy = copyArray(sampleBoardArray);
+            sampleBoard.moveLine(new Move(6, Move.Direction.DOWN));
+            assertEquals(sampleBoard.toString(), (new GridBoard(copy)).toString());
+            copy.get(6).set(6, Ball.WHITE);
+            assertNotEquals(sampleBoard.toString(), (new GridBoard(copy)).toString());
+        }
+
+        @Test
+        @DisplayName("moveLine (without WHITE) LEFT")
+        void moveLineWOBLEFT() {
+            ArrayList<ArrayList<Ball>> copy = copyArray(sampleBoardArray);
+            sampleBoard.moveLine(new Move(6, Move.Direction.LEFT));
+            assertEquals(sampleBoard.toString(), (new GridBoard(copy)).toString());
+            copy.get(6).set(6, Ball.WHITE);
+            assertNotEquals(sampleBoard.toString(), (new GridBoard(copy)).toString());
+        }
+
+        @Test
+        @DisplayName("moveLine (without WHITE) RIGHT")
+        void moveLineWOBRIGHT() {
+            ArrayList<ArrayList<Ball>> copy = copyArray(sampleBoardArray);
+            sampleBoard.moveLine(new Move(6, Move.Direction.RIGHT));
+            assertEquals(sampleBoard.toString(), (new GridBoard(copy)).toString());
+            copy.get(6).set(6, Ball.WHITE);
+            assertNotEquals(sampleBoard.toString(), (new GridBoard(copy)).toString());
+        }
+    }
 
     @Nested
     @DisplayName("isMoveValid tests")
@@ -209,11 +198,6 @@ class GridBoardTest {
 //    @Test
 //    void validIndex() {
 //    }
-//
-//    @Test
-//    void getCoordinates() {
-//
-//    }
 
     @Nested
     class possibleMove {
@@ -254,6 +238,17 @@ class GridBoardTest {
             copy.get(6).set(5, Ball.RED);
             copy.get(5).set(6, Ball.PURPLE);
             assertFalse((new GridBoard(copy)).possibleMoves());
+        }
+
+        @Test
+        void possibleMovesUP() {
+            ArrayList<ArrayList<Ball>> copy = copyArray(emptyBoardArray);
+
+            copy.get(6).set(0, Ball.GREEN);
+            copy.get(6).set(3, Ball.RED);
+            copy.get(6).set(6, Ball.GREEN);
+
+            assertTrue((new GridBoard(copy)).possibleMoves());
         }
     }
 
