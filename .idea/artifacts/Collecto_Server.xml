@@ -1,7 +1,10 @@
 <component name="ArtifactManager">
   <artifact type="jar" name="Collecto:Server">
     <output-path>$PROJECT_DIR$/out/artifacts/Collecto_Server</output-path>
-    <root id="archive" name="Collecto.jar">
+    <root id="archive" name="Server.jar">
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/src/ServerMANIFEST/META-INF/MANIFEST.MF" />
+      </element>
       <element id="module-output" name="Collecto" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/bluecatcode/mockito/mockito-1.10.19-extended/1.1.0/mockito-1.10.19-extended-1.1.0.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/mockito/mockito-all/1.10.19/mockito-all-1.10.19.jar" path-in-jar="/" />

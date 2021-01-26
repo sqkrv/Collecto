@@ -2,8 +2,13 @@
   <artifact name="Project Archive">
     <output-path>$PROJECT_DIR$/out/artifacts/Project_Archive</output-path>
     <root id="root">
-      <element id="archive" name="Collecto.zip">
-        <element id="dir-copy" path="$PROJECT_DIR$" />
+      <element id="archive" name="Project.zip">
+        <element id="artifact" artifact-name="Collecto:Server" />
+        <element id="artifact" artifact-name="Collecto:Client" />
+        <element id="file-copy" path="$PROJECT_DIR$/README.md" />
+        <element id="directory" name="Source">
+          <element id="dir-copy" path="$PROJECT_DIR$" />
+        </element>
       </element>
     </root>
   </artifact>
