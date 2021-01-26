@@ -1,39 +1,26 @@
 # Collecto
 
-best project btw 
+there should be:
+- Information about installation, indicating, for example, which directories and files are necessary and which conditions apply for installation
+- Steps on how to start the game, including example start commands if applicable.
 
-some changes because I can
+## Installation
 
+No specific installation required.
+However, your computer should already have java installed. (Check with `java --version`. The version must be 11.x.x or higher)
+Once the project archive is unarchived there are two files jar `Server.jar` and `Client.jar`, `README.md` (this document) and `Source` folder.
+- `Server.jar` is needed to run a server.
+- `Client.jar` runs the client to connect to the server and play the game.
+- `Source` folder contains source code of the project including generated JavaDoc.
+    - `JavaDoc` folder contains generated JavaDoc for this project.
 
-\
-Some options for board randomization:
-1. Presets\
-Find >5 preset boards and select one randomly.
-   
-2. Randomized selection\
-Take 8 balls of each colour, select a random ball, insert
-   it into the next spot on the field, check for neighbours
-    + doesn't need a preset field
-    - messy code
-    - may cause problems near the end
-   
-3. Randomized injection\
-Take 8 balls of each colour, for each colour, inject the balls 
-   randomly onto the field, check for neighbours, swap if needed.
-   + clean code
-    - requires preset field
-    - may cause problems at the end
-    
-4. Randomized board\
-Fill up a board randomly with 8 balls of each colour, check if 
-   the board is correct, retry if incorrect
-   + simple
-    - probably very inefficient
-   
-5. Row by row\
-Fill an array with one ball of each colour (6 total), select one randomly
-   and place it at (0,0) move on to (0,1) and pull from the resulting array.
-   repeat for all rows, then the last column, excluding the middle ball 
-   + simple
-   + quick
-   
+## Usage
+> To run `.jar` files you can use `java -jar "filename.jar"`
+
+To host games by yourself run `Server.jar`. Port can be specified as an argument or will be prompted in the terminal. If the port is incorrect you will be prompted to enter a new port via the terminal.
+The server notifies you if it has successfully started.  
+After the server has successfully started you can start the Client — `Client.jar`.
+Host address and port can be specified as arguments where the first argument is the host address and the second one is the port.
+After that the client tries to connect to the specified host.
+If the connection was unsuccessful Client notifies via the terminal and asks for new input of host address and port.
+After a successful connection, you are prompted to enter a username. If the server accepts username you will be able to play games. For all client-side commands type `HELP`. 
