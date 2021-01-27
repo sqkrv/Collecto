@@ -209,7 +209,7 @@ public class GridBoard {
      * where the line and direction are given in the provided {@code move} parameter.
      *
      * @param move move containing the direction and line to be moved
-     * @requires {@code {@link #isMoveValid(Move)} == true}
+     * @requires {@code isMoveValid(move) == true}
      */
     public void moveLine(Move move) {
         int removed;
@@ -262,6 +262,8 @@ public class GridBoard {
     /**
      * Retrieves a ball on a specified field.
      *
+     * @param row    row line number
+     * @param column column line number
      * @return Ball from a specified field, or null if an index is invalid
      * @requires {@code validIndex(row) == true}, {@code validIndex(column) == true}
      * @ensures index is valid
@@ -289,6 +291,7 @@ public class GridBoard {
     /**
      * Checks if a given index is valid. Index is valid if {@code 0 <= index < 7}.
      *
+     * @param index index to check for validness
      * @return true is index is valid, false otherwise
      */
     protected boolean validIndex(int index) {

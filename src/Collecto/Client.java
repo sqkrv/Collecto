@@ -42,10 +42,10 @@ public class Client implements Runnable {
     protected boolean serverCryptSupport = false;
     protected boolean useAI = false;
     protected boolean choosingAI = false;
+    protected Game game = null;
     private Socket socket;
     private BufferedReader in;
     private BufferedWriter out;
-    protected Game game = null;
     private String playerName;
     private ComputerPlayer ai;
     private boolean saidHello = false;
@@ -277,7 +277,7 @@ public class Client implements Runnable {
      *
      * @param params input from server containing the LIST command and all online players in an
      *               array of strings.
-     * @requires params.length > 1
+     * @requires {@code params.length > 1}
      */
     private void handleListServer(String[] params) {
         if (params.length <= 1) {
@@ -804,7 +804,7 @@ public class Client implements Runnable {
      * supports. It lets the user input thread sleep while it waits for the server to respond,
      * after which it triggers the {@link #requestLogin()} method.
      *
-     * @requires saidHello == false
+     * @requires {@code saidHello == false}
      * @ensures information about client services support is sent to the server
      */
     private void handleSetup() {
