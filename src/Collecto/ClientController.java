@@ -1,7 +1,7 @@
 package Collecto;
 
-import static Collecto.Global.Protocol.TYPE_HELP;
 import static Collecto.Global.Protocol.Commands.*;
+import static Collecto.Global.Protocol.TYPE_HELP;
 
 /**
  * This class is being used for controlling the Client
@@ -36,12 +36,12 @@ public class ClientController extends Controller {
     }
 
     /**
-     * Handles the command entered by the user by invoking the correct method corresponding to it, or invokes
-     * the method {@link Client#chooseAI(String[])} or {@link Client#chooseDifficulty(String[])} while
-     * the user is still deciding on using an AI.
+     * Handles the command entered by the user by invoking the correct method corresponding to it,
+     * or invokes the method {@link Client#chooseAI(String[])} or
+     * {@link Client#chooseDifficulty(String[])} while the user is still deciding on using an AI.
      *
-     * @requires {@code input != null}
      * @param input input from the user as detected by the {@code start()} method
+     * @requires {@code input != null}
      * @see Collecto.Global.Protocol.Commands
      */
     private void handleCommand(String input) {
@@ -49,8 +49,7 @@ public class ClientController extends Controller {
             return;
         }
 
-        input = input.replaceAll(" +", " "); // TODO i uncommented, but idk if this may brake smth
-        String[] params = input.trim().split(" ");
+        String[] params = input.trim().replaceAll(" +", " ").split(" ");
         params[0] = params[0].toUpperCase();
 
         if (client.choosingAI) {
@@ -74,6 +73,9 @@ public class ClientController extends Controller {
                 break;
             case BOARD:
                 client.printBoard();
+                break;
+            case STATUS:
+                client.status();
                 break;
             case DISCONNECT:
                 client.disconnect();

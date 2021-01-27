@@ -13,11 +13,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ClientMaliciousServerTest {
 
-    @BeforeAll
-    static void yes() throws IOException {
-        ServerSocket serverSocket = new ServerSocket(4224, 0, InetAddress.getLocalHost());
-        Socket socket = serverSocket.accept();
-    }
+//    @BeforeAll
+//    static void yes() throws IOException {
+//        ServerSocket serverSocket = new ServerSocket(4224, 0, InetAddress.getLocalHost());
+//        Socket socket = serverSocket.accept();
+//    }
 
     @BeforeEach
     void setUp() {

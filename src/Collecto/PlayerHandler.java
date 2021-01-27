@@ -3,13 +3,15 @@ package Collecto;
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.*;
+import java.util.ArrayList;
 
+import static Collecto.Colour.cyan;
+import static Collecto.Colour.purple;
 import static Collecto.Global.DELIMITER;
-import static Collecto.Colour.*;
-import static Collecto.Global.Protocol.*;
-import static Collecto.Global.Protocol.Misc.*;
 import static Collecto.Global.Protocol.Commands.*;
+import static Collecto.Global.Protocol.Extensions;
+import static Collecto.Global.Protocol.Misc.*;
+import static Collecto.Global.Protocol.Win;
 
 /**
  * This class handles clients that connect to a server.
@@ -33,17 +35,14 @@ import static Collecto.Global.Protocol.Commands.*;
  * @see TUI
  */
 public class PlayerHandler implements Runnable {
-    
+
     private final BufferedReader in;
     private final BufferedWriter out;
     private final Socket socket;
-
-    private Game game = null;
     private final Server server;
-    private PlayerHandler opponent = null;
-
     protected String name;
-
+    private Game game = null;
+    private PlayerHandler opponent = null;
     private boolean chatSupport = false;
     private boolean rankSupport = false;
     private boolean authSupport = false;
@@ -74,16 +73,25 @@ public class PlayerHandler implements Runnable {
 
         this.closeConnection();
         server.removePlayer(this);
-        TUI.print(TUI.log("("+getName()+") — Client disconnected"));
+        TUI.print(TUI.log("(" + getName() + ") — Client disconnected"));
         // this is where the client is fully disconnected from the server
         if (game != null) {
             opponent.handleGameOver(Win.DISCONNECT);
         }
     }
 
-    private void handleCommand(String message) {
-        TUI.print(TUI.log( "[" + purple("IN") + " ] " + "("+getName()+") — "+message));
-        message = message.strip();
+    /**
+     * Handles the command sent by a client. Splits the message parameter based on the
+     * {@link Global#DELIMITER} and looks at the first string to determine what command
+     * the client has sent. Invokes different methods in PlayerHandler to carry out these
+     * commands. Sends an error back if the command is not recognized.
+     *
+     * @param msg String containing the command and details of the command, separated
+     *            by a delimiter
+     */
+    private void handleCommand(String msg) {
+        TUI.print(TUI.log("[" + purple("IN") + " ] " + "(" + getName() + ") — " + msg));
+        String message = msg.strip();
         if (message == null) {
             sendError("Sent null to server");
             TUI.print(TUI.log("Client " + this.name + " sent null"));
@@ -108,7 +116,7 @@ public class PlayerHandler implements Runnable {
                 handleMove(params);
                 break;
             default:
-                sendError("Server could not recognize message \""+message+"\"");
+                sendError("Server could not recognize message \"" + message + "\"");
         }
     }
 
@@ -140,10 +148,18 @@ public class PlayerHandler implements Runnable {
 
     private void respondHello() {
         String response = HELLO + DELIMITER + Server.DESCRIPTION;
-        if (server.chatSupport) response += DELIMITER + Extensions.CHAT;
-        if (server.rankSupport) response += DELIMITER + Extensions.RANK;
-        if (server.authSupport) response += DELIMITER + Extensions.AUTH;
-        if (server.cryptSupport) response += DELIMITER + Extensions.CRYPT;
+        if (server.chatSupport) {
+            response += DELIMITER + Extensions.CHAT;
+        }
+        if (server.rankSupport) {
+            response += DELIMITER + Extensions.RANK;
+        }
+        if (server.authSupport) {
+            response += DELIMITER + Extensions.AUTH;
+        }
+        if (server.cryptSupport) {
+            response += DELIMITER + Extensions.CRYPT;
+        }
         sendMessage(response);
     }
 
@@ -172,16 +188,16 @@ public class PlayerHandler implements Runnable {
     }
 
     private void handleList() {
-         if (!loggedIn) {
-             sendError("You are not yet logged in!");
-             return;
-         }
-         StringBuilder playerList = new StringBuilder(LIST);
-         ArrayList<String> players = server.getPlayers();
-         for (String player : players) {
-             playerList.append(DELIMITER).append(player);
-         }
-         sendMessage(playerList.toString());
+        if (!loggedIn) {
+            sendError("You are not yet logged in!");
+            return;
+        }
+        StringBuilder playerList = new StringBuilder(LIST);
+        ArrayList<String> players = server.getPlayers();
+        for (String player : players) {
+            playerList.append(DELIMITER).append(player);
+        }
+        sendMessage(playerList.toString());
     }
 
     private void handleQueue() {
@@ -300,19 +316,24 @@ public class PlayerHandler implements Runnable {
     protected void startNewGame(Game game, PlayerHandler opponent) {
         this.game = game;
         String appendage;
-        if (game.getPlayerName(0).equals(this.name)) {
-            appendage = DELIMITER + this.name + DELIMITER + opponent.name;
+        if (newGame.getPlayerName(0).equals(this.name)) {
+            appendage = DELIMITER + this.name + DELIMITER + opponentPlayer.name;
             myTurn = true;
         } else {
-            appendage = DELIMITER + opponent.name + DELIMITER + this.name;
+            appendage = DELIMITER + opponentPlayer.name + DELIMITER + this.name;
         }
-        this.opponent = opponent;
-        sendMessage(NEWGAME + game.getBoardString() + appendage);
+        this.opponent = opponentPlayer;
+        sendMessage(NEWGAME + newGame.getBoardString() + appendage);
     }
 
+    /**
+     * Sends an error to the connected client.
+     *
+     * @param error description of the error
+     */
     private void sendError(String error) {
-        error = ERROR + DELIMITER + error;
-        sendMessage(error);
+        String formattedError = ERROR + DELIMITER + error;
+        sendMessage(formattedError);
     }
 
     protected void closeConnection() {

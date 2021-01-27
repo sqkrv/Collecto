@@ -30,18 +30,9 @@ import java.util.Random;
  */
 public class Server implements Runnable {
     private final int port;
-
     private final ArrayList<PlayerHandler> playerClients;
     private final LinkedList<PlayerHandler> queue = new LinkedList<>();
     private final ArrayList<PlayerHandler> inGame = new ArrayList<>();
-
-    private static final Controller controller = new Controller();
-
-    /**
-     * Description of the server.
-     */
-    protected final static String DESCRIPTION = "the server of Stan and Hein";
-
     protected boolean chatSupport = false;
     protected boolean rankSupport = false;
     protected boolean authSupport = false;
@@ -55,6 +46,52 @@ public class Server implements Runnable {
     public Server(int port) {
         playerClients = new ArrayList<>();
         this.port = port;
+    }
+
+    /**
+     * Main method to start server.
+     *
+     * <p>Firstly checks for provided program argument.
+     * If there is exactly one argument, tries to convert
+     * this argument to port.
+     * If other amount of arguments provided
+     * or provided argument cannot be converted to port,
+     * prompts user to input port manually until port
+     * is verified by starting dummy server on this port.
+     *
+     * @param args array of argument. Supposed to contain port argument
+     * @see Global#checkPort(String)
+     */
+    public static void main(String[] args) {
+        Integer port;
+
+        if (args.length != 1) {
+            // Port prompt
+            port = CONTROLLER.promptPort();
+        } else {
+            port = Global.checkPort(args[0]);
+            if (port == null) {
+                port = CONTROLLER.promptPort();
+            }
+        }
+
+        // Port check
+        while (true) {
+            try {
+                ServerSocket s = new ServerSocket(port);
+                s.close();
+                break;
+            } catch (BindException e) {
+                TUI.print("Cannot start server on port " + port);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            port = CONTROLLER.promptPort();
+        }
+
+        TUI.print(TUI.log("Server starting"));
+        Server server = new Server(port);
+        server.start();
     }
 
     /**
@@ -107,7 +144,9 @@ public class Server implements Runnable {
     public boolean checkPlayer(String playerName) {
         synchronized (playerClients) {
             for (PlayerHandler client : playerClients) {
-                if (client.getName().equals(playerName)) return false;
+                if (client.getName().equals(playerName)) {
+                    return false;
+                }
             }
             return true;
         }
@@ -120,7 +159,7 @@ public class Server implements Runnable {
      * @return true if client is in queue, false otherwise
      */
     protected synchronized boolean queued(PlayerHandler client) {
-        return (queue.contains(client));
+        return queue.contains(client);
     }
 
     /**
@@ -128,9 +167,9 @@ public class Server implements Runnable {
      * and if he is not, adds client to queue and calls {@link #startNewGame()}
      * to handle possible new game start.
      *
+     * @param client client to add to queue
      * @requires {@code client != null}
      * @ensures client can be added only when not in game
-     * @param client client to add to queue
      */
     protected synchronized void addToQueue(PlayerHandler client) {
         if (!isInGame(client)) {
@@ -142,18 +181,18 @@ public class Server implements Runnable {
     /**
      * Removes provided {@code client} from queue if it is already in it.
      *
-     * @requires {@code client != null}
      * @param client client to remove from queue
+     * @requires {@code client != null}
      */
     protected synchronized void removeFromQueue(PlayerHandler client) {
         if (queued(client)) {
-           queue.remove(client);
-       }
+            queue.remove(client);
+        }
     }
 
     /**
      * Returns names of all players currently being on server.
-     * 
+     *
      * @return array of names of all players currently being on server
      */
     protected ArrayList<String> getPlayers() {
@@ -167,11 +206,11 @@ public class Server implements Runnable {
     }
 
     /**
-     * Checks if there are at least 2 players in queue 
+     * Checks if there are at least 2 players in queue
      * and if there are - handles process of creating new game:
-     * randomly determines the first player to start, 
+     * randomly determines the first player to start,
      * creates a new {@code Game} instance adds and sets these two player as in-game
-     * players and calls {@link PlayerHandler#startNewGame(Game, PlayerHandler)} 
+     * players and calls {@link PlayerHandler#startNewGame(Game, PlayerHandler)}
      * to trigger game start for both player clients.
      */
     private void startNewGame() {
@@ -198,9 +237,9 @@ public class Server implements Runnable {
      * Ends game for provided {@code player} by removing
      * this player from {@code inGame} array.
      *
+     * @param client client to remove from inGame
      * @requires {@code client != null}
      * @ensures client is removed from {@code inGame} is it was there
-     * @param client client to remove from inGame
      */
     protected void gameEnded(PlayerHandler client) {
         if (isInGame(client)) {
@@ -209,59 +248,14 @@ public class Server implements Runnable {
     }
 
     /**
-     * Determines provided {@code player} in-game status. 
+     * Determines provided {@code player} in-game status.
      * Returns true if player is in game, false otherwise.
-     * 
-     * @requires {@code client != null}
+     *
      * @param client client to check status of
      * @return true if player is in game, false otherwise
+     * @requires {@code client != null}
      */
     protected boolean isInGame(PlayerHandler client) {
         return inGame.contains(client);
-    }
-
-    /**
-     * Main method to start server. 
-     * 
-     * <p>Firstly checks for provided program argument.
-     * If there is exactly one argument, tries to convert
-     * this argument to port.
-     * If other amount of arguments provided 
-     * or provided argument cannot be converted to port, 
-     * prompts user to input port manually until port 
-     * is verified by starting dummy server on this port.
-     * 
-     * @param args array of argument. Supposed to contain port argument
-     * @see Global#checkPort(String) 
-     */
-    public static void main(String[] args) {
-        Integer port;
-
-        if (args.length != 1) {
-            // Port prompt
-            port = controller.promptPort();
-        } else {
-            port = Global.checkPort(args[0]);
-            if (port == null) port = controller.promptPort();
-        }
-
-        // Port check
-        while (true) {
-            try {
-                ServerSocket s = new ServerSocket(port);
-                s.close();
-                break;
-            } catch (BindException e) {
-                TUI.print("Cannot start server on port "+port);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            port = controller.promptPort();
-        }
-
-        TUI.print(TUI.log("Server starting"));
-        Server server = new Server(port);
-        new Thread(server).start();
-        TUI.print(TUI.log("Server started on port "+port));
     }
 }
