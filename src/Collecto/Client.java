@@ -300,7 +300,8 @@ public class Client implements Runnable {
      * @param params server input
      * @requires {@code params.length == 2 || params.length == 3, (params[2] == "DRAW" ||
      * params[2] == "VICTORY" || params[2] == "DISCONNECT")}
-     * @ensures {@code game == null}, {@code useAI == false}, {@code myTurn == false}, user is notified of game end
+     * @ensures {@code game == null}, {@code useAI == false},
+     * {@code myTurn == false}, user is notified of game end
      */
     private void handleGameOver(String[] params) {
         TUI.print("Game has ended");
