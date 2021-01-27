@@ -37,7 +37,7 @@ class GridBoardTest {
         emptyBoard = new GridBoard(copyArray(emptyBoardArray));
     }
 
-    @RepeatedTest(100)
+    @RepeatedTest(1000)
     void boardConstruction() {
         assertEquals(board.getField(3, 3), Ball.WHITE);
         for (int i = 0; i < 7; i++) {
