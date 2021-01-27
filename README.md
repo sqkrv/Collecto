@@ -19,4 +19,4 @@ After the server has successfully started you can start the Client — `Client.j
 Host address and port can be specified as arguments where the first argument is the host address and the second one is the port.
 After that the client tries to connect to the specified host.
 If the connection was unsuccessful Client notifies via the terminal and asks for new input of host address and port.
-After a successful connection, you are prompted to enter a username. If the server accepts username you will be able to play games. For all client-side commands type `HELP`. 
+After a successful connection, you are prompted to enter a username. If the server accepts username you will be able to play games. For all client-side commands type `HELP`.
