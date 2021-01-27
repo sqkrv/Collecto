@@ -171,6 +171,7 @@ public class TUI {
                         "\n • " + BOARD + " — print current board state (works only in game)" +
                         "\n • " + QUEUE + " — join server's queue" +
                         "\n • " + LOGS + " — print all logs" +
+                        "\n • " + STATUS + " — print status of the client" +
                         "\n • " + DISCONNECT + " — disconnect from the server " +
                         "and gracefully terminate the client"
         );
