@@ -28,7 +28,12 @@ import java.util.Random;
  * @see Controller
  * @see TUI
  */
-public class Server implements Runnable {
+public class Server {
+    /**
+     * Description of the server.
+     */
+    protected final static String DESCRIPTION = "the server of Stan and Hein";
+    private static final Controller CONTROLLER = new Controller();
     private final int port;
     private final ArrayList<PlayerHandler> playerClients;
     private final LinkedList<PlayerHandler> queue = new LinkedList<>();
@@ -95,23 +100,23 @@ public class Server implements Runnable {
     }
 
     /**
-     * Override of {@code run()} method of Runnable interface.
-     * <p>Being activated when {@link #main(String[])} method
-     * successfully proceeds. Waits for connection of player,
+     * Starts up the server and waits for clients to connect.
+     * <p>Activated when the {@link #main(String[])} method
+     * successfully proceeds. Waits for connection of client,
      * starts a new thread of {@link PlayerHandler}
      * and after client disconnects server doesn't stop because of infinite loop.
      */
-    @Override
-    public void run() {
-        try (ServerSocket ssocket = new ServerSocket(port)) {
+    public void start() {
+        TUI.print(TUI.log("Server started on port " + port));
+        try (ServerSocket serverSocket = new ServerSocket(port)) {
             while (true) {
-                Socket socket = ssocket.accept();
+                Socket socket = serverSocket.accept();
                 TUI.print(TUI.log("New player connected"));
                 PlayerHandler player = new PlayerHandler(socket, this);
                 new Thread(player).start();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            TUI.printError("Error while accepting client sockets");
         }
     }
 

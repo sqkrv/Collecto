@@ -51,7 +51,15 @@ public class PlayerHandler implements Runnable {
     private boolean loggedIn = false;
     private boolean myTurn = false;
 
-
+    /**
+     * Constructs a new PlayerHandler with a given socket and server.
+     * Creates a new BufferedReader and BufferedWriter with this socket.
+     *
+     * @param socket socket connected to a client
+     * @param server the server to which this PlayerHandler belongs
+     * @throws IOException for input/output errors
+     * @requires socket has been connected to a client
+     */
     public PlayerHandler(Socket socket, Server server) throws IOException {
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
@@ -59,6 +67,16 @@ public class PlayerHandler implements Runnable {
         this.server = server;
     }
 
+    /**
+     * Listens to messages from the client. This method overrides the run() method from
+     * the Runnable interface, and it is triggered when a new thread belonging to this
+     * PlayerHandler is started. It continuously listens to input from the user, and
+     * handles it using the {@link #handleCommand(String)} method. When a client
+     * disconnects, it closes the connection using {@link #closeConnection()} and
+     * removes the player from the list of players on the server, printing a log
+     * serverside to display the player disconnecting. It then also grants the victory
+     * of any open game to the opponent of the current player.
+     */
     @Override
     public void run() {
         String message;
@@ -120,6 +138,15 @@ public class PlayerHandler implements Runnable {
         }
     }
 
+    /**
+     * Handles the HELLO command sent by a client. Goes over all support that the client
+     * offers, and stores it in booleans inside this PlayerHandler. Sends back a HELLO
+     * command to the client.
+     *
+     * @param params an array of split strings from protocol message by client
+     * @requires {@code params.length > 1}
+     * @ensures responds to the client with the HELLO command
+     */
     private void handleHello(String[] params) {
         if (params.length <= 1) {
             sendError("Insufficient parameters provided");
@@ -146,6 +173,10 @@ public class PlayerHandler implements Runnable {
         saidHello = true;
     }
 
+    /**
+     * Responds to a client with the HELLO command. Adds all services that this server
+     * supports to the response.
+     */
     private void respondHello() {
         String response = HELLO + DELIMITER + Server.DESCRIPTION;
         if (server.chatSupport) {
@@ -163,6 +194,18 @@ public class PlayerHandler implements Runnable {
         sendMessage(response);
     }
 
+    /**
+     * Handles a client attempting to log in to the server to which this PlayerHandler belongs.
+     * Checks if the client has said {@value Global.Protocol.Misc#HELLO} first,
+     * and if the client is not already logged in.
+     * Checks if the name of the client is already registered on the server, in which case it
+     * sends back the {@value Global.Protocol.Misc#ALREADY_LOGGED_IN} command.
+     * If it is not registered, it confirms the login by sending back
+     * the {@value Global.Protocol.Misc#LOGIN} command.
+     *
+     * @param params LOGIN command and the name of the player, in an array of strings
+     * @requires loggedIn == false, {@code params.length == 2}
+     */
     private void handleLogin(String[] params) {
         if (!saidHello) {
             sendError("Please say Hello before trying to log in");
@@ -187,6 +230,14 @@ public class PlayerHandler implements Runnable {
         }
     }
 
+    /**
+     * Handles the player sending the {@value Global.Protocol.Misc#HELLO} command.
+     * Checks if the player is logged in, and sends the connected client
+     * a list of all currently connected players on the
+     * server belonging to this PlayerHandler.
+     *
+     * @requires loggedIn == true
+     */
     private void handleList() {
         if (!loggedIn) {
             sendError("You are not yet logged in!");
@@ -200,6 +251,15 @@ public class PlayerHandler implements Runnable {
         sendMessage(playerList.toString());
     }
 
+    /**
+     * Handles a client sending the {@value Global.Protocol.Commands#QUEUE} command.
+     * Checks if the client is logged in, and not currently in a game.
+     * If the client is not in queue on the server, places the client in queue
+     * to await the start of a new game. If the client is
+     * already in queue, removes the client from the queue.
+     *
+     * @requires {@code loggedIn == true}, {@code game != null}
+     */
     private void handleQueue() {
         if (!loggedIn) {
             sendError("You are not yet logged in!");
@@ -216,13 +276,26 @@ public class PlayerHandler implements Runnable {
         }
     }
 
+    /**
+     * Handles a client sending the {@value Global.Protocol.Commands#MOVE} command.
+     * Checks if it is the turn of the client, if the client is in a game,
+     * and if there is any move possible for the current state of the board.
+     * Checks the validity of the move, and executes that move on the board
+     * of the current game, and notifies both clients playing the game that the move has
+     * successfully been made. Finally checks whether there are any moves still possible
+     * in the new state of the game, and if there are not, triggers {@link #handleGameOver()}.
+     *
+     * @param params the MOVE command followed by a single or double move
+     * @requires {@code game != null}, {@code myTurn == true},
+     * {@code params.length == 2 || params.length == 3}
+     */
     private void handleMove(String[] params) {
-        if (!myTurn) {
+        if (game == null) {
+            sendError("You are not in a game");
+        } else if (!myTurn) {
             sendError("Not your turn");
         } else if (params.length != 2 && params.length != 3) {
             sendError("Invalid amount of arguments provided");
-        } else if (game == null) {
-            sendError("You are not in a game");
         } else if (params.length == 3 && game.possibleFirstMove()) {
             sendError("Single move still possible");
         } else {
@@ -270,6 +343,13 @@ public class PlayerHandler implements Runnable {
         }
     }
 
+    /**
+     * Handles a game ending. Triggers the {@link #handleGameOver(String)} method with the
+     * reason {@value Global.Protocol.Win#VICTORY} if the game has a winner,
+     * or with {@value Global.Protocol.Win#DRAW} if there is no winner.
+     *
+     * @requires game != null
+     */
     private void handleGameOver() {
         String winner = game.getWinner();
         if (winner == null) {
@@ -279,6 +359,16 @@ public class PlayerHandler implements Runnable {
         }
     }
 
+    /**
+     * Handles a game ending. Sends a message to the connected client with the
+     * {@value Global.Protocol.Misc#GAMEOVER} command followed by the reason,
+     * followed by the winner if the reason is not {@value Global.Protocol.Win#DRAW}.
+     *
+     * @param reason the reason why the game has ended
+     * @requires {@code game != null}, reason is
+     * {@value Global.Protocol.Win#DRAW}, {@value Global.Protocol.Win#VICTORY},
+     * or {@value Global.Protocol.Win#DISCONNECT}
+     */
     private void handleGameOver(String reason) {
         String message = GAMEOVER + DELIMITER + reason;
         if (!reason.equals(Win.DRAW)) {
@@ -294,6 +384,16 @@ public class PlayerHandler implements Runnable {
         server.gameEnded(this);
     }
 
+    /**
+     * Response to a successful move made by a client. Sends the move to the client
+     * in the correct format, meaning the {@value Global.Protocol.Commands#MOVE} command,
+     * followed by a delimiter, followed by the move itself as an integer between 0-27,
+     * and if it is a double move, another delimiter and integer for the second move.
+     *
+     * @param firstMove  first move made by a client
+     * @param secondMove potential second move made by a client or null
+     * @requires firstMove is valid, secondMove is valid or null
+     */
     private void respondMove(Move firstMove, Move secondMove) {
         if (secondMove == null) {
             sendMessage(MOVE + DELIMITER + firstMove.push());
@@ -302,6 +402,13 @@ public class PlayerHandler implements Runnable {
         }
     }
 
+    /**
+     * Sends a message to the client connected to this PlayerHandler. Prints the outgoing
+     * message on the terminal of the server to which this PlayerHandler belongs.
+     *
+     * @param message String which is sent to the client
+     * @requires {@code message != null}
+     */
     private synchronized void sendMessage(String message) {
         try {
             TUI.print(TUI.log("[" + cyan("OUT") + "] " + message));
@@ -313,8 +420,19 @@ public class PlayerHandler implements Runnable {
         }
     }
 
-    protected void startNewGame(Game game, PlayerHandler opponent) {
-        this.game = game;
+    /**
+     * Triggers the start of a new game. Stores the reference to the new game given by the parameter
+     * as well as the opponent given by the parameter. Sends a message to the client connected to
+     * this PlayerHandler with the {@value Global.Protocol.Misc#NEWGAME} command,
+     * followed by the game in String form, and the names of the players,
+     * where the player who has the first turn is mentioned first.
+     *
+     * @param newGame        new game shared by the PlayerHandler and its opponent
+     * @param opponentPlayer PlayerHandler of new opponent with whom the new game is shared
+     * @requires {@code game == null}
+     */
+    protected void startNewGame(Game newGame, PlayerHandler opponentPlayer) {
+        this.game = newGame;
         String appendage;
         if (newGame.getPlayerName(0).equals(this.name)) {
             appendage = DELIMITER + this.name + DELIMITER + opponentPlayer.name;
@@ -336,6 +454,13 @@ public class PlayerHandler implements Runnable {
         sendMessage(formattedError);
     }
 
+    /**
+     * Closes the connection with the connected client.
+     * Removes this PlayerHandler from the queue if it is
+     * in queue, removes it from the list of online players
+     * on the server and tells the server that any game it
+     * was playing has ended.
+     */
     protected void closeConnection() {
         TUI.print(TUI.log("Closed connection with " + getName()));
         try {
@@ -350,6 +475,12 @@ public class PlayerHandler implements Runnable {
         server.removePlayer(this);
     }
 
+    /**
+     * Returns the name of the player (client) connected to this Player.
+     * Returns empty string if player name is null.
+     *
+     * @return name of the client connected to this PlayerHandler or empty string if name is null
+     */
     public String getName() {
         if (name != null) return name;
         else return "";

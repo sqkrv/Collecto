@@ -30,10 +30,6 @@ import static Collecto.Global.Protocol.Misc.*;
  */
 public class Client implements Runnable {
     public final static String DESCRIPTION = "Client of Hein and Stan";
-
-    private Socket socket;
-    private final BufferedReader in;
-    private final BufferedWriter out;
     private final ClientController controller;
     private final ArrayList<String> logs = new ArrayList<>();
     protected boolean chatSupport = false;
@@ -64,11 +60,63 @@ public class Client implements Runnable {
      * @param socket socket connected to a server
      * @requires socket != null
      */
-    public Client(Socket socket) throws IOException {
-        this.socket = socket;
-        in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
-        out = new BufferedWriter(new OutputStreamWriter(this.socket.getOutputStream()));
+    public Client(Socket socket) {
+        setupSocket(socket);
         controller = new ClientController(this);
+    }
+
+    public static void main(String[] args) throws IOException {
+        InetAddress ip;
+        Integer port;
+        Controller controller = new Controller();
+
+        if (args.length != 2) {
+            // IP prompt
+            ip = controller.promptAddress();
+
+            // Port prompt
+            port = controller.promptPort();
+        } else {
+            ip = Global.checkAddress(args[0]);
+            port = Global.checkPort(args[1]);
+            if (ip == null) {
+                ip = controller.promptAddress();
+            }
+            if (port == null) {
+                port = controller.promptPort();
+            }
+        }
+
+        Socket sock;
+
+        while (true) {
+            try {
+                TUI.print("Trying to connect to " + ip + ":" + port);
+                sock = new Socket(ip, port);
+                TUI.print("Connected");
+                break;
+            } catch (IOException ignored) {
+            }
+            TUI.print("Cannot connect to server on " + ip + ":" + port + ". " +
+                    "Try different parameters.");
+            ip = controller.promptAddress();
+            port = controller.promptPort();
+        }
+
+        Client client = new Client(sock);
+        Thread inputHandler = new Thread(client);
+        inputHandler.start();
+        client.startUpClient();
+    }
+
+    private void setupSocket(Socket sock) {
+        try {
+            this.socket = sock;
+            in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
+            out = new BufferedWriter(new OutputStreamWriter(this.socket.getOutputStream()));
+        } catch (IOException e) {
+            TUI.printError("Error while setting up input and output");
+        }
     }
 
     /**
@@ -420,7 +468,6 @@ public class Client implements Runnable {
         } else if (params.length != 52) {
             TUI.printError("Incorrect number of arguments received from server");
         } else {
-            game = new Game(parseStringBoard(params), params[50], params[51]);
             TUI.print("New game: " + params[50] + " versus " + params[51]);
             game = new Game(parseStringBoard(params), params[50], params[51]);
             if (params[50].equals(playerName)) {
@@ -469,14 +516,7 @@ public class Client implements Runnable {
     private void useAI() {
         choosingAI = true;
         if (!useAI) {
-            TUI.print("Do you want to use smartass computer to play for you? (y/n)");
-        }
-        try {
-            synchronized (this) {
-                this.wait();
-            }
-        } catch (InterruptedException e) {
-            addLog(TUI.log("InterruptedException while waiting for useAI sequence"));
+            TUI.print("Do you want to use computer to play for you? (y/n)");
         }
     }
 
@@ -498,8 +538,9 @@ public class Client implements Runnable {
             useAI = false;
             TUI.print("AI will not be used. It's in your hands my friend");
             choosingAI = false;
-            synchronized (this) {
-                notify();
+            printBoard();
+            if (myTurn) {
+                TUI.print("It's your turn");
             }
         } else {
             TUI.print("Please specify if you will use an AI with y or n");
@@ -523,9 +564,9 @@ public class Client implements Runnable {
             TUI.print("Please specify the level of the ai with 1 or 2");
             return;
         }
-        synchronized (this) {
-            choosingAI = false;
-            notify();
+        choosingAI = false;
+        if (myTurn) {
+            aiMove();
         }
         TUI.print("AI engaged. Sit back and enjoy");
     }
@@ -659,7 +700,7 @@ public class Client implements Runnable {
      *
      * @requires socket != null
      */
-    protected void disconnect() {
+    protected synchronized void disconnect() {
         if (socket != null) {
             try {
                 socket.close();
@@ -668,7 +709,7 @@ public class Client implements Runnable {
                 socket = null;
                 game = null;
             } catch (IOException e) {
-                TUI.printError("IOException while disconnecting from server");
+                addLog("IOException while disconnecting from server");
             }
             TUI.print("Connection to server lost");
         }
@@ -798,6 +839,15 @@ public class Client implements Runnable {
     }
 
     /**
+     * Checks to see if the client is currently playing a game.
+     *
+     * @return true if game != null, false if game == null
+     */
+    protected boolean inGame() {
+        return game != null;
+    }
+
+    /**
      * Listens to the server. This command overrides the run() method from the Runnable
      * interface, and is triggered in the main method when the server input thread is
      * started. It then continuously listens to the server input until this client or
@@ -815,7 +865,7 @@ public class Client implements Runnable {
                 handleCommandIn(line);
             }
         } catch (IOException e) {
-            TUI.printError("IOException while listening to server");
+            addLog("IOException while listening to server");
         }
         disconnect();
     }
