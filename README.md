@@ -22,7 +22,9 @@ On Windows you may need to execute some commands to get colours to work.
 To host games by yourself run `Server.jar`. Port can be specified as an argument or will be prompted in the terminal. If the port is incorrect you will be prompted to enter a new port via the terminal.
 The server notifies you if it has successfully started.  
 After the server has successfully started you can start the Client — `Client.jar`.
-Host address and port can be specified as arguments where the first argument is the host address and the second one is the port.
-After that the client tries to connect to the specified host.
-If the connection was unsuccessful Client notifies via the terminal and asks for new input of host address and port.
-After a successful connection, you are prompted to enter a username. If the server accepts username you will be able to play games. For all client-side commands type `HELP`.
+The host address and port can be specified as arguments where the first argument is the host address and the second one is the port.
+The client then tries to connect to the specified host.
+If the connection was unsuccessful the client notifies the user via the terminal and asks for new input of the host address and port.
+After a successful connection, you are prompted to enter a username. If the server accepts username you will be able to play games.  
+If the username is already taken or does not conform to the rules, you will be prompted for a different username.
+For all client-side commands type `HELP`.
