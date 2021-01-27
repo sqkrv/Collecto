@@ -344,7 +344,7 @@ public class Client implements Runnable {
         if (!useAI && myTurn) {
             TUI.print("It's your turn");
         }
-        if (useAI && myTurn) {
+        if (useAI && myTurn && !choosingAI) {
             aiMove();
         }
     }
@@ -485,7 +485,7 @@ public class Client implements Runnable {
      * successfully find a move, sends it to the server. If it can not find a move, notifies the
      * user of this client.
      *
-     * @requires {@code game.possibleMoves() == true, AI != null}
+     * @requires {@code game.possibleMoves() == true}, {@code AI != null}
      */
     private void aiMove() {
         if (!game.possibleMoves()) {
