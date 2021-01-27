@@ -404,48 +404,50 @@ public class Client implements Runnable {
     protected void handleMove(String[] params) {
         if (game == null) {
             TUI.print("You are not in a game");
-            return;
-        }
-        if (params.length != 3 && params.length != 5) {
-            TUI.print("Invalid amount of arguments, please try again");
+        } else if (!myTurn) {
+            TUI.print("Not your turn");
         } else {
-            String message = params[0];
-            Move.Direction direction;
-            Move.Direction direction2 = null;
-            try {
-                direction = Move.Direction.valueOf(params[2].toUpperCase());
-                if (params.length == 5) {
-                    direction2 = Move.Direction.valueOf(params[4].toUpperCase());
-                    if (game.possibleFirstMove()) {
-                        TUI.print("Single move can still be played");
-                        return;
+            if (params.length != 3 && params.length != 5) {
+                TUI.print("Invalid amount of arguments, please try again");
+            } else {
+                String message = params[0];
+                Move.Direction direction;
+                Move.Direction direction2 = null;
+                try {
+                    direction = Move.Direction.valueOf(params[2].toUpperCase());
+                    if (params.length == 5) {
+                        direction2 = Move.Direction.valueOf(params[4].toUpperCase());
+                        if (game.possibleFirstMove()) {
+                            TUI.print("Single move can still be played");
+                            return;
+                        }
                     }
+                } catch (IllegalArgumentException i) {
+                    TUI.print("Direction is wrong, please try again or type help");
+                    return;
                 }
-            } catch (IllegalArgumentException i) {
-                TUI.print("Direction is wrong, please try again or type help");
-                return;
-            }
-            Integer line = Global.parseInt(params[1]);
-            if (line == null) {
-                TUI.print("Line parameter is wrong, please try again");
-                return;
-            }
-            Move firstMove = new Move(line - 1, direction);
-            Move secondMove = null;
-            message += DELIMITER + firstMove.push();
-            if (params.length >= 4) {
-                line = Global.parseInt(params[3]);
+                Integer line = Global.parseInt(params[1]);
                 if (line == null) {
                     TUI.print("Line parameter is wrong, please try again");
                     return;
                 }
-                secondMove = new Move(line - 1, direction2);
-                message += DELIMITER + secondMove.push();
-            }
-            if (game.isMoveValid(firstMove, secondMove)) {
-                sendMessage(message);
-            } else {
-                TUI.print("Move is not valid, please try again or ask for a hint");
+                Move firstMove = new Move(line - 1, direction);
+                Move secondMove = null;
+                message += DELIMITER + firstMove.push();
+                if (params.length >= 4) {
+                    line = Global.parseInt(params[3]);
+                    if (line == null) {
+                        TUI.print("Line parameter is wrong, please try again");
+                        return;
+                    }
+                    secondMove = new Move(line - 1, direction2);
+                    message += DELIMITER + secondMove.push();
+                }
+                if (game.isMoveValid(firstMove, secondMove)) {
+                    sendMessage(message);
+                } else {
+                    TUI.print("Move is not valid, please try again or ask for a hint");
+                }
             }
         }
     }

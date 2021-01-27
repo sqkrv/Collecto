@@ -101,14 +101,14 @@ public class ClientController extends Controller {
                             client.handleMove(params);
                             break;
                         default:
-                            TUI.printError("Unknown command: " + params[0]);
+                            TUI.print("Unknown command: " + params[0]);
                             TUI.print(TYPE_HELP);
                     }
                 } else {
                     if (params[0].equals(HINT) || params[0].equals(MOVE)) {
                         TUI.print("You are not in a game");
                     } else {
-                        TUI.printError("Unknown command: " + params[0]);
+                        TUI.print("Unknown command: " + params[0]);
                         TUI.print(TYPE_HELP);
                     }
                 }
