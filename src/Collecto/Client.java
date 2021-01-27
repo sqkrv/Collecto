@@ -45,7 +45,7 @@ public class Client implements Runnable {
     private Socket socket;
     private BufferedReader in;
     private BufferedWriter out;
-    private Game game = null;
+    protected Game game = null;
     private String playerName;
     private ComputerPlayer ai;
     private boolean saidHello = false;
@@ -464,7 +464,7 @@ public class Client implements Runnable {
      * @requires game == null, params.length == 52
      * @ensures params[1] up to and including params[49] are parsed into a new board for the game
      */
-    private void handleNewGame(String[] params) {
+    protected void handleNewGame(String[] params) {
         if (game != null) {
             TUI.printError("Still in a game, can't start a new game");
         } else if (params.length != 52) {
