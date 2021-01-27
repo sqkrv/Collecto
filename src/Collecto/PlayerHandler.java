@@ -348,7 +348,7 @@ public class PlayerHandler implements Runnable {
      * reason {@value Global.Protocol.Win#VICTORY} if the game has a winner,
      * or with {@value Global.Protocol.Win#DRAW} if there is no winner.
      *
-     * @requires game != null
+     * @requires {@code game != null}
      */
     private void handleGameOver() {
         String winner = game.getWinner();
