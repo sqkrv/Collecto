@@ -25,6 +25,7 @@ public class Colour {
 
     /**
      * Turns the given string into a grey string and resets the colour at the end of the string.
+     *
      * @param string given string to be coloured
      * @return the given string but coloured grey
      */
@@ -34,6 +35,7 @@ public class Colour {
 
     /**
      * Turns the given string into a red string and resets the colour at the end of the string.
+     *
      * @param string given string to be coloured
      * @return the given string but coloured red
      */
@@ -43,6 +45,7 @@ public class Colour {
 
     /**
      * Turns the given string into a green string and resets the colour at the end of the string.
+     *
      * @param string given string to be coloured
      * @return the given string but coloured green
      */
@@ -52,6 +55,7 @@ public class Colour {
 
     /**
      * Turns the given string into a yellow string and resets the colour at the end of the string.
+     *
      * @param string given string to be coloured
      * @return the given string but coloured yellow
      */
@@ -61,6 +65,7 @@ public class Colour {
 
     /**
      * Turns the given string into a blue string and resets the colour at the end of the string.
+     *
      * @param string given string to be coloured
      * @return the given string but coloured blue
      */
@@ -70,6 +75,7 @@ public class Colour {
 
     /**
      * Turns the given string into a purple string and resets the colour at the end of the string.
+     *
      * @param string given string to be coloured
      * @return the given string but coloured purple
      */
@@ -79,6 +85,7 @@ public class Colour {
 
     /**
      * Turns the given string into a cyan string and resets the colour at the end of the string.
+     *
      * @param string given string to be coloured
      * @return the given string but coloured cyan
      */
@@ -88,6 +95,7 @@ public class Colour {
 
     /**
      * Turns the given string into a orange string and resets the colour at the end of the string.
+     *
      * @param string given string to be coloured
      * @return the given string but coloured orange
      */

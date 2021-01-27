@@ -52,8 +52,8 @@ public class ComputerPlayer {
      * if no possible moves found returns null.
      *
      * @param board the board used to determine a move
-     * @requires board != null
      * @return first possible move or null
+     * @requires board != null
      */
     private static Move makeBeginnerMoveSingle(GridBoard board) {
         Move move;
@@ -128,9 +128,9 @@ public class ComputerPlayer {
      * if {@code level == 2}, this method uses {@link #makeIntermediateMove(GridBoard)}.
      *
      * @param board the specified GridBoard on which the AI will attempt to make a move
+     * @return a determined move
      * @requires board != null
      * @ensures return is a valid move or null
-     * @return a determined move
      */
     public Move[] makeMove(GridBoard board) {
         switch (level) {
@@ -149,7 +149,7 @@ public class ComputerPlayer {
      * as a score to see what move is the best move.
      *
      * @param board the board on which the move is made
-     * @param move the move that has to be checked
+     * @param move  the move that has to be checked
      * @return amount of balls gained by making this move
      */
     private int ballsFromMove(GridBoard board, Move move) {

@@ -3,22 +3,25 @@ package Collecto.Tests;
 import Collecto.Controller;
 import org.junit.jupiter.api.Test;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
-import java.io.ByteArrayInputStream;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class ControllerTest {
 
+    private static final String WRONG = "Wrong Data";
     private Controller controller;
     private InputStream input;
     private BufferedReader reader;
     private String answer;
     private String result;
-    private static final String WRONG = "Wrong Data";
 
     void setUpController() {
         controller = new Controller() {
@@ -38,12 +41,12 @@ class ControllerTest {
         };
     }
 
-    void setUpInput(String input) {
-        this.input = new ByteArrayInputStream(input.getBytes());
+    void setUpInput(String newInput) {
+        this.input = new ByteArrayInputStream(newInput.getBytes());
     }
 
-    void setUpReader(BufferedReader reader) {
-        this.reader = reader;
+    void setUpReader(BufferedReader newReader) {
+        this.reader = newReader;
     }
 
     @Test
@@ -66,7 +69,6 @@ class ControllerTest {
         assertNotEquals(WRONG, result);
     }
 
-    // TODO for both test below add case with wrong provided input tu have "Wrong smth provided"
     @Test
     void promptAddress() throws UnknownHostException {
         InetAddress address = InetAddress.getByName("127.0.0.1");
@@ -81,7 +83,8 @@ class ControllerTest {
     @Test
     void promptWrongAddress() {
         String wrongRight = "wrong \n more wrong";
-        setUpReader(new BufferedReader(new InputStreamReader(new ByteArrayInputStream(wrongRight.getBytes()))));
+        setUpReader(new BufferedReader(new InputStreamReader(
+                new ByteArrayInputStream(wrongRight.getBytes()))));
         setUpControllerReader();
         assertThrows(NoSuchElementException.class, () -> controller.promptAddress());
     }
@@ -89,7 +92,8 @@ class ControllerTest {
     @Test
     void promptWrongRightAddress() throws UnknownHostException {
         String wrongRightWrong = "wrong\nlocalhost\n130.89.1.0";
-        setUpReader(new BufferedReader(new InputStreamReader(new ByteArrayInputStream(wrongRightWrong.getBytes()))));
+        setUpReader(new BufferedReader(new InputStreamReader(
+                new ByteArrayInputStream(wrongRightWrong.getBytes()))));
         setUpControllerReader();
         InetAddress address = controller.promptAddress();
         assertEquals(address, InetAddress.getByName("127.0.0.1"));
@@ -101,15 +105,16 @@ class ControllerTest {
         int wrongPort = 5555;
         setUpInput("4114");
         setUpController();
-        int result = controller.promptPort();
-        assertEquals(port, result);
-        assertNotEquals(wrongPort, result);
+        int portResult = controller.promptPort();
+        assertEquals(port, portResult);
+        assertNotEquals(wrongPort, portResult);
     }
 
     @Test
     void promptWrongPort() {
         String wrongRight = "wrong \n more wrong";
-        setUpReader(new BufferedReader(new InputStreamReader(new ByteArrayInputStream(wrongRight.getBytes()))));
+        setUpReader(new BufferedReader(new InputStreamReader(
+                new ByteArrayInputStream(wrongRight.getBytes()))));
         setUpControllerReader();
         assertThrows(NoSuchElementException.class, () -> controller.promptPort());
     }
@@ -117,7 +122,8 @@ class ControllerTest {
     @Test
     void promptWrongRightPort() {
         String wrongRightWrong = "wrong \n 5555 \n 4114";
-        setUpReader(new BufferedReader(new InputStreamReader(new ByteArrayInputStream(wrongRightWrong.getBytes()))));
+        setUpReader(new BufferedReader(new InputStreamReader(
+                new ByteArrayInputStream(wrongRightWrong.getBytes()))));
         setUpControllerReader();
         Integer port = controller.promptPort();
         assertEquals(port, 5555);

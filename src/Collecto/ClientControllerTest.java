@@ -3,20 +3,24 @@ package Collecto;
 import Collecto.Tests.SocketFactory;
 import org.junit.jupiter.api.*;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.Socket;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
-import java.net.Socket;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ClientControllerTest {
 
+    private static Socket[] sockets;
     private ClientController controller;
     private Client client;
     private Socket clientSocket;
     private BufferedReader in;
-    private static Socket[] sockets;
 
     @BeforeAll
     static void setUp() {
@@ -28,17 +32,18 @@ class ClientControllerTest {
         clientSocket = sockets[0];
         Socket serverSocket = sockets[1];
         client = new Client(clientSocket);
-//        BufferedWriter out = new BufferedWriter(new OutputStreamWriter(serverSocket.getOutputStream()));
         in = new BufferedReader(new InputStreamReader(serverSocket.getInputStream()));
     }
 
     void setUpController(String input) {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(input.getBytes())));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(
+                new ByteArrayInputStream(input.getBytes())));
         this.controller = new ClientController(client) {
             @Override
             public void setScanner() {
                 this.scanner = new Scanner(reader);
             }
+
             @Override
             public void start() {
                 handleCommand(scanner.nextLine());
@@ -49,7 +54,8 @@ class ClientControllerTest {
 
     @Test
     void start() {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream("input".getBytes())));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(
+                new ByteArrayInputStream("input".getBytes())));
         controller = new ClientController(client) {
             @Override
             public void setScanner() {
@@ -74,7 +80,7 @@ class ClientControllerTest {
 
     @Nested()
     @DisplayName("handleCommandTests")
-    class handleCommandTests {
+    class HandleCommandTests {
 
         @Test
         void helpTest() throws IOException {
@@ -94,7 +100,7 @@ class ClientControllerTest {
             client = new Client(clientSocket) {
                 @Override
                 public void handleNewGame(String[] params) {
-                    game = new Game("","");
+                    game = new Game("", "");
                 }
             };
             client.handleNewGame(null);
@@ -175,10 +181,11 @@ class ClientControllerTest {
                 public void hint() {
                     sendMessage("Hinted");
 
-                    }
+                }
+
                 @Override
                 public void handleNewGame(String[] params) {
-                    game = new Game("","");
+                    game = new Game("", "");
                 }
             };
             client.handleNewGame(null);
@@ -201,9 +208,10 @@ class ClientControllerTest {
                     sendMessage("Moved");
 
                 }
+
                 @Override
                 public void handleNewGame(String[] params) {
-                    game = new Game("","");
+                    game = new Game("", "");
                 }
             };
             client.handleNewGame(null);
@@ -223,7 +231,7 @@ class ClientControllerTest {
             client = new Client(clientSocket) {
                 @Override
                 public void handleNewGame(String[] params) {
-                    game = new Game("","");
+                    game = new Game("", "");
                 }
             };
             client.handleNewGame(null);
@@ -233,7 +241,7 @@ class ClientControllerTest {
 
         @Nested
         @DisplayName("chooseAITest")
-        class choosingAITest {
+        class ChoosingAITest {
             @Test
             void chooseAITest() throws IOException {
                 client = new Client(clientSocket) {

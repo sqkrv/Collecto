@@ -92,13 +92,13 @@ public class Misc {
     }
 
     public static ArrayList<ArrayList<Ball>> copyArray(ArrayList<ArrayList<Ball>> array) {
-        ArrayList<ArrayList<Ball>> copy_array = new ArrayList<>();
+        ArrayList<ArrayList<Ball>> copyArray = new ArrayList<>();
 
         for (ArrayList<Ball> row : array) {
-            copy_array.add(new ArrayList<>(row));
+            copyArray.add(new ArrayList<>(row));
         }
 
-        return copy_array;
+        return copyArray;
     }
 
     public static ArrayList<ArrayList<Ball>> emptyBoardArray() {

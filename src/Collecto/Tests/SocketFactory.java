@@ -7,15 +7,16 @@ import java.net.Socket;
 
 public class SocketFactory implements Runnable {
 
+    private final int port;
     private Socket socket1 = null;
     private Socket socket2 = null;
     private ServerSocket serverSocket;
-    private final int port;
 
     public SocketFactory(int port) {
         this.port = port;
         setServerSocket();
     }
+
     private void setServerSocket() {
         try {
             serverSocket = new ServerSocket(port);

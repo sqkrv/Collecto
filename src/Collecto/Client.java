@@ -859,7 +859,6 @@ public class Client implements Runnable {
      */
     @Override
     public void run() {
-        // Server messages listener
         try {
             String line;
             while ((line = in.readLine()) != null) {

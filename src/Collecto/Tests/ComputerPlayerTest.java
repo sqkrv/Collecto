@@ -58,6 +58,20 @@ class ComputerPlayerTest {
         assertEquals(ai1.getLevel(), 2);
     }
 
+    private void checkMove(ComputerPlayer ai) {
+        ArrayList<ArrayList<Ball>> array = copyArray(emptyBoardArray);
+        array.get(0).set(0, Ball.BLUE);
+        array.get(0).set(3, Ball.RED);
+        array.get(0).set(6, Ball.BLUE);
+
+        Move[] moves = ai.makeMove(new GridBoard(array));
+        assertEquals(moves[0], new Move(3, Move.Direction.DOWN));
+        assertTrue(
+                moves[1].equals(new Move(0, Move.Direction.LEFT)) ||
+                        moves[1].equals(new Move(0, Move.Direction.RIGHT))
+        );
+    }
+
     @Nested
     @DisplayName("Beginner moves")
     class BeginnerMoves {
@@ -86,20 +100,6 @@ class ComputerPlayerTest {
             Move[] moves = ai1.makeMove(new GridBoard(array));
             assertNull(moves);
         }
-    }
-
-    private void checkMove(ComputerPlayer ai) {
-        ArrayList<ArrayList<Ball>> array = copyArray(emptyBoardArray);
-        array.get(0).set(0, Ball.BLUE);
-        array.get(0).set(3, Ball.RED);
-        array.get(0).set(6, Ball.BLUE);
-
-        Move[] moves = ai.makeMove(new GridBoard(array));
-        assertEquals(moves[0], new Move(3, Move.Direction.DOWN));
-        assertTrue(
-                moves[1].equals(new Move(0, Move.Direction.LEFT)) ||
-                        moves[1].equals(new Move(0, Move.Direction.RIGHT))
-        );
     }
 
     @Nested

@@ -12,8 +12,6 @@ import java.net.UnknownHostException;
 import static org.junit.jupiter.api.Assertions.*;
 
 class GlobalTest {
-
-
     @BeforeEach
     void setUp() {
     }
@@ -56,22 +54,4 @@ class GlobalTest {
 
         assertEquals(4114, Global.checkPort("4114"));
     }
-
-//    @Test
-//    void parseInt() {
-//        assertNull(Global.parseInt("num"));
-//        assertNull(Global.parseInt("10.24"));
-//
-//        assertEquals(-1, Global.parseInt("-1"));
-//        assertEquals(1024, Global.parseInt("1024"));
-//    }
-
-//    @Test
-//    void checkProtocolStrings() {
-//        assertNotNull(Global.Protocol.class);
-//        assertNotNull(Global.Protocol.Commands.class);
-//        assertNotNull(Global.Protocol.Misc.class);
-//        assertNotNull(Global.Protocol.Extensions.class);
-//        assertNotNull(Global.Protocol.Win.class);
-//    }
 }

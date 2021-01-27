@@ -95,6 +95,7 @@ public class Global {
      * This class contains classes holding strings that are used often
      * in the entirety of the Collecto program, as well as the TYPE_HELP string
      * which contains a statement referring to the help menu in clients.
+     *
      * @see Commands
      * @see Misc
      * @see Extensions

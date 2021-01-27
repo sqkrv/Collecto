@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import static Collecto.Colour.cyan;
 import static Collecto.Colour.purple;
@@ -482,7 +483,6 @@ public class PlayerHandler implements Runnable {
      * @return name of the client connected to this PlayerHandler or empty string if name is null
      */
     public String getName() {
-        if (name != null) return name;
-        else return "";
+        return Objects.requireNonNullElse(name, "");
     }
 }

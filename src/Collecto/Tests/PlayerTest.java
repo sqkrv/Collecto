@@ -5,9 +5,13 @@ import Collecto.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 class PlayerTest {
 
@@ -49,7 +53,11 @@ class PlayerTest {
     void addWhiteBall() {
         ArrayList<Ball> balls = new ArrayList<>();
         HashMap<Ball, Integer> resultBalls = new HashMap<>();
-        for (Ball ball : Ball.values()) if (ball != Ball.WHITE) resultBalls.put(ball, 0);
+        for (Ball ball : Ball.values()) {
+            if (ball != Ball.WHITE) {
+                resultBalls.put(ball, 0);
+            }
+        }
 
         balls.add(Ball.WHITE);
         player.addBalls(balls);
