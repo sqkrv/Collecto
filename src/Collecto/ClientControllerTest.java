@@ -73,8 +73,8 @@ class ClientControllerTest {
     }
 
     @Nested()
-    @DisplayName("handleMove tests")
-    class handleMoveTests {
+    @DisplayName("handleCommandTests")
+    class handleCommandTests {
 
         @Test
         void helpTest() throws IOException {
@@ -188,6 +188,12 @@ class ClientControllerTest {
         }
 
         @Test
+        void hintTestNotInGame() {
+            setUpController("HINT");
+            controller.start();
+        }
+
+        @Test
         void moveTest() throws IOException {
             client = new Client(clientSocket) {
                 @Override
@@ -204,6 +210,58 @@ class ClientControllerTest {
             setUpController("MOVE");
             controller.start();
             assertEquals(in.readLine(), "Moved");
+        }
+
+        @Test
+        void moveTestNotInGame() {
+            setUpController("MOVE");
+            controller.start();
+        }
+
+        @Test
+        void wrongCommandInGame() {
+            client = new Client(clientSocket) {
+                @Override
+                public void handleNewGame(String[] params) {
+                    game = new Game("","");
+                }
+            };
+            client.handleNewGame(null);
+            setUpController("WRONG COMMAND");
+            controller.start();
+        }
+
+        @Nested
+        @DisplayName("chooseAITest")
+        class choosingAITest {
+            @Test
+            void chooseAITest() throws IOException {
+                client = new Client(clientSocket) {
+                    @Override
+                    public void chooseAI(String[] params) {
+                        sendMessage(params[0]);
+                    }
+                };
+                client.choosingAI = true;
+                setUpController("CHOSEN");
+                controller.start();
+                assertEquals(in.readLine(), "CHOSEN");
+            }
+
+            @Test
+            void useAITest() throws IOException {
+                client = new Client(clientSocket) {
+                    @Override
+                    public void chooseDifficulty(String[] params) {
+                        sendMessage(params[0]);
+                    }
+                };
+                client.choosingAI = true;
+                client.useAI = true;
+                setUpController("USEDAI");
+                controller.start();
+                assertEquals(in.readLine(), "USEDAI");
+            }
         }
     }
 }
