@@ -10,8 +10,14 @@ Once the project archive is unarchived there are two files jar `Server.jar` and 
 - `JavaDoc` folder contains generated JavaDoc for the source code of this project
 - `Source` folder contains source code of the project
 
+### Windows
+On Windows you may need to execute some commands to get colours to work.
+1. Execute in CMD with Admin rights: `reg add HKEY_CURRENT_USER\Console /v VirtualTerminalLevel /t REG_DWORD /d 0x00000001 /f`
+2. Open PowerShell and execute command: `[Console]::OutputEncoding = [System.Text.Encoding]::UTF8`
+
 ## Usage
-> To run `.jar` files you can use `java -jar "filename.jar"`
+> To run `.jar` files you can use `java -jar "filename.jar"`  
+> *On Windows you may need to include `-Dfile.encoding=UTF-8` parameter after the command above to have string like `java -jar "filename.jar" -Dfile.encoding=UTF-8`* 
 
 To host games by yourself run `Server.jar`. Port can be specified as an argument or will be prompted in the terminal. If the port is incorrect you will be prompted to enter a new port via the terminal.
 The server notifies you if it has successfully started.  
