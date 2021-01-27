@@ -10,7 +10,7 @@ public class SocketFactory implements Runnable {
     private Socket socket1 = null;
     private Socket socket2 = null;
     private ServerSocket serverSocket;
-    private static int port;
+    private final int port;
 
     public SocketFactory(int port) {
         this.port = port;
