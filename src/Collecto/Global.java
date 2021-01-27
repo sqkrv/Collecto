@@ -29,6 +29,16 @@ public class Global {
     }
 
     /**
+     * Checks if a given index is valid. Index is valid if {@code 0 <= index < 7}.
+     *
+     * @param index index to check for validness
+     * @return true is index is valid, false otherwise
+     */
+    public static boolean validIndex(int index) {
+        return index >= 0 && index < 7;
+    }
+
+    /**
      * Parses the String of a move in push form to an integer, and checks if that push is valid.
      *
      * @param stringPush push in String form

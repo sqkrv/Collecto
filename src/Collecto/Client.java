@@ -12,6 +12,7 @@ import static Collecto.Global.DELIMITER;
 import static Collecto.Global.Protocol.Commands.LIST;
 import static Collecto.Global.Protocol.Commands.MOVE;
 import static Collecto.Global.Protocol.Misc.*;
+import static Collecto.Global.validIndex;
 
 /**
  * This class contains the client used by users who want to connect to a server and play a game.
@@ -128,7 +129,7 @@ public class Client implements Runnable {
      * an error by default stating it did not understand what command the server sent.
      *
      * @param serverInput String input from the server
-     * @requires serverInput != null
+     * @requires {@code serverInput != null}
      * @ensures serverInput is handled correctly
      */
     public void handleCommandIn(String serverInput) {
@@ -201,8 +202,8 @@ public class Client implements Runnable {
      * for the server to send a hello response.
      *
      * @param params server input containing the HELLO command and all server support
-     * @requires saidHello == false
-     * @ensures all server support is stored, sleeping thread is woken up, saidHello == true
+     * @requires {@code saidHello == false}
+     * @ensures all server support is stored, sleeping thread is woken up, {@code saidHello == true}
      */
     private void handleHelloServer(String[] params) {
         if (!saidHello) {
@@ -236,8 +237,8 @@ public class Client implements Runnable {
      * in to the server, and wakes up the sleeping thread waiting for
      * the LOGIN command response from the server.
      *
-     * @requires loggedIn == false
-     * @ensures sleeping thread is woken up, loggedIn == true
+     * @requires {@code loggedIn == false}
+     * @ensures sleeping thread is woken up, {@code loggedIn == true}
      */
     private void handleLoginServer() {
         if (!loggedIn) {
@@ -257,8 +258,8 @@ public class Client implements Runnable {
      * is already taken, and wakes up the sleeping thread waiting for the LOGIN
      * command response from the server.
      *
-     * @requires loggedIn == false
-     * @ensures sleeping thread is woken up, loggedIn == true
+     * @requires {@code loggedIn == false}
+     * @ensures sleeping thread is woken up, {@code loggedIn == true}
      */
     private void handleAlreadyLoggedIn() {
         if (!loggedIn) {
@@ -297,9 +298,9 @@ public class Client implements Runnable {
      * Resets all game related parameters to be ready for a new game.
      *
      * @param params server input
-     * @requires params.length == 2 || params.length == 3, (params[2] == "DRAW" ||
-     * params[2] == "VICTORY" || params[2] == "DISCONNECT")
-     * @ensures game == null, useAI == false, myTurn == false, user is notified of game end
+     * @requires {@code params.length == 2 || params.length == 3, (params[2] == "DRAW" ||
+     * params[2] == "VICTORY" || params[2] == "DISCONNECT")}
+     * @ensures {@code game == null}, {@code useAI == false}, {@code myTurn == false}, user is notified of game end
      */
     private void handleGameOver(String[] params) {
         TUI.print("Game has ended");
@@ -329,7 +330,7 @@ public class Client implements Runnable {
      * by invoking the {@link #moveServer(String[])} method.
      *
      * @param params server input
-     * @requires params.length == 2 || params.length == 3
+     * @requires {@code params.length == 2 || params.length == 3}
      * @ensures board is printed, score is shown, AI makes move if useAI==true
      */
     private void handleMoveServer(String[] params) {
@@ -399,7 +400,7 @@ public class Client implements Runnable {
      * Ultimately sends the move to the server if it passes all clientside checks.
      *
      * @param params user input
-     * @requires game != null, params.length == 3 || params.length == 5
+     * @requires {@code game != null, params.length == 3 || params.length == 5}
      */
     protected void handleMove(String[] params) {
         if (game == null) {
@@ -427,7 +428,7 @@ public class Client implements Runnable {
                     return;
                 }
                 Integer line = Global.parseInt(params[1]);
-                if (line == null) {
+                if (line == null || !validIndex(line)) {
                     TUI.print("Line parameter is wrong, please try again");
                     return;
                 }
@@ -436,7 +437,7 @@ public class Client implements Runnable {
                 message += DELIMITER + firstMove.push();
                 if (params.length >= 4) {
                     line = Global.parseInt(params[3]);
-                    if (line == null) {
+                    if (line == null || !validIndex(line)) {
                         TUI.print("Line parameter is wrong, please try again");
                         return;
                     }
@@ -461,7 +462,7 @@ public class Client implements Runnable {
      * {@link #aiMove()} method.
      *
      * @param params server input
-     * @requires game == null, params.length == 52
+     * @requires {@code game == null, params.length == 52}
      * @ensures params[1] up to and including params[49] are parsed into a new board for the game
      */
     protected void handleNewGame(String[] params) {
@@ -484,7 +485,7 @@ public class Client implements Runnable {
      * successfully find a move, sends it to the server. If it can not find a move, notifies the
      * user of this client.
      *
-     * @requires game.possibleMoves() == true, AI != null
+     * @requires {@code game.possibleMoves() == true, AI != null}
      */
     private void aiMove() {
         if (!game.possibleMoves()) {
@@ -529,7 +530,7 @@ public class Client implements Runnable {
      * continues to the {@link #chooseDifficulty(String[])} method.
      *
      * @param answer user input
-     * @requires answer[0] == "Y" || answer[0] == "N"
+     * @requires {@code answer[0] == "Y" || answer[0] == "N"}
      * @ensures thread is notified if answer[0] == "N"
      */
     protected void chooseAI(String[] answer) {
@@ -577,7 +578,7 @@ public class Client implements Runnable {
      * Prints score and string representation of all balls for each player in game.
      * The output is of the following format: {@code username[score]: balls}
      *
-     * @requires game != null
+     * @requires {@code game != null}
      * @see TUI#print(String)
      */
     private void showScore() {
@@ -632,7 +633,7 @@ public class Client implements Runnable {
      * Uses the beginner AI to show to the user the first possible single move, or the first
      * possible double move if no single move is possible.
      *
-     * @requires game != null
+     * @requires {@code game != null}
      * @see ComputerPlayer#makeBeginnerMove(GridBoard)
      */
     protected void hint() {
@@ -661,7 +662,7 @@ public class Client implements Runnable {
      * Sends a String message to a connected server. Adds a log of every outgoing message.
      *
      * @param message message to be sent to the server
-     * @requires message != null
+     * @requires {@code message != null}
      */
     protected synchronized void sendMessage(String message) {
         if (message == null) {
@@ -700,7 +701,7 @@ public class Client implements Runnable {
      * Disconnects from a server. Closes the socket, reader and writer, and clears the socket and
      * the game of this client, and then gracefully terminates the program.
      *
-     * @requires socket != null
+     * @requires {@code socket != null}
      */
     protected synchronized void disconnect() {
         if (socket != null) {
@@ -721,7 +722,7 @@ public class Client implements Runnable {
     /**
      * Prints the board of a current game for the user to see.
      *
-     * @requires game != null
+     * @requires {@code game != null}
      */
     protected void printBoard() {
         if (game != null) {
@@ -843,7 +844,7 @@ public class Client implements Runnable {
     /**
      * Checks to see if the client is currently playing a game.
      *
-     * @return true if game != null, false if game == null
+     * @return true if {@code game != null}, false if {@code game == null}
      */
     protected boolean inGame() {
         return game != null;

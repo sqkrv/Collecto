@@ -269,7 +269,7 @@ public class GridBoard {
      * @ensures index is valid
      */
     public Ball getField(int row, int column) {
-        if (validIndex(row) && validIndex(column)) {
+        if (Global.validIndex(row) && Global.validIndex(column)) {
             return board.get(row).get(column);
         }
         return null;
@@ -284,18 +284,8 @@ public class GridBoard {
      * @requires {@code validIndex(row) == true}, {@code validIndex(column) == true}
      */
     private void setField(int row, int column, Ball ball) {
-        assert validIndex(row) && validIndex(column);
+        assert Global.validIndex(row) && Global.validIndex(column);
         board.get(row).set(column, ball);
-    }
-
-    /**
-     * Checks if a given index is valid. Index is valid if {@code 0 <= index < 7}.
-     *
-     * @param index index to check for validness
-     * @return true is index is valid, false otherwise
-     */
-    protected boolean validIndex(int index) {
-        return index >= 0 && index < 7;
     }
 
     /**
@@ -311,7 +301,7 @@ public class GridBoard {
      * @ensures surroundings of specified fields are checked
      */
     public boolean checkSurroundings(int row, int column) {
-        assert validIndex(row) && validIndex(column);
+        assert Global.validIndex(row) && Global.validIndex(column);
         Ball colour = getField(row, column);
         if (colour == Ball.WHITE) {
             return false;
